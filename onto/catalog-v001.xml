@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+    <uri id="User Entered Import Resolution" name="http://pst.istc.cnr.it/ontologies/2019/01/soho/1.0.0" uri="file:/home/anacleto/ws/ai/SOHO/core/soho_core_v1.1.owl"/>
+    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
+        <uri id="Automatically generated entry, Timestamp=1761819667547" name="http://pst.istc.cnr.it/ontologies/2025/dfki/mcog" uri="mcog-v0.1.owl"/>
+    </group>
+</catalog>

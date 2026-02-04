@@ -14,6 +14,444 @@
     <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
     <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
     <Import>http://pst.istc.cnr.it/ontologies/2019/01/soho/1.0.0</Import>
+    <Declaration>
+        <Class IRI="#AutonomousNavigation"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Capability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ConsumptionCapability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ContainmentCapacity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DetectionAccuracy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DetectionClass"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DetectionRange"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiscretePoseRegion"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#EmbodiedAgent"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#InteractionCapability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#InteractionCapacity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MoveTo"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#NavigationCapability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#NavigationCapacity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ObjectContainmentCapability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ObjectDetection"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ObjectLifting"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ObjectManipulationCapability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ObjectManipulationCapacity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ObjectPayload"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Pose"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#PutObjectIntoContainer"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ResourceCapability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ResourceCapacity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RobotEmbodiment"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RobotPart"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Velocity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalAgent"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#isPartOf"/>
+    </Declaration>
+    <EquivalentClasses>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#PickObject"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Collect"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#canBePerformedBy"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#RobotEmbodiment"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                        <Class IRI="#ObjectLifting"/>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectAllValuesFrom>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
+                <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#PlaceObject"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Release"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#canBePerformedBy"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#RobotEmbodiment"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                        <Class IRI="#ObjectLifting"/>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectAllValuesFrom>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
+                <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+            </ObjectExactCardinality>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#requires"/>
+                <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#Place"/>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#AutonomousNavigation"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#NavigationCapability"/>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#Velocity"/>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#Capability"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+            </ObjectSomeValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#EmbodiedAgent"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#RobotEmbodiment"/>
+            <ObjectMinCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#canPerform"/>
+                <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Function"/>
+            </ObjectMinCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#InteractionCapability"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Capability"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#InteractionCapacity"/>
+            </ObjectAllValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#MoveTo"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Channel"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#canBePerformedBy"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#RobotEmbodiment"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                        <Class IRI="#NavigationCapability"/>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectAllValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#NavigationCapability"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#NavigationCapability"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#NavigationCapacity"/>
+            </ObjectAllValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#ObjectContainmentCapability"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#ResourceCapability"/>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#ContainmentCapacity"/>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#ObjectDetection"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#InteractionCapability"/>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#DetectionAccuracy"/>
+            </ObjectExactCardinality>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#DetectionClass"/>
+            </ObjectExactCardinality>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#DetectionRange"/>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#ObjectLifting"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#ObjectManipulationCapability"/>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#ObjectPayload"/>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#ObjectManipulationCapability"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Capability"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#InteractionCapacity"/>
+            </ObjectAllValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#PutObjectIntoContainer"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Store"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#canBePerformedBy"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#RobotEmbodiment"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                        <Class IRI="#ObjectLifting"/>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectAllValuesFrom>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
+                <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+            </ObjectExactCardinality>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#requires"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                        <Class IRI="#ObjectContainmentCapability"/>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#ResourceCapability"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Capability"/>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <Class IRI="#ResourceCapacity"/>
+            </ObjectAllValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#RobotEmbodiment"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+            <ObjectMinCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                <Class IRI="#Capability"/>
+            </ObjectMinCardinality>
+            <ObjectMinCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                <Class IRI="#RobotPart"/>
+            </ObjectMinCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#RobotPart"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+            <ObjectMinCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                <Class IRI="#Capability"/>
+            </ObjectMinCardinality>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#isConstituentOf"/>
+                <Class IRI="#RobotEmbodiment"/>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <SubClassOf>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Cobot"/>
+        <Class IRI="#EmbodiedAgent"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#AutonomousNavigation"/>
+        <Class IRI="#NavigationCapability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Capability"/>
+        <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ConsumptionCapability"/>
+        <Class IRI="#ResourceCapability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ContainmentCapacity"/>
+        <Class IRI="#ResourceCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionAccuracy"/>
+        <Class IRI="#InteractionCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionClass"/>
+        <Class IRI="#InteractionCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DetectionRange"/>
+        <Class IRI="#InteractionCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#DiscretePoseRegion"/>
+        <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#EmbodiedAgent"/>
+        <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalAgent"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#InteractionCapability"/>
+        <Class IRI="#Capability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#InteractionCapacity"/>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#MoveTo"/>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Channel"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#NavigationCapability"/>
+        <Class IRI="#InteractionCapability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#NavigationCapacity"/>
+        <Class IRI="#InteractionCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ObjectContainmentCapability"/>
+        <Class IRI="#ConsumptionCapability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ObjectDetection"/>
+        <Class IRI="#InteractionCapability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ObjectLifting"/>
+        <Class IRI="#ObjectManipulationCapability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ObjectManipulationCapability"/>
+        <Class IRI="#InteractionCapability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ObjectManipulationCapacity"/>
+        <Class IRI="#InteractionCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ObjectPayload"/>
+        <Class IRI="#ObjectManipulationCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pose"/>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectProperty"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Pose"/>
+        <ObjectExactCardinality cardinality="1">
+            <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+            <Class IRI="#DiscretePoseRegion"/>
+        </ObjectExactCardinality>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#PutObjectIntoContainer"/>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Store"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ResourceCapability"/>
+        <Class IRI="#Capability"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ResourceCapacity"/>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RobotEmbodiment"/>
+        <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#RobotPart"/>
+        <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Velocity"/>
+        <Class IRI="#NavigationCapacity"/>
+    </SubClassOf>
+    <TransitiveObjectProperty>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+    </TransitiveObjectProperty>
+    <TransitiveObjectProperty>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#isPartOf"/>
+    </TransitiveObjectProperty>
 </Ontology>
 
 

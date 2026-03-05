@@ -21,10 +21,16 @@
         <Class IRI="#Capability"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#ClassicalPlanning"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#ConsumptionCapability"/>
     </Declaration>
     <Declaration>
         <Class IRI="#ContainmentCapacity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ContingentPlanning"/>
     </Declaration>
     <Declaration>
         <Class IRI="#DetectionAccuracy"/>
@@ -42,6 +48,12 @@
         <Class IRI="#EmbodiedAgent"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#EnvironmentLocation"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#HybridPlanning"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#InteractionCapability"/>
     </Declaration>
     <Declaration>
@@ -55,6 +67,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="#NavigationCapacity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#NumericPlanning"/>
     </Declaration>
     <Declaration>
         <Class IRI="#ObjectContainmentCapability"/>
@@ -75,10 +90,16 @@
         <Class IRI="#ObjectPayload"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#PlanningMethod"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#Pose"/>
     </Declaration>
     <Declaration>
         <Class IRI="#PutObjectIntoContainer"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ReasoningMethod"/>
     </Declaration>
     <Declaration>
         <Class IRI="#ResourceCapability"/>
@@ -93,10 +114,16 @@
         <Class IRI="#RobotPart"/>
     </Declaration>
     <Declaration>
+        <Class IRI="#TemporalPlanning"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="#Velocity"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalAgent"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#requiresPlanning"/>
     </Declaration>
     <Declaration>
         <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#isPartOf"/>
@@ -141,7 +168,7 @@
             </ObjectExactCardinality>
             <ObjectExactCardinality cardinality="1">
                 <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#requires"/>
-                <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#Place"/>
+                <Class IRI="#EnvironmentLocation"/>
             </ObjectExactCardinality>
         </ObjectIntersectionOf>
     </EquivalentClasses>
@@ -174,6 +201,13 @@
                 <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Function"/>
             </ObjectMinCardinality>
         </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#EnvironmentLocation"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+            <Class IRI="#Pose"/>
+        </ObjectSomeValuesFrom>
     </EquivalentClasses>
     <EquivalentClasses>
         <Class IRI="#InteractionCapability"/>
@@ -273,6 +307,10 @@
                     </ObjectSomeValuesFrom>
                 </ObjectIntersectionOf>
             </ObjectAllValuesFrom>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#requiresPlanning"/>
+                <Class IRI="#NumericPlanning"/>
+            </ObjectAllValuesFrom>
             <ObjectExactCardinality cardinality="1">
                 <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
                 <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
@@ -308,7 +346,7 @@
                 <Class IRI="#Capability"/>
             </ObjectMinCardinality>
             <ObjectMinCardinality cardinality="1">
-                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
                 <Class IRI="#RobotPart"/>
             </ObjectMinCardinality>
         </ObjectIntersectionOf>
@@ -317,19 +355,33 @@
         <Class IRI="#RobotPart"/>
         <ObjectIntersectionOf>
             <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                <Class IRI="#RobotPart"/>
+            </ObjectSomeValuesFrom>
             <ObjectMinCardinality cardinality="1">
                 <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
                 <Class IRI="#Capability"/>
             </ObjectMinCardinality>
-            <ObjectExactCardinality cardinality="1">
-                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#isConstituentOf"/>
-                <Class IRI="#RobotEmbodiment"/>
-            </ObjectExactCardinality>
         </ObjectIntersectionOf>
     </EquivalentClasses>
     <SubClassOf>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Action"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#requiresPlanning"/>
+            <Class IRI="#ClassicalPlanning"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Cobot"/>
         <Class IRI="#EmbodiedAgent"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Function"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty IRI="#requiresPlanning"/>
+            <Class IRI="#PlanningMethod"/>
+        </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#AutonomousNavigation"/>
@@ -340,12 +392,20 @@
         <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#ClassicalPlanning"/>
+        <Class IRI="#PlanningMethod"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#ConsumptionCapability"/>
         <Class IRI="#ResourceCapability"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#ContainmentCapacity"/>
         <Class IRI="#ResourceCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ContingentPlanning"/>
+        <Class IRI="#PlanningMethod"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#DetectionAccuracy"/>
@@ -368,6 +428,14 @@
         <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalAgent"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#EnvironmentLocation"/>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#ProductionLocation"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#HybridPlanning"/>
+        <Class IRI="#PlanningMethod"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#InteractionCapability"/>
         <Class IRI="#Capability"/>
     </SubClassOf>
@@ -386,6 +454,10 @@
     <SubClassOf>
         <Class IRI="#NavigationCapacity"/>
         <Class IRI="#InteractionCapacity"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#NumericPlanning"/>
+        <Class IRI="#PlanningMethod"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#ObjectContainmentCapability"/>
@@ -412,6 +484,10 @@
         <Class IRI="#ObjectManipulationCapacity"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#PlanningMethod"/>
+        <Class IRI="#ReasoningMethod"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#Pose"/>
         <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectProperty"/>
     </SubClassOf>
@@ -425,6 +501,10 @@
     <SubClassOf>
         <Class IRI="#PutObjectIntoContainer"/>
         <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Store"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ReasoningMethod"/>
+        <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#Method"/>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#ResourceCapability"/>
@@ -443,15 +523,31 @@
         <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="#TemporalPlanning"/>
+        <Class IRI="#NumericPlanning"/>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="#Velocity"/>
         <Class IRI="#NavigationCapacity"/>
     </SubClassOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#requiresPlanning"/>
+        <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#requires"/>
+    </SubObjectPropertyOf>
     <TransitiveObjectProperty>
         <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
     </TransitiveObjectProperty>
     <TransitiveObjectProperty>
         <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#isPartOf"/>
     </TransitiveObjectProperty>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#requiresPlanning"/>
+        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#ProductionMethod"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#requiresPlanning"/>
+        <Class IRI="#ReasoningMethod"/>
+    </ObjectPropertyRange>
 </Ontology>
 
 

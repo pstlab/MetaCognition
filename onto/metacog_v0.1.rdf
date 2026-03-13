@@ -7,7 +7,9 @@
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:swrla="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#">
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrla="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#">
     <owl:Ontology rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog">
         <owl:versionIRI rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog/1.0.0"/>
         <owl:imports rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho/1.0.0"/>
@@ -60,14 +62,6 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    
-
-
-    <!-- http://pst.istc.cnr.it/ontologies/2019/01/soho#Cobot -->
-
-    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#Cobot">
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EmbodiedAgent"/>
-    </rdf:Description>
     
 
 
@@ -261,6 +255,18 @@
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DiscretePoseRegion -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DiscretePoseRegion">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCoordinate"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+                        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
     </owl:Class>
     
@@ -272,16 +278,21 @@
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
+                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#Agent"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#canPerform"/>
                         <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
                         <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Function"/>
                     </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
+                    </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalAgent"/>
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Agent"/>
     </owl:Class>
     
 
@@ -632,14 +643,19 @@
                         <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
                         <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
                         <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#DesignedArtifact"/>
     </owl:Class>
     
 
@@ -656,14 +672,13 @@
                         <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
                     </owl:Restriction>
                     <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
-                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
+                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                        <owl:someValuesFrom rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#DesignedArtifact"/>
     </owl:Class>
     
 
@@ -687,6 +702,109 @@
     <!-- http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalAgent -->
 
     <owl:Class rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalAgent"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Rules
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description>
+        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
+        <rdfs:comment>RobotEmbodiment&apos;s capabilities</rdfs:comment>
+        <rdfs:label>S3</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
+                            </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:first>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                        <swrl:propertyPredicate rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e"/>
+                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
+                                    </rdf:Description>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                        <rdf:first>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                                <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
+                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c"/>
+                                            </rdf:Description>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                <rdf:first>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                        <swrl:propertyPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
+                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c"/>
+                                                    </rdf:Description>
+                                                </rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e"/>
+                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
 </rdf:RDF>
 
 

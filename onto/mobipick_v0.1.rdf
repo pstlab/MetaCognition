@@ -8,6 +8,7 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
     <owl:Ontology rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick">
         <owl:versionIRI rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog/1.0.0"/>
+        <owl:imports rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog/1.0.0"/>
     </owl:Ontology>
 </rdf:RDF>
 

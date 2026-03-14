@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/"
+     xml:base="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/"
+     xmlns:DUL="http://www.loa-cnr.it/ontologies/DUL.owl#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:soho="http://pst.istc.cnr.it/ontologies/2019/01/soho#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrla="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#">
+    <owl:Ontology rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick">
+        <owl:versionIRI rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog/1.0.0"/>
+        <owl:imports rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog/1.0.0"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_agent -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_agent">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EmbodiedAgent"/>
+        <DUL:hasConstituent rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_embodiment"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_arm -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_arm">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+        <soho:hasCapability rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_lifting"/>
+        <DUL:hasPart rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_gripper"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_arm_pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_arm_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_arm_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_base -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_base">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+        <soho:hasCapability rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_nav"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_base_pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_base_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_base_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_camera -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_camera">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+        <soho:hasCapability rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_detect"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_detect -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_detect">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectDetection"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_lifting -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_lifting">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectLifting"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_nav -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_nav">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#AutonomousNavigation"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_embodiment -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_embodiment">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
+        <DUL:hasPart rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_arm"/>
+        <DUL:hasPart rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_base"/>
+        <DUL:hasPart rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_camera"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_gripper -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_gripper">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab0 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab0">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab0_pose"/>
+        <soho:hasLabel>Table0 Manipulation Location</soho:hasLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab0_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab0_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab1 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab1">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab1_pose"/>
+        <soho:hasLabel>Table1 Manipulation Location</soho:hasLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab1_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab1_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab2 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab2">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab2_pose"/>
+        <soho:hasLabel>Table2 Manipulation Location</soho:hasLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab2_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab2_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab3 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab3">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab3_pose"/>
+        <soho:hasLabel>Table3 Manipulation Location</soho:hasLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab3_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab3_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab4 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab4">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab4_pose"/>
+        <soho:hasLabel>Table4 Manipulation Location</soho:hasLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab4_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#tab4_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Rules
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/e">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/p">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/c">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description>
+        <swrla:isRuleEnabled rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrla:isRuleEnabled>
+        <rdfs:comment>RobotEmbodiment&apos;s capabilities</rdfs:comment>
+        <rdfs:label>S3</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/e"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/p"/>
+                            </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:first>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                        <swrl:propertyPredicate rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/e"/>
+                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/p"/>
+                                    </rdf:Description>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                        <rdf:first>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                                <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
+                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/c"/>
+                                            </rdf:Description>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                                <rdf:first>
+                                                    <rdf:Description>
+                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                        <swrl:propertyPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/p"/>
+                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/c"/>
+                                                    </rdf:Description>
+                                                </rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                        <swrl:propertyPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/e"/>
+                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/c"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+

@@ -24136,21 +24136,6 @@
     
 
 
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability -->
-
-    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability">
-        <owl:equivalentClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectManipulationCapability"/>
-    </rdf:Description>
-    
-
-
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity -->
-
-    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity">
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Amount"/>
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Region"/>
-    </rdf:Description>
-    
 
 
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#MoveTo -->

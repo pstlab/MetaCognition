@@ -65,6 +65,27 @@
     
 
 
+    <!-- http://pst.istc.cnr.it/ontologies/2019/01/soho#ActingCapability -->
+
+    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#ActingCapability">
+        <owl:equivalentClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectManipulationCapability"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2019/01/soho#AgentCapability -->
+
+    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#AgentCapability">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </rdf:Description>
+    
+
+
     <!-- http://pst.istc.cnr.it/ontologies/2019/01/soho#Function -->
 
     <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#Function">
@@ -72,6 +93,34 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#requiresPlanning"/>
                 <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#PlanningMethod"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </rdf:Description>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectDetection -->
+
+    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectDetection">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DetectionAccuracy"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DetectionClass"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DetectionRange"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </rdf:Description>
@@ -97,7 +146,7 @@
                                     <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
                                     <owl:Restriction>
                                         <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
-                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectLifting"/>
+                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#LiftObjectCapability"/>
                                     </owl:Restriction>
                                 </owl:intersectionOf>
                             </owl:Class>
@@ -134,7 +183,7 @@
                                     <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
                                     <owl:Restriction>
                                         <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
-                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectLifting"/>
+                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#LiftObjectCapability"/>
                                     </owl:Restriction>
                                 </owl:intersectionOf>
                             </owl:Class>
@@ -165,57 +214,10 @@
     
 
 
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#AutonomousNavigation -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#AutonomousNavigation">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationCapability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Velocity"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationCapability"/>
-    </owl:Class>
-    
-
-
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
-    </owl:Class>
-    
-
-
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ClassicalPlanning -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ClassicalPlanning">
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#PlanningMethod"/>
-    </owl:Class>
-    
-
-
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ConsumptionCapability -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ConsumptionCapability">
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceCapability"/>
     </owl:Class>
     
 
@@ -276,6 +278,20 @@
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition">
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -345,7 +361,7 @@
                     <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#ProductionObject"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
-                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
+                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
@@ -360,29 +376,25 @@
     
 
 
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
-    </owl:Class>
-    
-
-
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity">
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#LiftObjectCapability -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#LiftObjectCapability">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#MoveObjectCapability"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectPayload"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -423,18 +435,14 @@
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationCapability -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationCapability">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationCapability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationCapacity"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability"/>
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#AgentCapability"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Velocity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -455,72 +463,10 @@
     
 
 
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectContainmentCapability -->
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectDisposition -->
 
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectContainmentCapability">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceCapability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ContainmentCapacity"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ConsumptionCapability"/>
-    </owl:Class>
-    
-
-
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectDetection -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectDetection">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DetectionAccuracy"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DetectionClass"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DetectionRange"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability"/>
-    </owl:Class>
-    
-
-
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectLifting -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectLifting">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectManipulationCapability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectPayload"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectManipulationCapability"/>
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectDisposition">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition"/>
     </owl:Class>
     
 
@@ -528,18 +474,13 @@
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectManipulationCapability -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectManipulationCapability">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapability"/>
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#AgentCapability"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -605,7 +546,7 @@
                                     <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
                                     <owl:Restriction>
                                         <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
-                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectLifting"/>
+                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#LiftObjectCapability"/>
                                     </owl:Restriction>
                                 </owl:intersectionOf>
                             </owl:Class>
@@ -629,7 +570,7 @@
                                     <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
                                     <owl:Restriction>
                                         <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
-                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectContainmentCapability"/>
+                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceContainmentDisposition"/>
                                     </owl:Restriction>
                                 </owl:intersectionOf>
                             </owl:Class>
@@ -651,29 +592,33 @@
     
 
 
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceCapability -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceCapability">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                        <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceCapacity"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
-    </owl:Class>
-    
-
-
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceCapacity -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceCapacity">
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceContainmentDisposition -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceContainmentDisposition">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceDisposition"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ContainmentCapacity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceDisposition -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ResourceDisposition">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ObjectDisposition"/>
     </owl:Class>
     
 
@@ -688,7 +633,7 @@
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
                         <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
-                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
+                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
@@ -781,10 +726,10 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
-    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e">
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
-    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p">
+    <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
     <rdf:Description rdf:about="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c">
@@ -801,8 +746,8 @@
                 <rdf:first>
                     <rdf:Description>
                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
-                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e"/>
+                        <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
                     </rdf:Description>
                 </rdf:first>
                 <rdf:rest>
@@ -810,9 +755,10 @@
                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                         <rdf:first>
                             <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
-                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e"/>
+                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
                             </rdf:Description>
                         </rdf:first>
                         <rdf:rest>
@@ -820,10 +766,9 @@
                                 <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                                 <rdf:first>
                                     <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
-                                        <swrl:propertyPredicate rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
-                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e"/>
-                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                        <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition"/>
+                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c"/>
                                     </rdf:Description>
                                 </rdf:first>
                                 <rdf:rest>
@@ -831,9 +776,10 @@
                                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                                         <rdf:first>
                                             <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                                <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Capability"/>
-                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c"/>
+                                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                                <swrl:propertyPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                                                <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
+                                                <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c"/>
                                             </rdf:Description>
                                         </rdf:first>
                                         <rdf:rest>
@@ -841,10 +787,9 @@
                                                 <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                                                 <rdf:first>
                                                     <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
-                                                        <swrl:propertyPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
-                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/p"/>
-                                                        <swrl:argument2 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/c"/>
+                                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                                        <swrl:classPredicate rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotEmbodiment"/>
+                                                        <swrl:argument1 rdf:resource="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/e"/>
                                                     </rdf:Description>
                                                 </rdf:first>
                                                 <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>

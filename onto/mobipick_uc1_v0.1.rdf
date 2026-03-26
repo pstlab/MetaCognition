@@ -131,6 +131,94 @@
 
     <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_gripper">
         <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#RobotPart"/>
+        <soho:hasCapability rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_capability_grasping"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_gripper_pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_gripper_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_gripper_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractingObject"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0_disp"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0_pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0_disp -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0_disp">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractingObject"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1_disp"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1_pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1_disp -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1_disp">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay1_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0 -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractingObject"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0_disp"/>
+        <DUL:hasQuality rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0_pose"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0_disp -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0_disp">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0_pose -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#screwdriver0_pose">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
     </owl:NamedIndividual>
     
 

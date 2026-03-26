@@ -24283,6 +24283,14 @@
     
 
 
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ManipulationLocation -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ManipulationLocation">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
+    </owl:Class>
+    
+
+
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#MoveTo -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#MoveTo">
@@ -24307,6 +24315,15 @@
                                 </owl:intersectionOf>
                             </owl:Class>
                         </owl:allValuesFrom>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
+                        <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationLocation"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -24376,6 +24393,14 @@
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#InteractionCapacity"/>
         <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Amount"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationLocation -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NavigationLocation">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#EnvironmentLocation"/>
     </owl:Class>
     
 

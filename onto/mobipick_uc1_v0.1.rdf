@@ -145,6 +145,22 @@
     
 
 
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#planning_classical -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#planning_classical">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#ClassicalPlanning"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#planning_numeric -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#planning_numeric">
+        <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#NumericPlanning"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0 -->
 
     <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#relay0">

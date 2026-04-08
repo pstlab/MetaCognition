@@ -1,0 +1,33 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+@prefix owl: <http://www.w3.org/2002/07/owl#>
+@prefix dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
+@prefix soho: <http://pst.istc.cnr.it/ontologies/2019/01/soho#>
+@prefix mc: <http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#>
+@prefix uc: <http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#>
+
+# Include RDFS rules
+@include <RDFS> .
+
+# The capabilities of an embodiment are inherited by its parts
+[rule0:
+    (?e rdf:type mc:RobotEmbodiment) 
+    (?e dul:hasPart ?p) 
+    (?p dul:hasQuality ?q)
+    -> 
+    (?e dul:hasQuality ?q)
+]
+
+# infer the functions an embopdimetn can perform according to its qualities
+[rule1:
+    (?e rdf:type mc:RobotEmbodiment) 
+    (?e dul:hasQuality ?q) 
+    (?c rdf:type mc:NavigationCapability)
+    (?l rdf:type mc:EnvironmentLocation) 
+    (?m rdf:type mc:ClassicalPlanning)
+    makeTemp(?x)
+    -> 
+    (?x rdf:type mc:MoveTo) 
+    (?x mc:requiresPlanning ?m)
+    (?x soho:canBePerformedBy ?e)
+]

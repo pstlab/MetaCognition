@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metacognition SPARQL Console</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #0ea5e9;
+      --border: #334155;
+      --ok: #22c55e;
+      --err: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .title {
+      margin: 0 0 8px;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+      backdrop-filter: blur(6px);
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    textarea {
+      min-height: 280px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .row > * {
+      flex: 1;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #082f49;
+    }
+
+    .secondary {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .status {
+      margin-top: 12px;
+      min-height: 22px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .status.ok { color: var(--ok); }
+    .status.err { color: var(--err); }
+
+    .result-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      border-radius: 12px;
+      background: #020617;
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      overflow: auto;
+      max-height: 520px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #0b1220;
+      color: #cbd5e1;
+    }
+
+    td {
+      background: #111827;
+      color: #e5e7eb;
+      word-break: break-word;
+    }
+
+    .hidden { display: none; }
+
+    .hint-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Metacognition SPARQL Console</h1>
+      <p class="subtitle">
+        Interfaccia web minimale per inviare query SPARQL alla REST del backend Spring Boot e visualizzare la risposta in formato tabellare o JSON.
+      </p>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Query</h2>
+
+        <label for="endpoint">Endpoint REST</label>
+        <input id="endpoint" type="text" value="http://localhost:8080/metacognition/api/sparql/select" />
+
+        <div class="row">
+          <div>
+            <label for="raw">Formato risposta</label>
+            <select id="raw">
+              <option value="true" selected>raw = true</option>
+              <option value="false">raw = false</option>
+            </select>
+          </div>
+          <div>
+            <label for="responseView">Vista risultato</label>
+            <select id="responseView">
+              <option value="table" selected>Tabella se possibile</option>
+              <option value="json">JSON</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="sparql">SPARQL</label>
+        <textarea id="sparql">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX dul: &lt;http://www.loa-cnr.it/ontologies/DUL.owl#&gt;
+PREFIX soho: &lt;http://pst.istc.cnr.it/ontologies/2019/01/soho#&gt;
+PREFIX mc: &lt;http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#&gt;
+PREFIX uc: &lt;http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#&gt;
+
+SELECT ?e ?q
+WHERE {
+ ?e rdf:type mc:RobotEmbodiment .
+ ?e dul:hasQuality ?q .
+}
+</textarea>
+
+        <div class="actions">
+          <button id="runBtn" class="primary">Esegui query</button>
+          <button id="clearBtn" class="secondary">Pulisci</button>
+          <button id="exampleBtn" class="secondary">Carica esempio</button>
+          <button id="copyBtn" class="secondary">Copia risultato</button>
+        </div>
+
+        <div id="status" class="status"></div>
+      </section>
+
+      <aside class="card">
+        <h2>Note rapide</h2>
+        <ul class="hint-list">
+          <li>Il body inviato è JSON con campi <code>sparql</code> e <code>raw</code>.</li>
+          <li>La UI usa <code>fetch()</code> con metodo POST.</li>
+          <li>Se il backend non consente richieste cross-origin, va abilitato CORS nel controller Spring Boot.</li>
+          <li>La tabella viene mostrata solo se la risposta ha una struttura adatta.</li>
+        </ul>
+        <p class="footer-note">
+          Per servire questa pagina localmente puoi metterla tra le risorse statiche di Spring Boot, ad esempio in <code>src/main/resources/static/</code>.
+        </p>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top: 20px;">
+      <div class="result-toolbar">
+        <h2 style="margin: 0;">Risultato</h2>
+        <span id="resultMeta" class="pill">Nessuna risposta</span>
+      </div>
+
+      <div id="tableContainer" class="hidden"></div>
+      <pre id="jsonOutput">In attesa di una query...</pre>
+    </section>
+  </div>
+
+  <script>
+    const endpointEl = document.getElementById('endpoint');
+    const rawEl = document.getElementById('raw');
+    const responseViewEl = document.getElementById('responseView');
+    const sparqlEl = document.getElementById('sparql');
+    const runBtn = document.getElementById('runBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const exampleBtn = document.getElementById('exampleBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const statusEl = document.getElementById('status');
+    const jsonOutputEl = document.getElementById('jsonOutput');
+    const tableContainerEl = document.getElementById('tableContainer');
+    const resultMetaEl = document.getElementById('resultMeta');
+
+    function setStatus(message, kind = '') {
+      statusEl.textContent = message;
+      statusEl.className = 'status' + (kind ? ' ' + kind : '');
+    }
+
+    function setLoading(isLoading) {
+      runBtn.disabled = isLoading;
+      runBtn.textContent = isLoading ? 'Esecuzione...' : 'Esegui query';
+    }
+
+    function clearResult() {
+      tableContainerEl.innerHTML = '';
+      tableContainerEl.classList.add('hidden');
+      jsonOutputEl.textContent = 'In attesa di una query...';
+      resultMetaEl.textContent = 'Nessuna risposta';
+      setStatus('');
+    }
+
+    function renderTable(rows) {
+      if (!Array.isArray(rows) || rows.length === 0 || typeof rows[0] !== 'object' || rows[0] === null) {
+        return false;
+      }
+
+      const columns = Array.from(
+        rows.reduce((set, row) => {
+          Object.keys(row).forEach(k => set.add(k));
+          return set;
+        }, new Set())
+      );
+
+      if (columns.length === 0) {
+        return false;
+      }
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+      const headRow = document.createElement('tr');
+
+      columns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headRow.appendChild(th);
+      });
+
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        columns.forEach(col => {
+          const td = document.createElement('td');
+          const value = row[col];
+          td.textContent = value === undefined || value === null
+            ? ''
+            : (typeof value === 'object' ? JSON.stringify(value) : String(value));
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      tableContainerEl.innerHTML = '';
+      tableContainerEl.appendChild(table);
+      tableContainerEl.classList.remove('hidden');
+      return true;
+    }
+
+    function extractTabularData(payload) {
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+
+      if (payload && Array.isArray(payload.results)) {
+        return payload.results;
+      }
+
+      if (payload && payload.results && Array.isArray(payload.results.bindings)) {
+        return payload.results.bindings.map(binding => {
+          const flat = {};
+          Object.entries(binding).forEach(([key, value]) => {
+            flat[key] = value && typeof value === 'object' && 'value' in value ? value.value : value;
+          });
+          return flat;
+        });
+      }
+
+      if (payload && Array.isArray(payload.bindings)) {
+        return payload.bindings;
+      }
+
+      return null;
+    }
+
+    async function runQuery() {
+      const endpoint = endpointEl.value.trim();
+      const sparql = sparqlEl.value.trim();
+      const raw = rawEl.value === 'true';
+      const responseView = responseViewEl.value;
+
+      if (!endpoint) {
+        setStatus('Inserisci un endpoint REST valido.', 'err');
+        return;
+      }
+
+      if (!sparql) {
+        setStatus('Inserisci una query SPARQL.', 'err');
+        return;
+      }
+
+      setLoading(true);
+      setStatus('Invio richiesta al backend...');
+      tableContainerEl.innerHTML = '';
+      tableContainerEl.classList.add('hidden');
+      jsonOutputEl.textContent = 'Caricamento...';
+
+      const body = { sparql, raw };
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        const text = await response.text();
+        let payload;
+
+        try {
+          payload = text ? JSON.parse(text) : { empty: true };
+        } catch {
+          payload = text;
+        }
+
+        if (!response.ok) {
+          jsonOutputEl.textContent = typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2);
+          resultMetaEl.textContent = `HTTP ${response.status}`;
+          setStatus(`Errore dal backend: HTTP ${response.status}`, 'err');
+          return;
+        }
+
+        resultMetaEl.textContent = `HTTP ${response.status}`;
+
+        const tabular = extractTabularData(payload);
+        const tableRendered = responseView === 'table' && tabular && renderTable(tabular);
+
+        if (tableRendered) {
+          jsonOutputEl.textContent = JSON.stringify(payload, null, 2);
+          setStatus(`Query completata con successo. Righe: ${tabular.length}`, 'ok');
+        } else {
+          tableContainerEl.classList.add('hidden');
+          jsonOutputEl.textContent = typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2);
+          setStatus('Query completata con successo.', 'ok');
+        }
+      } catch (error) {
+        jsonOutputEl.textContent = String(error);
+        resultMetaEl.textContent = 'Errore di rete';
+        setStatus(`Errore di rete o CORS: ${error.message}`, 'err');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    runBtn.addEventListener('click', runQuery);
+
+    clearBtn.addEventListener('click', () => {
+      sparqlEl.value = '';
+      clearResult();
+    });
+
+    exampleBtn.addEventListener('click', () => {
+      sparqlEl.value = `PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX dul: &lt;http://www.loa-cnr.it/ontologies/DUL.owl#&gt;
+PREFIX soho: &lt;http://pst.istc.cnr.it/ontologies/2019/01/soho#&gt;
+PREFIX mc: &lt;http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#&gt;
+PREFIX uc: &lt;http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#&gt;
+
+SELECT ?e ?q
+WHERE {
+ ?e rdf:type mc:RobotEmbodiment .
+ ?e dul:hasQuality ?q .
+}`;
+      setStatus('Esempio caricato.');
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(jsonOutputEl.textContent);
+        setStatus('Risultato copiato negli appunti.', 'ok');
+      } catch {
+        setStatus('Impossibile copiare il risultato.', 'err');
+      }
+    });
+  </script>
+</body>
+</html>

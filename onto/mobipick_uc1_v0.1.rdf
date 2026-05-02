@@ -29,6 +29,14 @@
     
 
 
+    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#base_pose_observation -->
+
+    <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#base_pose_observation">
+        <soho:hasCoordinate>pos01</soho:hasCoordinate>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_agent -->
 
     <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_agent">
@@ -71,6 +79,7 @@
 
     <owl:NamedIndividual rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#mobipick_base_pose">
         <rdf:type rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Pose"/>
+        <DUL:hasRegion rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/mobipick#base_pose_observation"/>
     </owl:NamedIndividual>
     
 

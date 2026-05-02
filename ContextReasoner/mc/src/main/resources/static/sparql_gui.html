@@ -237,7 +237,8 @@
     <div class="header">
       <h1 class="title">Metacognition SPARQL Console</h1>
       <p class="subtitle">
-        Interfaccia web minimale per inviare query SPARQL alla REST del backend Spring Boot e visualizzare la risposta in formato tabellare o JSON.
+        SPARQL endpoint of the Metacognition exposing the semantic representation of the scene and the 
+        outcomes of the reasoning process of the underlying Context Reasoner.
       </p>
     </div>
 
@@ -250,23 +251,24 @@
 
         <div class="row">
           <div>
-            <label for="raw">Formato risposta</label>
+            <label for="raw">Model to query</label>
             <select id="raw">
               <option value="true" selected>raw = true</option>
               <option value="false">raw = false</option>
             </select>
           </div>
           <div>
-            <label for="responseView">Vista risultato</label>
+            <label for="responseView">Result layout</label>
             <select id="responseView">
-              <option value="table" selected>Tabella se possibile</option>
+              <option value="table" selected>Table format</option>
               <option value="json">JSON</option>
             </select>
           </div>
         </div>
 
         <label for="sparql">SPARQL</label>
-        <textarea id="sparql">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+        <textarea id="sparql">
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 PREFIX dul: &lt;http://www.loa-cnr.it/ontologies/DUL.owl#&gt;
 PREFIX soho: &lt;http://pst.istc.cnr.it/ontologies/2019/01/soho#&gt;
@@ -281,37 +283,33 @@ WHERE {
 </textarea>
 
         <div class="actions">
-          <button id="runBtn" class="primary">Esegui query</button>
-          <button id="clearBtn" class="secondary">Pulisci</button>
-          <button id="exampleBtn" class="secondary">Carica esempio</button>
-          <button id="copyBtn" class="secondary">Copia risultato</button>
+          <button id="runBtn" class="primary">Run query</button>
+          <button id="clearBtn" class="secondary">Clear</button>
+          <button id="exampleBtn" class="secondary">Load default query</button>
+          <button id="copyBtn" class="secondary">Copy result to the Clipboard</button>
         </div>
 
         <div id="status" class="status"></div>
       </section>
 
       <aside class="card">
-        <h2>Note rapide</h2>
+        <h2>Notes</h2>
         <ul class="hint-list">
-          <li>Il body inviato è JSON con campi <code>sparql</code> e <code>raw</code>.</li>
-          <li>La UI usa <code>fetch()</code> con metodo POST.</li>
-          <li>Se il backend non consente richieste cross-origin, va abilitato CORS nel controller Spring Boot.</li>
-          <li>La tabella viene mostrata solo se la risposta ha una struttura adatta.</li>
+          <li>The endpoint is implemented thourgh a REST POST request. The request body contains a JSON object with SPARQL query.</li>
+          <li>THe User Interface uses <code>fetch()</code> as POST method.</li>
+          <li>The REST endpoing should allow cross-origin requets, enable CORS in the Spring Boot controller.</li>
         </ul>
-        <p class="footer-note">
-          Per servire questa pagina localmente puoi metterla tra le risorse statiche di Spring Boot, ad esempio in <code>src/main/resources/static/</code>.
-        </p>
       </aside>
     </div>
 
     <section class="card" style="margin-top: 20px;">
       <div class="result-toolbar">
-        <h2 style="margin: 0;">Risultato</h2>
-        <span id="resultMeta" class="pill">Nessuna risposta</span>
+        <h2 style="margin: 0;">Result</h2>
+        <span id="resultMeta" class="pill">Empty result</span>
       </div>
 
       <div id="tableContainer" class="hidden"></div>
-      <pre id="jsonOutput">In attesa di una query...</pre>
+      <pre id="jsonOutput">Query being processed...</pre>
     </section>
   </div>
 
@@ -336,14 +334,14 @@ WHERE {
 
     function setLoading(isLoading) {
       runBtn.disabled = isLoading;
-      runBtn.textContent = isLoading ? 'Esecuzione...' : 'Esegui query';
+      runBtn.textContent = isLoading ? 'Loading...' : 'Run query';
     }
 
     function clearResult() {
       tableContainerEl.innerHTML = '';
       tableContainerEl.classList.add('hidden');
-      jsonOutputEl.textContent = 'In attesa di una query...';
-      resultMetaEl.textContent = 'Nessuna risposta';
+      jsonOutputEl.textContent = 'Waiting for a query...';
+      resultMetaEl.textContent = 'No answer';
       setStatus('');
     }
 
@@ -430,20 +428,20 @@ WHERE {
       const responseView = responseViewEl.value;
 
       if (!endpoint) {
-        setStatus('Inserisci un endpoint REST valido.', 'err');
+        setStatus('Specify a valid REST endpoint.', 'err');
         return;
       }
 
       if (!sparql) {
-        setStatus('Inserisci una query SPARQL.', 'err');
+        setStatus('Specify a valid SPARQL query.', 'err');
         return;
       }
 
       setLoading(true);
-      setStatus('Invio richiesta al backend...');
+      setStatus('Sending request to the backend...');
       tableContainerEl.innerHTML = '';
       tableContainerEl.classList.add('hidden');
-      jsonOutputEl.textContent = 'Caricamento...';
+      jsonOutputEl.textContent = 'Loading...';
 
       const body = { sparql, raw };
 
@@ -502,7 +500,8 @@ WHERE {
     });
 
     exampleBtn.addEventListener('click', () => {
-      sparqlEl.value = `PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+      sparqlEl.value = `
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 PREFIX dul: &lt;http://www.loa-cnr.it/ontologies/DUL.owl#&gt;
 PREFIX soho: &lt;http://pst.istc.cnr.it/ontologies/2019/01/soho#&gt;
@@ -520,9 +519,9 @@ WHERE {
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(jsonOutputEl.textContent);
-        setStatus('Risultato copiato negli appunti.', 'ok');
+        setStatus('Result copied to the clipboard.', 'ok');
       } catch {
-        setStatus('Impossibile copiare il risultato.', 'err');
+        setStatus('Unable to load the result.', 'err');
       }
     });
   </script>

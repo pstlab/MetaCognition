@@ -11,6 +11,13 @@
 
 # The capabilities of an embodiment are inherited by its parts
 [rule0:
+    (?o1 dul:hasPart ?o2)
+    (?o2 dul:hasPart ?o3)
+    ->
+    (?o1 dul:hasPart ?o3)
+]
+
+[rule1:
     (?e rdf:type mc:RobotEmbodiment) 
     (?e dul:hasPart ?p) 
     (?p dul:hasQuality ?q)
@@ -18,8 +25,9 @@
     (?e dul:hasQuality ?q)
 ]
 
+
 # infer the functions an embopdimetn can perform according to its qualities
-[rule1:
+[rule2:
     (?e rdf:type mc:RobotEmbodiment) 
     (?e dul:hasQuality ?q) 
     (?c rdf:type mc:NavigationCapability)

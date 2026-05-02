@@ -24063,38 +24063,6 @@
     
 
 
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DiscretePoseRegion -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DiscretePoseRegion">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCoordinate"/>
-                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-        <rdfs:subClassOf>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCoordinate"/>
-                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </rdfs:subClassOf>
-    </owl:Class>
-    
-
-
     <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#Disposition">
@@ -24499,20 +24467,6 @@
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectProperty"/>
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#ProductionProperty"/>
         <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass>
-                    <owl:Class>
-                        <owl:unionOf rdf:parseType="Collection">
-                            <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DiscretePoseRegion"/>
-                            <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#SymbolicPoseRegion"/>
-                        </owl:unionOf>
-                    </owl:Class>
-                </owl:onClass>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -24740,38 +24694,6 @@
             </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#DesignedArtifact"/>
-    </owl:Class>
-    
-
-
-    <!-- http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#SymbolicPoseRegion -->
-
-    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#SymbolicPoseRegion">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCoordinate"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-        <rdfs:subClassOf>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCoordinate"/>
-                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -27000,29 +26922,7 @@
                 <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
             </owl:Restriction>
         </owl:intersectionOf>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#DiscretePoseRegion"/>
-    </owl:Class>
-    <owl:Class>
-        <owl:intersectionOf rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCoordinate"/>
-                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </owl:intersectionOf>
         <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-    </owl:Class>
-    <owl:Class>
-        <owl:intersectionOf rdf:parseType="Collection">
-            <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCoordinate"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </owl:intersectionOf>
-        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#SymbolicPoseRegion"/>
     </owl:Class>
     <owl:Class>
         <owl:intersectionOf rdf:parseType="Collection">

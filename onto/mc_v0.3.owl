@@ -45,9 +45,6 @@
         <Class IRI="#EnvironmentObject"/>
     </Declaration>
     <Declaration>
-        <Class IRI="#GoTo"/>
-    </Declaration>
-    <Declaration>
         <Class IRI="#InstrumentalObject"/>
     </Declaration>
     <Declaration>
@@ -58,6 +55,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="#MovableDisposition"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#MoveTo"/>
     </Declaration>
     <Declaration>
         <Class IRI="#NavigationCapability"/>
@@ -146,6 +146,102 @@
     <Declaration>
         <DataProperty IRI="#hasSymbol"/>
     </Declaration>
+    <EquivalentClasses>
+        <Class IRI="#MoveTo"/>
+        <ObjectIntersectionOf>
+            <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Channel"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#requiresCapability"/>
+                <Class IRI="#NavigationCapability"/>
+            </ObjectSomeValuesFrom>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="#requiresReasoning"/>
+                <Class IRI="#ClassicalPlanning"/>
+            </ObjectSomeValuesFrom>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#canBePerformedBy"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#EmbodiedAgent"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                        <ObjectIntersectionOf>
+                            <Class IRI="#RobotEmbodiment"/>
+                            <ObjectSomeValuesFrom>
+                                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                                <Class IRI="#NavigationCapability"/>
+                            </ObjectSomeValuesFrom>
+                        </ObjectIntersectionOf>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectAllValuesFrom>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasEffectOn"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#Pose"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectInverseOf>
+                            <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                        </ObjectInverseOf>
+                        <ObjectIntersectionOf>
+                            <Class IRI="#RobotPart"/>
+                            <ObjectSomeValuesFrom>
+                                <ObjectInverseOf>
+                                    <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                                </ObjectInverseOf>
+                                <ObjectIntersectionOf>
+                                    <Class IRI="#RobotEmbodiment"/>
+                                    <ObjectSomeValuesFrom>
+                                        <ObjectInverseOf>
+                                            <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                                        </ObjectInverseOf>
+                                        <Class IRI="#EmbodiedAgent"/>
+                                    </ObjectSomeValuesFrom>
+                                </ObjectIntersectionOf>
+                            </ObjectSomeValuesFrom>
+                        </ObjectIntersectionOf>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectAllValuesFrom>
+            <ObjectAllValuesFrom>
+                <ObjectProperty IRI="#hasPreconditionOn"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#Pose"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectInverseOf>
+                            <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                        </ObjectInverseOf>
+                        <ObjectIntersectionOf>
+                            <Class IRI="#RobotPart"/>
+                            <ObjectSomeValuesFrom>
+                                <ObjectInverseOf>
+                                    <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                                </ObjectInverseOf>
+                                <ObjectIntersectionOf>
+                                    <Class IRI="#RobotEmbodiment"/>
+                                    <ObjectSomeValuesFrom>
+                                        <ObjectInverseOf>
+                                            <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                                        </ObjectInverseOf>
+                                        <Class IRI="#EmbodiedAgent"/>
+                                    </ObjectSomeValuesFrom>
+                                </ObjectIntersectionOf>
+                            </ObjectSomeValuesFrom>
+                        </ObjectIntersectionOf>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectAllValuesFrom>
+            <ObjectExactCardinality cardinality="1">
+                <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
+                <ObjectIntersectionOf>
+                    <Class IRI="#EnvironmentLocation"/>
+                    <ObjectSomeValuesFrom>
+                        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                        <Class IRI="#TraversabilityDisposition"/>
+                    </ObjectSomeValuesFrom>
+                </ObjectIntersectionOf>
+            </ObjectExactCardinality>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
     <SubClassOf>
         <Class IRI="#Angle"/>
         <Class IRI="#SpatialQuality"/>
@@ -248,118 +344,6 @@
             <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
             <Class IRI="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
         </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#GoTo"/>
-        <Class IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#Channel"/>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#GoTo"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#requiresCapability"/>
-            <Class IRI="#NavigationCapability"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#GoTo"/>
-        <ObjectSomeValuesFrom>
-            <ObjectProperty IRI="#requiresReasoning"/>
-            <Class IRI="#ClassicalPlanning"/>
-        </ObjectSomeValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#GoTo"/>
-        <ObjectAllValuesFrom>
-            <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#canBePerformedBy"/>
-            <ObjectIntersectionOf>
-                <Class IRI="#EmbodiedAgent"/>
-                <ObjectSomeValuesFrom>
-                    <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
-                    <ObjectIntersectionOf>
-                        <Class IRI="#RobotEmbodiment"/>
-                        <ObjectSomeValuesFrom>
-                            <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
-                            <Class IRI="#NavigationCapability"/>
-                        </ObjectSomeValuesFrom>
-                    </ObjectIntersectionOf>
-                </ObjectSomeValuesFrom>
-            </ObjectIntersectionOf>
-        </ObjectAllValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#GoTo"/>
-        <ObjectAllValuesFrom>
-            <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasEffectOn"/>
-            <ObjectIntersectionOf>
-                <Class IRI="#Pose"/>
-                <ObjectSomeValuesFrom>
-                    <ObjectInverseOf>
-                        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
-                    </ObjectInverseOf>
-                    <ObjectIntersectionOf>
-                        <Class IRI="#RobotPart"/>
-                        <ObjectSomeValuesFrom>
-                            <ObjectInverseOf>
-                                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
-                            </ObjectInverseOf>
-                            <ObjectIntersectionOf>
-                                <Class IRI="#RobotEmbodiment"/>
-                                <ObjectSomeValuesFrom>
-                                    <ObjectInverseOf>
-                                        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
-                                    </ObjectInverseOf>
-                                    <Class IRI="#EmbodiedAgent"/>
-                                </ObjectSomeValuesFrom>
-                            </ObjectIntersectionOf>
-                        </ObjectSomeValuesFrom>
-                    </ObjectIntersectionOf>
-                </ObjectSomeValuesFrom>
-            </ObjectIntersectionOf>
-        </ObjectAllValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#GoTo"/>
-        <ObjectAllValuesFrom>
-            <ObjectProperty IRI="#hasPreconditionOn"/>
-            <ObjectIntersectionOf>
-                <Class IRI="#Pose"/>
-                <ObjectSomeValuesFrom>
-                    <ObjectInverseOf>
-                        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
-                    </ObjectInverseOf>
-                    <ObjectIntersectionOf>
-                        <Class IRI="#RobotPart"/>
-                        <ObjectSomeValuesFrom>
-                            <ObjectInverseOf>
-                                <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
-                            </ObjectInverseOf>
-                            <ObjectIntersectionOf>
-                                <Class IRI="#RobotEmbodiment"/>
-                                <ObjectSomeValuesFrom>
-                                    <ObjectInverseOf>
-                                        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
-                                    </ObjectInverseOf>
-                                    <Class IRI="#EmbodiedAgent"/>
-                                </ObjectSomeValuesFrom>
-                            </ObjectIntersectionOf>
-                        </ObjectSomeValuesFrom>
-                    </ObjectIntersectionOf>
-                </ObjectSomeValuesFrom>
-            </ObjectIntersectionOf>
-        </ObjectAllValuesFrom>
-    </SubClassOf>
-    <SubClassOf>
-        <Class IRI="#GoTo"/>
-        <ObjectExactCardinality cardinality="1">
-            <ObjectProperty IRI="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
-            <ObjectIntersectionOf>
-                <Class IRI="#EnvironmentLocation"/>
-                <ObjectSomeValuesFrom>
-                    <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
-                    <Class IRI="#TraversabilityDisposition"/>
-                </ObjectSomeValuesFrom>
-            </ObjectIntersectionOf>
-        </ObjectExactCardinality>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#InstrumentalObject"/>

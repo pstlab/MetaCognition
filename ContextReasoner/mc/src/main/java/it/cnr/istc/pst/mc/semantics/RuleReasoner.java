@@ -41,15 +41,20 @@ public class RuleReasoner extends KnowledgeGraph<InfModel> {
         this.rules = loadRulesFromFile(ruleFile);
 
         // create the reaonser
-        GenericRuleReasoner reasoner = new GenericRuleReasoner(this.rules);
+        GenericRuleReasoner reasoner = new GenericRuleReasoner(
+            this.rules);
+
         // attach the resoner to the model
         reasoner.setMode(GenericRuleReasoner.HYBRID);
-        reasoner.setDerivationLogging(true);
-        reasoner.setOWLTranslation(false);
-        reasoner.setTransitiveClosureCaching(true);
+        
+        //reasoner.setDerivationLogging(true);
+        //reasoner.setOWLTranslation(false);
+        //reasoner.setTransitiveClosureCaching(true);
 
         // create the inference model by applying the reasoner to the semantic model
-        this.model = ModelFactory.createInfModel(reasoner, this.base.getModel());
+        this.model = ModelFactory.createInfModel(
+            reasoner, 
+            this.base.getModel());
     }
 
     /**

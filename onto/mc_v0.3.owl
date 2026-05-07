@@ -278,7 +278,7 @@
     </SubClassOf>
     <SubClassOf>
         <Class IRI="#DiscreteOrientationRegion"/>
-        <DataExactCardinality cardinality="1">
+        <DataExactCardinality cardinality="4">
             <DataProperty IRI="#hasCoordinate"/>
             <Datatype abbreviatedIRI="xsd:decimal"/>
         </DataExactCardinality>

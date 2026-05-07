@@ -1,0 +1,722 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://pst.istc.cnr.it/ontologies/2026/mobipick/uc1"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="http://pst.istc.cnr.it/ontologies/2026/mobipick/uc1"
+     versionIRI="http://pst.istc.cnr.it/ontologies/2026/mobipick/uc1/1.0">
+    <Prefix name="" IRI="http://www.semanticweb.org/anacleto/ontologies/2026/3/untitled-ontology-111/"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Import>http://pst.istc.cnr.it/ontologies/2026/metacognition</Import>
+    <Declaration>
+        <Class IRI="#DiscreteOrientationRegion"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#DiscretePoseRegion"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#EmbodiedAgent"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#EnvironmentLocation"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#NavigationCapability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Orientation"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Pose"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RobotEmbodiment"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#RobotPart"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#StaticObject"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#TraversabilityDisposition"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasCoordinateW"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasCoordinateX"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasCoordinateY"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasCoordinateZ"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_home_location"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_home_location_disposition"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_home_location_orientation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_home_location_orientation_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_home_location_pose"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_home_location_pose_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_table1_location"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_table1_location_disposition"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_table1_location_orientation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_table1_location_orientation_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_table1_location_pose"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#base_table1_location_pose_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick_base"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick_base_capability"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick_base_orientation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick_base_orientation_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick_base_pose"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick_base_pose_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#mobipick_embodiment"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table1"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table1_orientation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table1_orientation_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table1_pose"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table1_pose_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table2"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table2_orientation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table2_orientation_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table2_pose"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table2_pose_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table3"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table3_orientation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table3_orientation_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table3_pose"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table3_pose_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table4"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table4_orientation"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table4_orientation_region"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table4_pose"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#table4_pose_region"/>
+    </Declaration>
+    <ClassAssertion>
+        <Class IRI="#EnvironmentLocation"/>
+        <NamedIndividual IRI="#base_home_location"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#TraversabilityDisposition"/>
+        <NamedIndividual IRI="#base_home_location_disposition"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Orientation"/>
+        <NamedIndividual IRI="#base_home_location_orientation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscreteOrientationRegion"/>
+        <NamedIndividual IRI="#base_home_location_orientation_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Pose"/>
+        <NamedIndividual IRI="#base_home_location_pose"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscretePoseRegion"/>
+        <NamedIndividual IRI="#base_home_location_pose_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#EnvironmentLocation"/>
+        <NamedIndividual IRI="#base_table1_location"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#TraversabilityDisposition"/>
+        <NamedIndividual IRI="#base_table1_location_disposition"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Orientation"/>
+        <NamedIndividual IRI="#base_table1_location_orientation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscreteOrientationRegion"/>
+        <NamedIndividual IRI="#base_table1_location_orientation_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Pose"/>
+        <NamedIndividual IRI="#base_table1_location_pose"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscretePoseRegion"/>
+        <NamedIndividual IRI="#base_table1_location_pose_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#EmbodiedAgent"/>
+        <NamedIndividual IRI="#mobipick"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#RobotPart"/>
+        <NamedIndividual IRI="#mobipick_base"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#NavigationCapability"/>
+        <NamedIndividual IRI="#mobipick_base_capability"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Orientation"/>
+        <NamedIndividual IRI="#mobipick_base_orientation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscreteOrientationRegion"/>
+        <NamedIndividual IRI="#mobipick_base_orientation_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Pose"/>
+        <NamedIndividual IRI="#mobipick_base_pose"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscretePoseRegion"/>
+        <NamedIndividual IRI="#mobipick_base_pose_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#RobotEmbodiment"/>
+        <NamedIndividual IRI="#mobipick_embodiment"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#StaticObject"/>
+        <NamedIndividual IRI="#table1"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Orientation"/>
+        <NamedIndividual IRI="#table1_orientation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscreteOrientationRegion"/>
+        <NamedIndividual IRI="#table1_orientation_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Pose"/>
+        <NamedIndividual IRI="#table1_pose"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscretePoseRegion"/>
+        <NamedIndividual IRI="#table1_pose_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#StaticObject"/>
+        <NamedIndividual IRI="#table2"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Orientation"/>
+        <NamedIndividual IRI="#table2_orientation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscreteOrientationRegion"/>
+        <NamedIndividual IRI="#table2_orientation_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Pose"/>
+        <NamedIndividual IRI="#table2_pose"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscretePoseRegion"/>
+        <NamedIndividual IRI="#table2_pose_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#StaticObject"/>
+        <NamedIndividual IRI="#table3"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Orientation"/>
+        <NamedIndividual IRI="#table3_orientation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscreteOrientationRegion"/>
+        <NamedIndividual IRI="#table3_orientation_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Pose"/>
+        <NamedIndividual IRI="#table3_pose"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscretePoseRegion"/>
+        <NamedIndividual IRI="#table3_pose_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#StaticObject"/>
+        <NamedIndividual IRI="#table4"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Orientation"/>
+        <NamedIndividual IRI="#table4_orientation"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscreteOrientationRegion"/>
+        <NamedIndividual IRI="#table4_orientation_region"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#Pose"/>
+        <NamedIndividual IRI="#table4_pose"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="#DiscretePoseRegion"/>
+        <NamedIndividual IRI="#table4_pose_region"/>
+    </ClassAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#base_home_location"/>
+        <NamedIndividual IRI="#base_home_location_disposition"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#base_home_location"/>
+        <NamedIndividual IRI="#base_home_location_orientation"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#base_home_location"/>
+        <NamedIndividual IRI="#base_home_location_pose"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#base_home_location_orientation"/>
+        <NamedIndividual IRI="#base_home_location_orientation_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#base_home_location_pose"/>
+        <NamedIndividual IRI="#base_home_location_pose_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#base_table1_location"/>
+        <NamedIndividual IRI="#base_table1_location_disposition"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#base_table1_location"/>
+        <NamedIndividual IRI="#base_table1_location_orientation"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#base_table1_location"/>
+        <NamedIndividual IRI="#base_table1_location_pose"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#base_table1_location_orientation"/>
+        <NamedIndividual IRI="#base_table1_location_orientation_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#base_table1_location_pose"/>
+        <NamedIndividual IRI="#base_table1_location_pose_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+        <NamedIndividual IRI="#mobipick"/>
+        <NamedIndividual IRI="#mobipick_embodiment"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#mobipick_base"/>
+        <NamedIndividual IRI="#mobipick_base_capability"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#mobipick_base"/>
+        <NamedIndividual IRI="#mobipick_base_orientation"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#mobipick_base"/>
+        <NamedIndividual IRI="#mobipick_base_pose"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#mobipick_base_orientation"/>
+        <NamedIndividual IRI="#mobipick_base_orientation_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#mobipick_base_pose"/>
+        <NamedIndividual IRI="#mobipick_base_pose_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+        <NamedIndividual IRI="#mobipick_embodiment"/>
+        <NamedIndividual IRI="#mobipick_base"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table1"/>
+        <NamedIndividual IRI="#table1_orientation"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table1"/>
+        <NamedIndividual IRI="#table1_pose"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table1_orientation"/>
+        <NamedIndividual IRI="#table1_orientation_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table1_pose"/>
+        <NamedIndividual IRI="#table1_pose_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table2"/>
+        <NamedIndividual IRI="#table2_orientation"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table2"/>
+        <NamedIndividual IRI="#table2_pose"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table2_orientation"/>
+        <NamedIndividual IRI="#table2_orientation_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table2_pose"/>
+        <NamedIndividual IRI="#table2_pose_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table3"/>
+        <NamedIndividual IRI="#table3_orientation"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table3"/>
+        <NamedIndividual IRI="#table3_pose"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table3_orientation"/>
+        <NamedIndividual IRI="#table3_orientation_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table3_pose"/>
+        <NamedIndividual IRI="#table3_pose_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table4"/>
+        <NamedIndividual IRI="#table4_orientation"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+        <NamedIndividual IRI="#table4"/>
+        <NamedIndividual IRI="#table4_pose"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table4_orientation"/>
+        <NamedIndividual IRI="#table4_orientation_region"/>
+    </ObjectPropertyAssertion>
+    <ObjectPropertyAssertion>
+        <ObjectProperty IRI="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+        <NamedIndividual IRI="#table4_pose"/>
+        <NamedIndividual IRI="#table4_pose_region"/>
+    </ObjectPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasCoordinateW"/>
+        <NamedIndividual IRI="#base_home_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasCoordinateX"/>
+        <NamedIndividual IRI="#base_home_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasCoordinateY"/>
+        <NamedIndividual IRI="#base_home_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasCoordinateZ"/>
+        <NamedIndividual IRI="#base_home_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasCoordinateX"/>
+        <NamedIndividual IRI="#base_home_location_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">20.50</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasCoordinateY"/>
+        <NamedIndividual IRI="#base_home_location_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">15.20</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="#hasCoordinateZ"/>
+        <NamedIndividual IRI="#base_home_location_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateW"/>
+        <NamedIndividual IRI="#base_table1_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.707</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#base_table1_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#base_table1_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#base_table1_location_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">-0.707</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#base_table1_location_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">19.23</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#base_table1_location_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">15.40</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#base_table1_location_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateW"/>
+        <NamedIndividual IRI="#table1_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.707</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table1_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table1_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table1_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">-0.707</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table1_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">18.30</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table1_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">15.18</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table1_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateW"/>
+        <NamedIndividual IRI="#table2_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table2_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table2_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table2_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table2_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">19.565</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table2_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">13.76</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table2_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateW"/>
+        <NamedIndividual IRI="#table3_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table3_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table3_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table3_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table3_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">21.165</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table3_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">13.84</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table3_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateW"/>
+        <NamedIndividual IRI="#table4_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">1.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table4_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table4_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table4_orientation_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX"/>
+        <NamedIndividual IRI="#table4_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">22.70</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY"/>
+        <NamedIndividual IRI="#table4_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">15.04</Literal>
+    </DataPropertyAssertion>
+    <DataPropertyAssertion>
+        <DataProperty IRI="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ"/>
+        <NamedIndividual IRI="#table4_pose_region"/>
+        <Literal datatypeIRI="http://www.w3.org/2001/XMLSchema#decimal">0.0</Literal>
+    </DataPropertyAssertion>
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+

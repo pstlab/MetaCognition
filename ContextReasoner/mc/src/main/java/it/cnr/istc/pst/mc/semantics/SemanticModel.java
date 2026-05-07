@@ -3,6 +3,7 @@ package it.cnr.istc.pst.mc.semantics;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.slf4j.Logger;
@@ -31,9 +32,13 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         // parse model from file
         try (InputStream in = new FileInputStream(file)) {
             // create the raw knowledge graph
-            this.model = ModelFactory.createDefaultModel();
+            this.model = ModelFactory.createOntologyModel(
+                OntModelSpec.OWL_MEM_MICRO_RULE_INF); //.createDefaultModel();
+
             // read the model
-            this.model.read(in, "TODO", ontoFormat);
+            this.model.read(
+                in, 
+                MetacognitionDictionary.NS_MC.getUri());
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to load OWL file: " + file, e);

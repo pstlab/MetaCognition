@@ -49,7 +49,7 @@ public class ContextReasonerService {
             prop.getRulesPath());
 
         // print model size
-        log.info("SituationAwareness service initialized");
+        log.info("Metacognition service initialized");
         log.info("Raw model size: {}", this.model.size());
         log.info("Inference model size: {}", this.reasoner.size());
     }

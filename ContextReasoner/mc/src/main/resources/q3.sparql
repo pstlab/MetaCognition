@@ -1,0 +1,14 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
+PREFIX soho: <http://pst.istc.cnr.it/ontologies/2019/01/soho#>
+PREFIX mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
+
+SELECT ?a ?aLabel ?f ?l ?lLabel
+WHERE {
+?f rdf:type mc:MoveTo .
+?f soho:hasTarget ?l .
+?l soho:hasLabel ?lLabel .
+?f soho:canBePerformedBy ?a .
+?a soho:hasLabel ?aLabel .
+}

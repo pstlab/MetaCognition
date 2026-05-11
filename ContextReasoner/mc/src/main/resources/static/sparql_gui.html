@@ -225,6 +225,12 @@
       font-size: 13px;
     }
 
+    .action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     @media (max-width: 900px) {
       .grid {
         grid-template-columns: 1fr;
@@ -292,13 +298,27 @@ WHERE {
       </section>
 
       <aside class="card">
-        <h2>Notes</h2>
-        <ul class="hint-list">
-          <li>The endpoint is implemented thourgh a REST POST request. The request body contains a JSON object with SPARQL query.</li>
-          <li>THe User Interface uses <code>fetch()</code> as POST method.</li>
-          <li>The REST endpoing should allow cross-origin requets, enable CORS in the Spring Boot controller.</li>
-        </ul>
+        <h2>Backend Actions</h2>
+
+        <p class="footer-note">
+          Execute backend REST operations directly from the GUI.
+        </p>
+
+        <div class="action-group" style="margin-top: 20px;">
+          
+          <button class="secondary" onclick="callApi('/metacognition/api/load/mobipick/uc1', 'POST')">
+            Load Mobipick UC1
+          </button>
+
+        </div>
+
+        <div class="footer-note" style="margin-top: 18px;">
+          Buttons invoke backend REST APIs using <code>fetch()</code>.
+        </div>
       </aside>
+
+
+
     </div>
 
     <section class="card" style="margin-top: 20px;">
@@ -505,7 +525,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
 PREFIX soho: <http://pst.istc.cnr.it/ontologies/2019/01/soho#>
 PREFIX mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
-PREFIX uc1: <http://pst.istc.cnr.it/ontologies/2026/mobipick/uc1#>
 
 SELECT ?e ?q
 WHERE {
@@ -523,6 +542,86 @@ WHERE {
         setStatus('Unable to load the result.', 'err');
       }
     });
+
+
+
+    async function callApi(path, method = 'POST', body = null) {
+
+        const baseUrl = window.location.origin;
+        const url = `${baseUrl}${path}`;
+
+        setStatus(`Calling ${path} ...`);
+
+        jsonOutputEl.textContent = 'Loading...';
+        tableContainerEl.classList.add('hidden');
+        tableContainerEl.innerHTML = '';
+
+        try {
+
+          const options = {
+            method,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+
+          if (body) {
+            options.body = JSON.stringify(body);
+          }
+
+          const response = await fetch(url, options);
+
+          const text = await response.text();
+
+          let payload;
+
+          try {
+            payload = text ? JSON.parse(text) : {};
+          } catch {
+            payload = text;
+          }
+
+          if (!response.ok) {
+
+            jsonOutputEl.textContent =
+              typeof payload === 'string'
+                ? payload
+                : JSON.stringify(payload, null, 2);
+
+            resultMetaEl.textContent = `HTTP ${response.status}`;
+
+            setStatus(
+              `Backend error: HTTP ${response.status}`,
+              'err'
+            );
+
+            return;
+          }
+
+          resultMetaEl.textContent = `HTTP ${response.status}`;
+
+          jsonOutputEl.textContent =
+            typeof payload === 'string'
+              ? payload
+              : JSON.stringify(payload, null, 2);
+
+          setStatus(
+            `REST API executed successfully.`,
+            'ok'
+          );
+
+        } catch (error) {
+
+          jsonOutputEl.textContent = String(error);
+
+          resultMetaEl.textContent = 'Network Error';
+
+          setStatus(
+            `Network/CORS error: ${error.message}`,
+            'err'
+          );
+        }
+      }
   </script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import org.apache.jena.query.ResultSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,6 +64,18 @@ public class MetacognitionRestController {
         // format result as JSON
         ResultSetFormatter.outputAsJSON(out, res);
         return out.toString(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    @PostMapping("/load/mobipick/uc1")
+    public String doLoadMobipickDescription() {
+        // call the service
+        this.service.loadMobipickUc1();
+        return "Ok";
+        
     }
 
 }

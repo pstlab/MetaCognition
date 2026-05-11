@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-    <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1777376326164" name="http://www.semanticweb.org/anacleto/ontologies/2025/9/untitled-ontology-10/" uri="metacog_v0.1.rdf"/>
-        <uri id="Automatically generated entry, Timestamp=1777376326164" name="http://www.semanticweb.org/anacleto/ontologies/2026/2/untitled-ontology-47/" uri="mobipick_uc1_v0.1.rdf"/>
-    </group>
-</catalog>

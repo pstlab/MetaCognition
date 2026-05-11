@@ -4,8 +4,9 @@
     <uri id="Imports Wizard Entry" name="http://pst.istc.cnr.it/ontologies/2025/dfki/metacog/1.0.0" uri="https://raw.githubusercontent.com/pstlab/MetaCognition/refs/heads/main/onto/metacog_v0.1.rdf"/>
     <uri id="Imports Wizard Entry" name="http://pst.istc.cnr.it/ontologies/2019/01/soho/1.0.0" uri="https://raw.githubusercontent.com/pstlab/SOHO/refs/heads/main/core/soho_core_v1.1.owl"/>
     <group id="Folder Repository, directory=, recursive=true, Auto-Update=true, version=2" prefer="public" xml:base="">
-        <uri id="Automatically generated entry, Timestamp=1778167590215" name="duplicate:http://pst.istc.cnr.it/ontologies/2026/metacognition" uri="mc_uc1_v0.1.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1778167590215" name="duplicate:http://pst.istc.cnr.it/ontologies/2026/metacognition" uri="mc_v0.3.owl"/>
-        <uri id="Automatically generated entry, Timestamp=1778167590215" name="http://pst.istc.cnr.it/ontologies/2026/mobipick/uc1" uri="mc_uc1_v0.3.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1778506421028" name="duplicate:http://pst.istc.cnr.it/ontologies/2026/metacognition" uri="mc_uc1_v0.1.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1778506421028" name="duplicate:http://pst.istc.cnr.it/ontologies/2026/metacognition" uri="mc_v0.3.owl"/>
+        <uri id="Automatically generated entry, Timestamp=1778506421028" name="http://pst.istc.cnr.it/ontologies/2026/metacognition#" uri="mc_v0.3.rdf"/>
+        <uri id="Automatically generated entry, Timestamp=1778506421028" name="http://pst.istc.cnr.it/ontologies/2026/mobipick/uc1" uri="mc_uc1_v0.3.owl"/>
     </group>
 </catalog>

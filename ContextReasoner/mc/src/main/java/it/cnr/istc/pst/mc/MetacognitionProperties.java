@@ -14,16 +14,9 @@ public class MetacognitionProperties {
     private String ontologyVersion;
     private String ontologyFormat;
     private String rulesPath;
-    
-    private String kgUc1;
-
-
-    public String getKgUc1() {
-        return kgUc1;
-    }
 
     public String getOntologyFormat() {
-        return ontologyFormat;
+        return ontologyFormat.trim();
     }
 
     public String getOntologyPath() {
@@ -31,15 +24,11 @@ public class MetacognitionProperties {
     }
     
     public String getOntologyVersion() {
-        return ontologyVersion;
+        return ontologyVersion.trim();
     }
 
     public String getRulesPath() {
-        return rulesPath;
-    }
-
-    public void setKgUc1(String kgUc1) {
-        this.kgUc1 = kgUc1;
+        return rulesPath.trim();
     }
 
     public void setOntologyFormat(String ontologyFormat) {

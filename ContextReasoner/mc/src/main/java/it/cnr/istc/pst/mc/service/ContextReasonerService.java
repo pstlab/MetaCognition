@@ -5,6 +5,7 @@ import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,184 @@ public class ContextReasonerService {
         } finally {
             // release the lock
             this.lock.end();
+        }
+    }
+
+
+    /**
+     * Load Mobipick scenario UC1
+     */
+    public void loadMobipickUc1() {
+
+        // open write-level transaction
+        this.lock.begin(ReadWrite.WRITE);
+        try {
+
+            // assert stati objects of the environment
+            log.info("Asssert static objects of the environment");            
+            // assert static object
+            Resource sObj = this.model.assertStaticObject(
+                "table1", 
+                new double[] {
+                    18.300,
+                    15,18,
+                    0.0
+                }, 
+                new double[] {
+                    0.0,
+                    0.0,
+                    -0.707,
+                    0.707
+                });
+
+            log.debug("Asserted static object {}", sObj.getURI());
+
+            sObj = this.model.assertStaticObject(
+                "table2", 
+                new double[] {
+                    19.565,
+                    13.76,
+                    0.0
+                }, 
+                new double[] {
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                });
+
+            log.debug("Asserted static object {}", sObj.getURI());
+            
+            sObj = this.model.assertStaticObject(
+                "table3", 
+                new double[] {
+                    21.165,
+                    13.84,
+                    0.0
+                }, 
+                new double[] {
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                });
+
+            log.debug("Asserted static object {}", sObj.getURI());
+
+            sObj = this.model.assertStaticObject(
+                "table4", 
+                new double[] {
+                    22.700,
+                    15.05,
+                    0.0
+                }, 
+                new double[] {
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                });
+
+            log.debug("Asserted static object {}", sObj.getURI());
+
+            // assert environment locations of the environment
+            log.info("Asssert environment locations");
+            // assert location
+            Resource rLoc = this.model.assertEnvironmentLocation(
+                "base_home", 
+                new double[] {
+                    20.50,
+                    15.20,
+                    0.0
+                },
+                new double[] {
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0
+                });
+
+            log.debug("Asserted environment location {}", rLoc.getURI());
+            
+            rLoc = this.model.assertEnvironmentLocation(
+                "base_table1", 
+                new double[] {
+                    19.23,
+                    15.40,
+                    0.0
+                },
+                new double[] {
+                    0.0,
+                    0.0,
+                    -0.707,
+                    0.707
+                });
+
+            log.debug("Asserted environment location {}", rLoc.getURI());
+
+            rLoc = this.model.assertEnvironmentLocation(
+                "base_table2", 
+                new double[] {
+                    19.39,
+                    14.66,
+                    0.0
+                },
+                new double[] {
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                });
+
+            log.debug("Asserted environment location {}", rLoc.getURI());
+
+            rLoc = this.model.assertEnvironmentLocation(
+                "base_table3", 
+                new double[] {
+                    21.01,
+                    14.77,
+                    0.0                    
+                }, 
+                new double[] {
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                });
+
+            log.debug("Asserted environment location {}", rLoc.getURI());
+
+            rLoc = this.model.assertEnvironmentLocation(
+                "base_table4", 
+                new double[] {
+                    21.80,
+                    14.90,
+                    0.0
+                }, 
+                new double[] {
+                    0.0,
+                    0.0,
+                    0.707,
+                    0.707
+                });
+
+            log.debug("Asserted environment location {}", rLoc.getURI());
+
+            // create robot description 
+            log.info("Load Mobipick description into the Knowledge Graph");
+            // assert mobipick agent
+            Resource agent = this.model.assertMobipickEmbodiment();
+            log.debug("URI of the resource associated with the mobipick agent {}", agent.getURI());
+                
+            // commint knowledge updates
+            this.lock.commit();
+
+        } finally {
+
+            // close transaction
+            this.lock.end();
+            // refresh inference
+            this.reasoner.refreshInferenceModel();
         }
     }
 }

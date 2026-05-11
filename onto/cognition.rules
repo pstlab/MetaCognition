@@ -3,7 +3,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#>
 @prefix dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
 @prefix soho: <http://pst.istc.cnr.it/ontologies/2019/01/soho#>
-@prefix mc: <http://pst.istc.cnr.it/ontologies/2025/dfki/metacog#>
+@prefix mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
 
 # Include RDFS rules
 @include <RDFS> .
@@ -27,13 +27,11 @@
 
 # infer the functions an embodiment can perform according to its qualities
 [rule2:
-    (?a rdf:type mc:EmbodiedAgent),
-    (?a dul:hasConstituent ?e),
-    (?e rdf:type mc:RobotEmbodiment), 
-    (?e dul:hasQuality ?q), 
-    (?c rdf:type mc:NavigationCapability),
-    (?l rdf:type mc:EnvironmentLocation),
-    (?l dul:hasQuality mc:TraversabilityDisposition), 
+    (?a dul:hasConstituent ?e), (?a rdf:type mc:EmbodiedAgent),
+    (?e dul:hasQuality ?q),
+    (?q rdf:type mc:NavigationCapability),
+    (?l dul:hasQuality ?disp), 
+    (?disp rdf:type mc:TraversabilityDisposition), 
     makeTemp(?x)
     -> 
     (?x rdf:type mc:MoveTo), 

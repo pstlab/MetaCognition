@@ -3,6 +3,7 @@ import urllib.parse
 import json
 import sys
 
+
 class FusekiClient:
     def __init__(self, fuseki_url: str):
         self.fuseki_url = fuseki_url
@@ -45,8 +46,54 @@ class FusekiClient:
             print(f"An unexpected error occurred: {e}")
             return {"error": "Exception", "reason": str(e)}
 
+
+class ContextReasonerClient:
+    def __init__(self, endpoint_url: str):
+        self.endpoint_url = endpoint_url
+
+    def query(self, sparql_query: str):
+        """
+        Sends a SPARQL SELECT query to the ContextReasoner REST endpoint.
+        """
+        try:
+            data = json.dumps({
+                "raw": False,
+                "sparql": sparql_query,
+            }).encode("utf-8")
+            req = urllib.request.Request(
+                self.endpoint_url,
+                data=data,
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            )
+
+            with urllib.request.urlopen(req) as response:
+                return json.loads(response.read().decode("utf-8"))
+
+        except urllib.error.URLError as e:
+            return {
+                "error": "URLError",
+                "reason": str(e.reason),
+            }
+        except json.JSONDecodeError as e:
+            return {
+                "error": "JSONDecodeError",
+                "reason": str(e),
+            }
+        except Exception as e:
+            return {
+                "error": "Exception",
+                "reason": str(e),
+            }
+
+
 # --- Configuration ---
 FUSEKI_URL = "http://localhost:3030/MetaCognition/query"
+CONTEXT_REASONER_URL = (
+    "http://localhost:8080/metacognition/api/sparql/select"
+)
 
 # --- SPARQL Query ---
 SPARQL_QUERY = """

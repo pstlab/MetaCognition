@@ -5,4 +5,7 @@ setup(
     version='0.1.0',
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
+    install_requires=[
+        'unified-planning>=1.3,<2',
+    ],
 )

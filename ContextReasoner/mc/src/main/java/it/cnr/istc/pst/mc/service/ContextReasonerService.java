@@ -246,6 +246,8 @@ public class ContextReasonerService {
             log.info("Load Mobipick description into the Knowledge Graph");
             // assert mobipick agent
             Resource agent = this.model.assertMobipickEmbodiment();
+
+            
             log.debug("URI of the resource associated with the mobipick agent {}", agent.getURI());
                 
             // commint knowledge updates

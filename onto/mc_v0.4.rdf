@@ -50,6 +50,24 @@
     
 
 
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsObject -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsObject">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns"/>
+        <rdfs:range rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsQuality -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsQuality">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns"/>
+        <rdfs:range rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluent -->
 
     <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluent">
@@ -610,20 +628,10 @@
                         <owl:onClass>
                             <owl:Class>
                                 <owl:intersectionOf rdf:parseType="Collection">
-                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent"/>
+                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment"/>
                                     <owl:Restriction>
-                                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
-                                        <owl:someValuesFrom>
-                                            <owl:Class>
-                                                <owl:intersectionOf rdf:parseType="Collection">
-                                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment"/>
-                                                    <owl:Restriction>
-                                                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
-                                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
-                                                    </owl:Restriction>
-                                                </owl:intersectionOf>
-                                            </owl:Class>
-                                        </owl:someValuesFrom>
+                                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
                                     </owl:Restriction>
                                 </owl:intersectionOf>
                             </owl:Class>

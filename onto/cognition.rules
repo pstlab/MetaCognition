@@ -28,42 +28,38 @@
 # infer the functions an embodiment can perform according to its qualities
 [rule2:
 
-    (?a dul:hasConstituent ?e),
-    (?a rdf:type mc:EmbodiedAgent),
+    (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
 
-    (?e dul:hasQuality ?q),
-    (?q rdf:type mc:NavigationCapability),
+    (?e dul:hasQuality ?c),(?c rdf:type mc:NavigationCapability),
 
-    (?e dul:hasQuality ?p),
-    (?p rdf:type mc:Pose),
+    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose),
+    
 
-    (?l dul:hasQuality ?disp),
-    (?disp rdf:type mc:TraversabilityDisposition),
+    (?l dul:hasQuality ?d), (?d rdf:type mc:TraversabilityDisposition),
 
-    (?l dul:hasQuality ?lp),
-    (?lp rdf:type mc:Pose),
+    (?l dul:hasQuality ?p), (?p rdf:type mc:Pose),
 
-    (?lp dul:hasRegion ?r),
-    (?r rdf:type dul:Region),
+    (?p dul:hasRegion ?r),
 
-    makeTemp(?x),
+    makeTemp(?m), 
+    
     makeTemp(?f)
 
     ->
 
-    (?x rdf:type mc:MoveTo),
+    (?m rdf:type mc:MoveTo), 
 
-    (?x soho:canBePerformedBy ?a),
-    (?x soho:hasTarget ?a),
+    (?m soho:canBePerformedBy ?a),
+    (?m soho:hasTarget ?e),
 
-    (?x soho:hasPreconditionOn ?p),
-    (?x soho:hasEffectOn ?p),
+    (?m mc:hasPreconditionOn ?ep),
+    (?m soho:hasEffectOn ?ep),
 
     (?f rdf:type mc:Fluent),
-    (?x mc:assertsFluent ?f),
+    (?m mc:assertsFluent ?f),
 
-    (?f mc:concerns ?a),
-    (?f mc:concerns ?p),
+    (?f mc:concernsObject ?e),
+    (?f mc:concernsQuality ?ep),
     (?f mc:hasFluentValue ?r)
 
 ]

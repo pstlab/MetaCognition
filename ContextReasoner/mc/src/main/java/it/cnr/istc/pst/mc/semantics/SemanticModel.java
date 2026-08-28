@@ -2,13 +2,11 @@ package it.cnr.istc.pst.mc.semantics;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.List;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.nd4j.linalg.cpu.nativecpu.bindings.Nd4jCpu.reduce_max_bp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +99,7 @@ public class SemanticModel extends KnowledgeGraph<Model> {
      * @param propertyUri
      * @param object
      */
-    public void assertProrperty(Resource subject, String propertyUri, Resource object) {
+    public void assertProperty(Resource subject, String propertyUri, Resource object) {
         // check if property exists
         Property prop = this.model.getProperty(propertyUri);
         // check if exists
@@ -165,18 +163,50 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         // create robot part - base
         Resource rBase = this.assertResourceOfType(
             MetacognitionDictionary.NS.getUri() + "RobotPart");
-  
+
+            
+
+        // create pose quality of the robot base
+        Resource rBasePose = this.assertDiscretePose(
+            new double[] {  // base home
+                20.50,
+                15.20,
+                0.0
+            });
+
+        // create orientation quality of the robot base
+        Resource rBaseOrientation = this.assertDiscreteOrientation(
+            new double[] {  // default orientation
+                0.0,
+                0.0,
+                1.0,
+                0.0
+            });
+        
         // create navigation capability 
         Resource rBaseCap1 = this.assertResourceOfType(
             MetacognitionDictionary.NS.getUri() + "NavigationCapability"
         );
         
         // assert part's capabilities
-        this.assertProrperty(
+        this.assertProperty(
             rBase, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", 
             rBaseCap1);
+
+        // assert part's quality 
+        this.assertProperty(
+            rBase,
+            MetacognitionDictionary.NS_DUL.getUri() + "hasQuality",
+            rBasePose);
+
+        // assert part's quality 
+        this.assertProperty(
+            rBase,
+            MetacognitionDictionary.NS_DUL.getUri() + "hasQuality",
+            rBaseOrientation);
  
+        // assert data property
         this.assertDataProperty(
             rBase, 
             MetacognitionDictionary.NS_SOHO.getUri() + "hasLabel", 
@@ -194,7 +224,7 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         ); 
 
         // assert part's capabilities
-        this.assertProrperty(
+        this.assertProperty(
             rCamera  , 
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", 
             rCameraCap1);
@@ -210,7 +240,7 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         );
     
         // assert part relation
-        this.assertProrperty(
+        this.assertProperty(
             rArm, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasPart", 
             rCamera);
@@ -226,12 +256,12 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         );
         
         // assert embodiment structure
-        this.assertProrperty(
+        this.assertProperty(
             rEmbo, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasPart", 
             rBase);
         
-        this.assertProrperty(
+        this.assertProperty(
             rEmbo, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasPart", 
             rArm);
@@ -246,7 +276,7 @@ public class SemanticModel extends KnowledgeGraph<Model> {
             MetacognitionDictionary.NS.getUri() + "EmbodiedAgent"
         );
         // assert embodiment constituent
-        this.assertProrperty(
+        this.assertProperty(
             agent, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasConstituent", 
             rEmbo);
@@ -301,7 +331,7 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         );
 
         // associate pose with region
-        this.assertProrperty(
+        this.assertProperty(
             pose, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasRegion", 
             poseRegion);
@@ -354,7 +384,7 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         );
 
         // associate pose with region
-        this.assertProrperty(
+        this.assertProperty(
             ori, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasRegion", 
             oriRegion);
@@ -384,12 +414,12 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         );
 
         // assert the object's qualities
-        this.assertProrperty(
+        this.assertProperty(
             obj, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", 
             pose);
 
-        this.assertProrperty(
+        this.assertProperty(
             obj, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", 
             ori);
@@ -428,17 +458,17 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         );
 
         // assert the location's qualities
-        this.assertProrperty(
+        this.assertProperty(
             loc, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", 
             pose);
 
-        this.assertProrperty(
+        this.assertProperty(
             loc, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", 
             orientation);
 
-        this.assertProrperty(
+        this.assertProperty(
             loc, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", 
             disp);

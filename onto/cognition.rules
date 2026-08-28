@@ -27,14 +27,43 @@
 
 # infer the functions an embodiment can perform according to its qualities
 [rule2:
-    (?a dul:hasConstituent ?e), (?a rdf:type mc:EmbodiedAgent),
+
+    (?a dul:hasConstituent ?e),
+    (?a rdf:type mc:EmbodiedAgent),
+
     (?e dul:hasQuality ?q),
     (?q rdf:type mc:NavigationCapability),
-    (?l dul:hasQuality ?disp), 
-    (?disp rdf:type mc:TraversabilityDisposition), 
-    makeTemp(?x)
-    -> 
-    (?x rdf:type mc:MoveTo), 
+
+    (?e dul:hasQuality ?p),
+    (?p rdf:type mc:Pose),
+
+    (?l dul:hasQuality ?disp),
+    (?disp rdf:type mc:TraversabilityDisposition),
+
+    (?l dul:hasQuality ?lp),
+    (?lp rdf:type mc:Pose),
+
+    (?lp dul:hasRegion ?r),
+    (?r rdf:type dul:Region),
+
+    makeTemp(?x),
+    makeTemp(?f)
+
+    ->
+
+    (?x rdf:type mc:MoveTo),
+
     (?x soho:canBePerformedBy ?a),
-    (?x soho:hasTarget ?l)
+    (?x soho:hasTarget ?a),
+
+    (?x soho:hasPreconditionOn ?p),
+    (?x soho:hasEffectOn ?p),
+
+    (?f rdf:type mc:Fluent),
+    (?x mc:assertsFluent ?f),
+
+    (?f mc:concerns ?a),
+    (?f mc:concerns ?p),
+    (?f mc:hasFluentValue ?r)
+
 ]

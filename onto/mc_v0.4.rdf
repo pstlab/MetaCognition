@@ -1,0 +1,937 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://pst.istc.cnr.it/ontologies/2026/metacognition#"
+     xml:base="http://pst.istc.cnr.it/ontologies/2026/metacognition"
+     xmlns:DUL="http://www.loa-cnr.it/ontologies/DUL.owl#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:swrla="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#">
+    <owl:Ontology rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition">
+        <owl:versionIRI rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition/1.0"/>
+        <owl:imports rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho/1.0.0"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#assertsFluent -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#assertsFluent">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns">
+        <rdfs:domain rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluent -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluent">
+        <rdfs:domain rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Function"/>
+        <rdfs:range rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluentValue -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluentValue">
+        <rdfs:domain rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+        <rdfs:range rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Region"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasPreconditionOn -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasPreconditionOn"/>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#negatesFluent -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#negatesFluent">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#requiresFluent -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#requiresFluent">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#requiresReasoning -->
+
+    <owl:ObjectProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#requiresReasoning">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#requires"/>
+        <rdfs:range rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ReasoningMethod"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasAngle -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasAngle">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasDiscreteValue"/>
+        <rdfs:domain rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteAngleRegion"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasDiscreteValue"/>
+        <rdfs:domain rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteSpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateW -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateW">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate"/>
+        <rdfs:domain rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteOrientationRegion"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateX">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteOrientationRegion"/>
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscretePoseRegion"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateY">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteOrientationRegion"/>
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscretePoseRegion"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinateZ">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteOrientationRegion"/>
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscretePoseRegion"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasDiscreteValue -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasDiscreteValue">
+        <rdfs:subPropertyOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegionDataValue"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#hasSymbol -->
+
+    <owl:DatatypeProperty rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasSymbol">
+        <rdfs:subPropertyOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasDiscreteValue"/>
+        <rdfs:domain rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#SymbolicSpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#Angle -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Angle">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteAngleRegion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#ClassicalPlanning -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#ClassicalPlanning">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#PlanningMethod"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#ContainmentCapability -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#ContainmentCapability">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectCapability"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteAngleRegion -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteAngleRegion">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteSpatialRegion"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasAngle"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteOrientationRegion -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteOrientationRegion">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteSpatialRegion"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">4</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscretePoseRegion -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscretePoseRegion">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteSpatialRegion"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasCoordinate"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">3</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteSpatialRegion -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteSpatialRegion">
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#SpaceRegion"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#AutonomousAgent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasLabel"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentLocation -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentLocation">
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalPlace"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#SpatialLocation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentObject -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentObject">
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:someValuesFrom rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.loa-cnr.it/ontologies/DUL.owl#Situation"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluentValue"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Region"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Situation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#InstrumentalObject -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#InstrumentalObject">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#InteractingObject"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectCapability"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#InteractingObject -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#InteractingObject">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentObject"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectDisposition"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Orientation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#ManipulationLocation -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#ManipulationLocation">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentLocation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#MovableDisposition -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#MovableDisposition">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectDisposition"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#MoveTo -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#MoveTo">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#Channel"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#requiresCapability"/>
+                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#NavigationCapability"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#requiresReasoning"/>
+                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ClassicalPlanning"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#canBePerformedBy"/>
+                        <owl:allValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                                        <owl:someValuesFrom>
+                                            <owl:Class>
+                                                <owl:intersectionOf rdf:parseType="Collection">
+                                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment"/>
+                                                    <owl:Restriction>
+                                                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#NavigationCapability"/>
+                                                    </owl:Restriction>
+                                                </owl:intersectionOf>
+                                            </owl:Class>
+                                        </owl:someValuesFrom>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:allValuesFrom>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasEffectOn"/>
+                        <owl:allValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty>
+                                            <rdf:Description>
+                                                <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                                            </rdf:Description>
+                                        </owl:onProperty>
+                                        <owl:someValuesFrom>
+                                            <owl:Class>
+                                                <owl:intersectionOf rdf:parseType="Collection">
+                                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart"/>
+                                                    <owl:Restriction>
+                                                        <owl:onProperty>
+                                                            <rdf:Description>
+                                                                <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                                                            </rdf:Description>
+                                                        </owl:onProperty>
+                                                        <owl:someValuesFrom>
+                                                            <owl:Class>
+                                                                <owl:intersectionOf rdf:parseType="Collection">
+                                                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment"/>
+                                                                    <owl:Restriction>
+                                                                        <owl:onProperty>
+                                                                            <rdf:Description>
+                                                                                <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                                                                            </rdf:Description>
+                                                                        </owl:onProperty>
+                                                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent"/>
+                                                                    </owl:Restriction>
+                                                                </owl:intersectionOf>
+                                                            </owl:Class>
+                                                        </owl:someValuesFrom>
+                                                    </owl:Restriction>
+                                                </owl:intersectionOf>
+                                            </owl:Class>
+                                        </owl:someValuesFrom>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:allValuesFrom>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#assertsFluent"/>
+                        <owl:allValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns"/>
+                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent"/>
+                                    </owl:Restriction>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concerns"/>
+                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:allValuesFrom>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasPreconditionOn"/>
+                        <owl:allValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty>
+                                            <rdf:Description>
+                                                <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                                            </rdf:Description>
+                                        </owl:onProperty>
+                                        <owl:someValuesFrom>
+                                            <owl:Class>
+                                                <owl:intersectionOf rdf:parseType="Collection">
+                                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart"/>
+                                                    <owl:Restriction>
+                                                        <owl:onProperty>
+                                                            <rdf:Description>
+                                                                <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                                                            </rdf:Description>
+                                                        </owl:onProperty>
+                                                        <owl:someValuesFrom>
+                                                            <owl:Class>
+                                                                <owl:intersectionOf rdf:parseType="Collection">
+                                                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment"/>
+                                                                    <owl:Restriction>
+                                                                        <owl:onProperty>
+                                                                            <rdf:Description>
+                                                                                <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                                                                            </rdf:Description>
+                                                                        </owl:onProperty>
+                                                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent"/>
+                                                                    </owl:Restriction>
+                                                                </owl:intersectionOf>
+                                                            </owl:Class>
+                                                        </owl:someValuesFrom>
+                                                    </owl:Restriction>
+                                                </owl:intersectionOf>
+                                            </owl:Class>
+                                        </owl:someValuesFrom>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:allValuesFrom>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent"/>
+                                    <owl:Restriction>
+                                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasConstituent"/>
+                                        <owl:someValuesFrom>
+                                            <owl:Class>
+                                                <owl:intersectionOf rdf:parseType="Collection">
+                                                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment"/>
+                                                    <owl:Restriction>
+                                                        <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                                                        <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+                                                    </owl:Restriction>
+                                                </owl:intersectionOf>
+                                            </owl:Class>
+                                        </owl:someValuesFrom>
+                                    </owl:Restriction>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:onClass>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#NavigationCapability -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#NavigationCapability">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#AgentCapability"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#NavigationLocation -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#NavigationLocation">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentLocation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#TraversabilityDisposition"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Orientation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#NumericPlanning -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#NumericPlanning">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#PlanningMethod"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectCapability -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectCapability">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectProperty"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Capacity"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectDisposition -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectDisposition">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectProperty"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#Orientation -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Orientation">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteOrientationRegion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#PickGraspable -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#PickGraspable">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Collect"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#PlaceGraspable -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#PlaceGraspable">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Release"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#PlanningMethod -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#PlanningMethod">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ReasoningMethod"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscretePoseRegion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#ReasoningMethod -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#ReasoningMethod">
+        <rdfs:subClassOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Method"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotEmbodiment">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#RobotInterface"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2019/01/soho#AgentCapability"/>
+                            <owl:Restriction>
+                                <owl:onProperty>
+                                    <rdf:Description>
+                                        <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#isQualityOf"/>
+                                    </rdf:Description>
+                                </owl:onProperty>
+                                <owl:allValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality"/>
+                            <owl:Restriction>
+                                <owl:onProperty>
+                                    <rdf:Description>
+                                        <owl:inverseOf rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                                    </rdf:Description>
+                                </owl:onProperty>
+                                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasLabel"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#RobotInterface"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasCapability"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#AgentCapability"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasPart"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#RobotPart"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#hasLabel"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#SpatialQuality">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#ObjectProperty"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasRegion"/>
+                <owl:someValuesFrom rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#SymbolicSpatialRegion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#StaticObject -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#StaticObject">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#EnvironmentObject"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Orientation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#hasQuality"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Pose"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#StoreGraspable -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#StoreGraspable">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2019/01/soho#Store"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#SymbolicSpatialRegion -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#SymbolicSpatialRegion">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#DiscreteSpatialRegion"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasSymbol"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#TemporalPlanning -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#TemporalPlanning">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#PlanningMethod"/>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#TraversabilityDisposition -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#TraversabilityDisposition">
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#ObjectDisposition"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+

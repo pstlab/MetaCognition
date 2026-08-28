@@ -9,7 +9,6 @@ import org.apache.jena.query.ResultSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,7 @@ public class MetacognitionRestController {
 
     @Autowired
     private ContextReasonerService service; 
-    
+
 
     /**
      * 
@@ -45,9 +44,10 @@ public class MetacognitionRestController {
         // check requets body
         if (request == null || request.getSparql() == null || request.getSparql().isBlank()) {
             throw new IllegalArgumentException("Missing SPARQL query");
-        }
+        }       
+        
+    
 
-        // prepare SPARQL query
         Query query = QueryFactory.create(request.getSparql());
         if (!query.isSelectType()) {
             throw new IllegalArgumentException("Only SELECT queries are allowed on this endpoint");
@@ -75,7 +75,6 @@ public class MetacognitionRestController {
         // call the service
         this.service.loadMobipickUc1();
         return "Ok";
-        
     }
 
 }

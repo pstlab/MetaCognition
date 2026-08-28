@@ -10,11 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.cnr.istc.pst.mc.service.ContextReasonerService;
+import it.cnr.istc.pst.mc.service.KnowledgeAbstractionService;
 
 import java.io.ByteArrayOutputStream;
 
@@ -29,6 +32,21 @@ public class MetacognitionRestController {
 
     @Autowired
     private ContextReasonerService service; 
+
+    @Autowired
+    private KnowledgeAbstractionService abstractionService;
+
+    /** Returns contextual action schemas abstracted from current inferred meta-knowledge. */
+    @GetMapping(value = "/abstraction", produces = "application/json")
+    public AbstractionResponse getAbstraction() {
+        return this.abstractionService.abstractCurrentKnowledge();
+    }
+
+    /** Returns inferred planning-relevant subgraphs contributing to one schema. */
+    @GetMapping(value = "/abstraction/{signatureId}/groundings", produces = "application/json")
+    public SchemaGroundingsResponse getSchemaGroundings(@PathVariable String signatureId) {
+        return this.abstractionService.inspectCurrentSchema(signatureId);
+    }
 
 
     /**

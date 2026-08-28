@@ -37,6 +37,10 @@
       margin-bottom: 24px;
     }
 
+    .nav { display: flex; gap: 8px; margin-bottom: 22px; }
+    .nav a { color: var(--muted); text-decoration: none; padding: 9px 13px; border-radius: 10px; border: 1px solid var(--border); }
+    .nav a.active, .nav a:hover { color: var(--text); background: #1e293b; border-color: var(--accent); }
+
     .title {
       margin: 0 0 8px;
       font-size: 30px;
@@ -240,6 +244,10 @@
 </head>
 <body>
   <div class="container">
+    <nav class="nav" aria-label="Metacognition tools">
+      <a class="active" href="/sparql_gui.html">SPARQL console</a>
+      <a href="/abstraction_inspection.html">Knowledge inspection</a>
+    </nav>
     <div class="header">
       <h1 class="title">Metacognition SPARQL Console</h1>
       <p class="subtitle">

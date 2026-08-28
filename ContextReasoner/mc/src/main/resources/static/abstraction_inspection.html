@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metacognition Knowledge Inspection</title>
+  <style>
+    :root { --bg:#0f172a; --panel:#111827; --panel2:#1f2937; --text:#e5e7eb; --muted:#94a3b8; --accent:#38bdf8; --border:#334155; --ok:#22c55e; --err:#ef4444; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; font-family:Inter,Arial,sans-serif; background:linear-gradient(180deg,#020617 0%,var(--bg) 100%); color:var(--text); }
+    .container { max-width:1400px; margin:auto; padding:32px 20px 48px; }
+    .nav { display:flex; gap:8px; margin-bottom:22px; }
+    .nav a { color:var(--muted); text-decoration:none; padding:9px 13px; border-radius:10px; border:1px solid var(--border); }
+    .nav a.active,.nav a:hover { color:var(--text); background:#1e293b; border-color:var(--accent); }
+    h1 { margin:0 0 8px; font-size:30px; }
+    h2,h3 { margin:0; }
+    .subtitle,.muted { color:var(--muted); line-height:1.5; }
+    .toolbar { display:flex; justify-content:space-between; gap:14px; align-items:center; margin:24px 0 16px; }
+    button { border:0; border-radius:11px; padding:10px 14px; font:inherit; font-weight:600; cursor:pointer; background:linear-gradient(135deg,var(--accent),#0ea5e9); color:#082f49; }
+    button:disabled { opacity:.6; cursor:wait; }
+    .layout { display:grid; grid-template-columns:minmax(280px,1fr) minmax(0,2fr); gap:20px; align-items:start; }
+    .card { background:rgba(17,24,39,.92); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.22); }
+    .schema-list { display:flex; flex-direction:column; gap:10px; margin-top:14px; max-height:calc(100vh - 260px); overflow:auto; }
+    .schema { width:100%; text-align:left; color:var(--text); background:#0b1220; border:1px solid var(--border); padding:14px; }
+    .schema:hover,.schema.selected { border-color:var(--accent); background:#172033; transform:none; }
+    .schema strong { display:block; font-size:16px; margin-bottom:6px; }
+    .badge { color:var(--accent); font-size:12px; }
+    details { margin-top:10px; }
+    summary { color:var(--muted); cursor:pointer; font-size:13px; }
+    pre { margin:10px 0 0; padding:13px; border-radius:11px; background:#020617; border:1px solid var(--border); color:#cbd5e1; overflow:auto; max-height:380px; font-size:12px; line-height:1.45; }
+    .empty { padding:45px 20px; text-align:center; color:var(--muted); }
+    .grounding-list { display:flex; flex-direction:column; gap:12px; margin-top:16px; }
+    .grounding-item { margin:0; border:1px solid var(--border); border-radius:14px; background:#0b1220; overflow:hidden; }
+    .grounding-item[open] { border-color:#475569; }
+    .grounding-summary { padding:15px; list-style:none; cursor:pointer; }
+    .grounding-summary::-webkit-details-marker { display:none; }
+    .grounding-summary::before { content:'›'; display:inline-block; margin-right:9px; color:var(--accent); font-size:20px; transition:transform .15s ease; }
+    .grounding-item[open] > .grounding-summary::before { transform:rotate(90deg); }
+    .grounding-head { display:inline-flex; width:calc(100% - 28px); justify-content:space-between; gap:12px; align-items:center; vertical-align:middle; }
+    .grounding-id { font-family:monospace; color:#bae6fd; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .grounded-signature { display:flex; gap:7px; flex-wrap:wrap; margin:10px 0 0 29px; }
+    .role-chip { padding:5px 8px; border:1px solid var(--border); border-radius:999px; color:#cbd5e1; background:#111827; font-size:11px; }
+    .role-chip b { color:var(--accent); font-weight:600; }
+    .grounding-content { padding:0 15px 15px; }
+    .views { display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px; }
+    .graph { width:100%; min-height:330px; background:#020617; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+    .graph svg { display:block; width:100%; height:330px; }
+    .triple-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
+    .triple-table th,.triple-table td { padding:8px; border-bottom:1px solid var(--border); text-align:left; overflow-wrap:anywhere; }
+    .triple-table th { color:var(--muted); }
+    .status.ok { color:var(--ok); } .status.err { color:var(--err); }
+    @media(max-width:850px) { .layout { grid-template-columns:1fr; } .schema-list { max-height:none; } }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <nav class="nav" aria-label="Metacognition tools">
+      <a href="/sparql_gui.html">SPARQL console</a>
+      <a class="active" href="/abstraction_inspection.html">Knowledge inspection</a>
+    </nav>
+    <header>
+      <h1>Knowledge Abstraction Inspection</h1>
+      <p class="subtitle">Inspect contextual action schemas and the inferred Function and Fluent meta-knowledge behind them. This view is read-only.</p>
+    </header>
+    <div class="toolbar">
+      <span id="status" class="status muted">Loading abstraction…</span>
+      <button id="refresh">Refresh inferred knowledge</button>
+    </div>
+    <div class="layout">
+      <aside class="card">
+        <h2>Function schemas</h2>
+        <div id="schemas" class="schema-list"></div>
+      </aside>
+      <section class="card">
+        <div id="detail" class="empty">Select a schema to inspect its grounded Function individuals.</div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const schemasEl=document.getElementById('schemas');
+    const detailEl=document.getElementById('detail');
+    const statusEl=document.getElementById('status');
+    const refreshEl=document.getElementById('refresh');
+    let selectedId=null;
+
+    const short=value=>{ if(!value)return ''; const hash=value.lastIndexOf('#'); const slash=value.lastIndexOf('/'); return value.slice(Math.max(hash,slash)+1)||value; };
+    const setStatus=(text,kind='')=>{ statusEl.textContent=text; statusEl.className='status '+(kind||'muted'); };
+    const json=value=>JSON.stringify(value,null,2);
+
+    async function loadSchemas(){
+      refreshEl.disabled=true; setStatus('Reading current inferred knowledge…');
+      try {
+        const response=await fetch('/metacognition/api/abstraction');
+        if(!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload=await response.json(); renderSchemas(payload.schemas||[]);
+        setStatus(`${payload.schemas?.length||0} contextual schema(s) detected.`,'ok');
+        if(selectedId && (payload.schemas||[]).some(s=>s.signatureId===selectedId)) await selectSchema(selectedId);
+      } catch(error) { setStatus(`Unable to load abstraction: ${error.message}`,'err'); schemasEl.innerHTML='<div class="empty">No schemas available.</div>'; }
+      finally { refreshEl.disabled=false; }
+    }
+
+    function renderSchemas(schemas){
+      schemasEl.replaceChildren();
+      if(!schemas.length){ schemasEl.innerHTML='<div class="empty">No grounded Function schemas are currently inferred.</div>'; detailEl.className='empty'; detailEl.textContent='Load or update a scenario, then refresh this inspection.'; return; }
+      schemas.forEach(schema=>{
+        const wrap=document.createElement('div');
+        const button=document.createElement('button'); button.className='schema'+(schema.signatureId===selectedId?' selected':'');
+        const title=document.createElement('strong'); title.textContent=schema.functionType;
+        const badge=document.createElement('span'); badge.className='badge'; badge.textContent=`${schema.groundingCount} grounding${schema.groundingCount===1?'':'s'} · ${schema.signatureId}`;
+        button.append(title,badge); button.addEventListener('click',()=>selectSchema(schema.signatureId));
+        const details=document.createElement('details'); const summary=document.createElement('summary'); summary.textContent='Schema JSON';
+        const pre=document.createElement('pre'); pre.textContent=json(schema); details.append(summary,pre); wrap.append(button,details); schemasEl.append(wrap);
+      });
+    }
+
+    async function selectSchema(signatureId){
+      selectedId=signatureId; [...document.querySelectorAll('.schema')].forEach(b=>b.classList.toggle('selected',b.textContent.includes(signatureId)));
+      detailEl.className='empty'; detailEl.textContent='Loading grounded subgraphs…';
+      try {
+        const response=await fetch(`/metacognition/api/abstraction/${encodeURIComponent(signatureId)}/groundings`);
+        if(!response.ok) throw new Error(`HTTP ${response.status}`);
+        renderDetail(await response.json());
+      } catch(error) { detailEl.textContent=`Unable to inspect schema: ${error.message}`; }
+    }
+
+    function renderDetail(payload){
+      detailEl.className=''; detailEl.replaceChildren();
+      const heading=document.createElement('h2'); heading.textContent=`${payload.schema.functionType} groundings`;
+      const note=document.createElement('p'); note.className='muted'; note.textContent=`${payload.groundings.length} inferred Function individual(s) share this typed relational and Fluent pattern.`;
+      const list=document.createElement('div'); list.className='grounding-list';
+      payload.groundings.forEach((grounding,index)=>list.append(renderGrounding(grounding,index)));
+      detailEl.append(heading,note,list);
+    }
+
+    function renderGrounding(grounding,index){
+      const card=document.createElement('details'); card.className='grounding-item';
+      const summary=document.createElement('summary'); summary.className='grounding-summary';
+      const head=document.createElement('div'); head.className='grounding-head';
+      const title=document.createElement('h3'); title.textContent=`Function ${index+1}`;
+      const id=document.createElement('span'); id.className='grounding-id'; id.title=grounding.id; id.textContent=short(grounding.id);
+      head.append(title,id);
+      const signature=document.createElement('div'); signature.className='grounded-signature';
+      groundedSignature(grounding).forEach(item=>{ const chip=document.createElement('span'); chip.className='role-chip'; const role=document.createElement('b'); role.textContent=item.role; chip.append(role,document.createTextNode(` → ${item.value}`)); signature.append(chip); });
+      summary.append(head,signature);
+      const content=document.createElement('div'); content.className='grounding-content';
+      const graph=document.createElement('div'); graph.className='graph'; drawGraph(graph,grounding.triples);
+      const details=document.createElement('details'); details.open=true; const dataSummary=document.createElement('summary'); dataSummary.textContent='Related triples and JSON';
+      const table=tripleTable(grounding.triples); const pre=document.createElement('pre'); pre.textContent=json(grounding);
+      details.append(dataSummary,table,pre); content.append(graph,details); card.append(summary,content); return card;
+    }
+
+    function groundedSignature(grounding){
+      const structuralRoles=new Set(['canBePerformedBy','hasTarget','hasPreconditionOn','hasEffectOn']);
+      const result=grounding.triples.filter(t=>t.subject===grounding.id && structuralRoles.has(t.predicate))
+        .map(t=>({role:t.predicate,value:short(t.object)}));
+      ['requiresFluent','assertsFluent','negatesFluent'].forEach(role=>{
+        const count=grounding.triples.filter(t=>t.subject===grounding.id && t.predicate===role).length;
+        if(count) result.push({role,value:`${count} fluent${count===1?'':'s'}`});
+      });
+      return result;
+    }
+
+    function tripleTable(triples){
+      const table=document.createElement('table'); table.className='triple-table'; table.innerHTML='<thead><tr><th>Subject</th><th>Predicate</th><th>Object</th></tr></thead>';
+      const body=document.createElement('tbody'); triples.forEach(t=>{ const row=document.createElement('tr'); [short(t.subject),t.predicate,short(t.object)].forEach(v=>{const td=document.createElement('td');td.textContent=v;row.append(td);});body.append(row); }); table.append(body); return table;
+    }
+
+    function drawGraph(container,triples){
+      const ns='http://www.w3.org/2000/svg'; const svg=document.createElementNS(ns,'svg');
+      const defs=document.createElementNS(ns,'defs'); const marker=document.createElementNS(ns,'marker');
+      marker.setAttribute('id','edge-arrow'); marker.setAttribute('viewBox','0 0 10 10'); marker.setAttribute('refX','9'); marker.setAttribute('refY','5'); marker.setAttribute('markerWidth','7'); marker.setAttribute('markerHeight','7'); marker.setAttribute('orient','auto-start-reverse');
+      const arrow=document.createElementNS(ns,'path'); arrow.setAttribute('d','M 0 0 L 10 5 L 0 10 z'); arrow.setAttribute('fill','#64748b'); marker.append(arrow); defs.append(marker); svg.append(defs);
+      const typeByNode=new Map(triples.filter(t=>t.predicate==='type').map(t=>[t.subject,short(t.object)]));
+      const relations=triples.filter(t=>t.predicate!=='type');
+      const ids=[...new Set(relations.flatMap(t=>[t.subject,t.objectKind==='literal'?`literal:${t.object}`:t.object]))];
+      const cx=400,cy=165,rx=300,ry=115; const positions=new Map(ids.map((id,i)=>[id,{x:cx+rx*Math.cos(2*Math.PI*i/ids.length),y:cy+ry*Math.sin(2*Math.PI*i/ids.length)}]));
+      relations.forEach(t=>{ const a=positions.get(t.subject),b=positions.get(t.objectKind==='literal'?`literal:${t.object}`:t.object); if(!a||!b)return;
+        const dx=b.x-a.x,dy=b.y-a.y,distance=Math.hypot(dx,dy)||1,targetRadius=27;
+        const line=document.createElementNS(ns,'line'); line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',b.x-dx/distance*targetRadius);line.setAttribute('y2',b.y-dy/distance*targetRadius);line.setAttribute('stroke','#64748b');line.setAttribute('stroke-width','1.5');line.setAttribute('marker-end','url(#edge-arrow)');svg.append(line);
+        const label=document.createElementNS(ns,'text');label.setAttribute('x',(a.x+b.x)/2);label.setAttribute('y',(a.y+b.y)/2-4);label.setAttribute('fill','#94a3b8');label.setAttribute('font-size','10');label.setAttribute('text-anchor','middle');label.textContent=t.predicate;svg.append(label);
+      });
+      ids.forEach(id=>{const p=positions.get(id),literal=id.startsWith('literal:');const circle=document.createElementNS(ns,'circle');circle.setAttribute('cx',p.x);circle.setAttribute('cy',p.y);circle.setAttribute('r','23');circle.setAttribute('fill',literal?'#713f12':'#075985');circle.setAttribute('stroke',literal?'#fbbf24':'#38bdf8');svg.append(circle);const label=document.createElementNS(ns,'text');label.setAttribute('x',p.x);label.setAttribute('y',p.y+34);label.setAttribute('fill','#e5e7eb');label.setAttribute('font-size','11');label.setAttribute('text-anchor','middle');const name=document.createElementNS(ns,'tspan');name.setAttribute('x',p.x);name.textContent=short(id.replace('literal:','')).slice(0,24);label.append(name);const type=typeByNode.get(id);if(type&&!literal){const typed=document.createElementNS(ns,'tspan');typed.setAttribute('x',p.x);typed.setAttribute('dy','13');typed.setAttribute('fill','#38bdf8');typed.textContent=type;label.append(typed);}svg.append(label);});
+      svg.setAttribute('viewBox','0 0 800 330'); container.append(svg);
+    }
+
+    refreshEl.addEventListener('click',loadSchemas); loadSchemas();
+  </script>
+</body>
+</html>

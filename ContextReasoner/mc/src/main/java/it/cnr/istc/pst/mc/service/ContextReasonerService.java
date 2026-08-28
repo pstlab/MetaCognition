@@ -6,9 +6,12 @@ import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.function.Function;
 
 import it.cnr.istc.pst.mc.MetacognitionProperties;
 import it.cnr.istc.pst.mc.semantics.RuleReasoner;
@@ -78,6 +81,21 @@ public class ContextReasonerService {
 
         } finally {
             // release the lock
+            this.lock.end();
+        }
+    }
+
+    /**
+     * Runs a read-only operation against the current materialized inference model.
+     * The model is refreshed and remains protected by the service read lock for the
+     * complete operation; callers must not retain or mutate it.
+     */
+    public <T> T readInferredModel(Function<Model, T> reader) {
+        this.lock.begin(ReadWrite.READ);
+        try {
+            this.reasoner.refreshInferenceModel();
+            return reader.apply(this.reasoner.getModel());
+        } finally {
             this.lock.end();
         }
     }

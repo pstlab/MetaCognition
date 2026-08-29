@@ -32,14 +32,12 @@
 
     (?e dul:hasQuality ?c),(?c rdf:type mc:NavigationCapability),
 
-    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose),
+    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose), (?ep dul:hasRegion ?er),
     
 
     (?l dul:hasQuality ?d), (?d rdf:type mc:TraversabilityDisposition),
 
-    (?l dul:hasQuality ?p), (?p rdf:type mc:Pose),
-
-    (?p dul:hasRegion ?r),
+    (?l dul:hasQuality ?lp), (?lp rdf:type mc:Pose), (?lp dul:hasRegion ?lr),
 
     makeTemp(?m), 
     
@@ -55,11 +53,12 @@
     (?m mc:hasPreconditionOn ?ep),
     (?m soho:hasEffectOn ?ep),
 
-    (?f rdf:type mc:Fluent),
     (?m mc:assertsFluent ?f),
-
+    
+    (?f rdf:type mc:RegionChangeFluent),
     (?f mc:concernsObject ?e),
     (?f mc:concernsQuality ?ep),
-    (?f mc:hasFluentValue ?r)
+    (?f mc:hasInitialValue ?er),
+    (?f mc:hasResultingValue ?lr)
 
 ]

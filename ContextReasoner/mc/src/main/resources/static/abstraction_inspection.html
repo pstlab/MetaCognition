@@ -25,6 +25,10 @@
     .schema:hover,.schema.selected { border-color:var(--accent); background:#172033; transform:none; }
     .schema strong { display:block; font-size:16px; margin-bottom:6px; }
     .badge { color:var(--accent); font-size:12px; }
+    .constraint-preview { display:block; margin-top:8px; color:#cbd5e1; font-size:11px; font-weight:400; }
+    .constraint-panel { display:grid; gap:8px; margin:12px 0 18px; }
+    .constraint-row { padding:10px 12px; background:#0b1220; border:1px solid var(--border); border-radius:10px; font-family:monospace; font-size:12px; color:#cbd5e1; }
+    .constraint-row .transition { color:var(--accent); font-weight:700; }
     details { margin-top:10px; }
     summary { color:var(--muted); cursor:pointer; font-size:13px; }
     pre { margin:10px 0 0; padding:13px; border-radius:11px; background:#020617; border:1px solid var(--border); color:#cbd5e1; overflow:auto; max-height:380px; font-size:12px; line-height:1.45; }
@@ -45,6 +49,9 @@
     .views { display:grid; grid-template-columns:1fr; gap:12px; margin-top:12px; }
     .graph { width:100%; min-height:330px; background:#020617; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
     .graph svg { display:block; width:100%; height:330px; }
+    .graph-node { cursor:grab; touch-action:none; }
+    .graph-node.dragging { cursor:grabbing; }
+    .graph-node text,.graph-edge-label { pointer-events:none; user-select:none; }
     .triple-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
     .triple-table th,.triple-table td { padding:8px; border-bottom:1px solid var(--border); text-align:left; overflow-wrap:anywhere; }
     .triple-table th { color:var(--muted); }
@@ -107,7 +114,9 @@
         const button=document.createElement('button'); button.className='schema'+(schema.signatureId===selectedId?' selected':'');
         const title=document.createElement('strong'); title.textContent=schema.functionType;
         const badge=document.createElement('span'); badge.className='badge'; badge.textContent=`${schema.groundingCount} grounding${schema.groundingCount===1?'':'s'} · ${schema.signatureId}`;
-        button.append(title,badge); button.addEventListener('click',()=>selectSchema(schema.signatureId));
+        button.append(title,badge);
+        if(schema.fluentConstraints?.length){ const preview=document.createElement('span'); preview.className='constraint-preview'; preview.textContent=schema.fluentConstraints.map(constraintLabel).join(' · '); button.append(preview); }
+        button.addEventListener('click',()=>selectSchema(schema.signatureId));
         const details=document.createElement('details'); const summary=document.createElement('summary'); summary.textContent='Schema JSON';
         const pre=document.createElement('pre'); pre.textContent=json(schema); details.append(summary,pre); wrap.append(button,details); schemasEl.append(wrap);
       });
@@ -127,9 +136,15 @@
       detailEl.className=''; detailEl.replaceChildren();
       const heading=document.createElement('h2'); heading.textContent=`${payload.schema.functionType} groundings`;
       const note=document.createElement('p'); note.className='muted'; note.textContent=`${payload.groundings.length} inferred Function individual(s) share this typed relational and Fluent pattern.`;
+      const constraints=document.createElement('div'); constraints.className='constraint-panel';
+      (payload.schema.fluentConstraints||[]).forEach(constraint=>{ const row=document.createElement('div'); row.className='constraint-row'; const association=document.createElement('span'); association.textContent=`${constraint.association} ${constraint.fluentType}: ${constraint.object}.${constraint.quality} `; const transition=document.createElement('span'); transition.className='transition'; transition.textContent=`delete ${constraint.initialValue||'∅'} → add ${constraint.resultingValue||'∅'}`; row.append(association,transition); constraints.append(row); });
       const list=document.createElement('div'); list.className='grounding-list';
       payload.groundings.forEach((grounding,index)=>list.append(renderGrounding(grounding,index)));
-      detailEl.append(heading,note,list);
+      detailEl.append(heading,note,constraints,list);
+    }
+
+    function constraintLabel(constraint){
+      return `${constraint.fluentType}: delete ${constraint.initialValue||'∅'} → add ${constraint.resultingValue||'∅'}`;
     }
 
     function renderGrounding(grounding,index){
@@ -167,19 +182,34 @@
 
     function drawGraph(container,triples){
       const ns='http://www.w3.org/2000/svg'; const svg=document.createElementNS(ns,'svg');
+      const markerId=`edge-arrow-${Math.random().toString(36).slice(2)}`;
       const defs=document.createElementNS(ns,'defs'); const marker=document.createElementNS(ns,'marker');
-      marker.setAttribute('id','edge-arrow'); marker.setAttribute('viewBox','0 0 10 10'); marker.setAttribute('refX','9'); marker.setAttribute('refY','5'); marker.setAttribute('markerWidth','7'); marker.setAttribute('markerHeight','7'); marker.setAttribute('orient','auto-start-reverse');
+      marker.setAttribute('id',markerId); marker.setAttribute('viewBox','0 0 10 10'); marker.setAttribute('refX','9'); marker.setAttribute('refY','5'); marker.setAttribute('markerWidth','7'); marker.setAttribute('markerHeight','7'); marker.setAttribute('orient','auto-start-reverse');
       const arrow=document.createElementNS(ns,'path'); arrow.setAttribute('d','M 0 0 L 10 5 L 0 10 z'); arrow.setAttribute('fill','#64748b'); marker.append(arrow); defs.append(marker); svg.append(defs);
       const typeByNode=new Map(triples.filter(t=>t.predicate==='type').map(t=>[t.subject,short(t.object)]));
       const relations=triples.filter(t=>t.predicate!=='type');
       const ids=[...new Set(relations.flatMap(t=>[t.subject,t.objectKind==='literal'?`literal:${t.object}`:t.object]))];
       const cx=400,cy=165,rx=300,ry=115; const positions=new Map(ids.map((id,i)=>[id,{x:cx+rx*Math.cos(2*Math.PI*i/ids.length),y:cy+ry*Math.sin(2*Math.PI*i/ids.length)}]));
-      relations.forEach(t=>{ const a=positions.get(t.subject),b=positions.get(t.objectKind==='literal'?`literal:${t.object}`:t.object); if(!a||!b)return;
-        const dx=b.x-a.x,dy=b.y-a.y,distance=Math.hypot(dx,dy)||1,targetRadius=27;
-        const line=document.createElementNS(ns,'line'); line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',b.x-dx/distance*targetRadius);line.setAttribute('y2',b.y-dy/distance*targetRadius);line.setAttribute('stroke','#64748b');line.setAttribute('stroke-width','1.5');line.setAttribute('marker-end','url(#edge-arrow)');svg.append(line);
-        const label=document.createElementNS(ns,'text');label.setAttribute('x',(a.x+b.x)/2);label.setAttribute('y',(a.y+b.y)/2-4);label.setAttribute('fill','#94a3b8');label.setAttribute('font-size','10');label.setAttribute('text-anchor','middle');label.textContent=t.predicate;svg.append(label);
+      const pairKey=(source,target)=>[source,target].sort().join('\u0000'); const pairTotals=new Map(); const pairIndexes=new Map(); const edges=[];
+      relations.forEach(t=>{const target=t.objectKind==='literal'?`literal:${t.object}`:t.object;const key=pairKey(t.subject,target);pairTotals.set(key,(pairTotals.get(key)||0)+1);});
+      relations.forEach(t=>{ const target=t.objectKind==='literal'?`literal:${t.object}`:t.object; const key=pairKey(t.subject,target); const index=pairIndexes.get(key)||0; pairIndexes.set(key,index+1);
+        const line=document.createElementNS(ns,'line'); line.setAttribute('stroke','#64748b');line.setAttribute('stroke-width','1.5');line.setAttribute('marker-end',`url(#${markerId})`);svg.append(line);
+        const label=document.createElementNS(ns,'text');label.classList.add('graph-edge-label');label.setAttribute('fill','#94a3b8');label.setAttribute('font-size','10');label.setAttribute('text-anchor','middle');label.textContent=t.predicate;svg.append(label);
+        edges.push({source:t.subject,target,line,label,offset:(index-(pairTotals.get(key)-1)/2)*18});
       });
-      ids.forEach(id=>{const p=positions.get(id),literal=id.startsWith('literal:');const circle=document.createElementNS(ns,'circle');circle.setAttribute('cx',p.x);circle.setAttribute('cy',p.y);circle.setAttribute('r','23');circle.setAttribute('fill',literal?'#713f12':'#075985');circle.setAttribute('stroke',literal?'#fbbf24':'#38bdf8');svg.append(circle);const label=document.createElementNS(ns,'text');label.setAttribute('x',p.x);label.setAttribute('y',p.y+34);label.setAttribute('fill','#e5e7eb');label.setAttribute('font-size','11');label.setAttribute('text-anchor','middle');const name=document.createElementNS(ns,'tspan');name.setAttribute('x',p.x);name.textContent=short(id.replace('literal:','')).slice(0,24);label.append(name);const type=typeByNode.get(id);if(type&&!literal){const typed=document.createElementNS(ns,'tspan');typed.setAttribute('x',p.x);typed.setAttribute('dy','13');typed.setAttribute('fill','#38bdf8');typed.textContent=type;label.append(typed);}svg.append(label);});
+      const updateEdges=()=>edges.forEach(edge=>{const a=positions.get(edge.source),b=positions.get(edge.target);if(!a||!b)return;const dx=b.x-a.x,dy=b.y-a.y,distance=Math.hypot(dx,dy)||1,nx=-dy/distance,ny=dx/distance,targetRadius=27;
+        edge.line.setAttribute('x1',a.x+nx*edge.offset);edge.line.setAttribute('y1',a.y+ny*edge.offset);edge.line.setAttribute('x2',b.x-dx/distance*targetRadius+nx*edge.offset);edge.line.setAttribute('y2',b.y-dy/distance*targetRadius+ny*edge.offset);
+        edge.label.setAttribute('x',(a.x+b.x)/2+nx*(edge.offset+8));edge.label.setAttribute('y',(a.y+b.y)/2+ny*(edge.offset+8)-4);
+      });
+      const svgPoint=event=>{const point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;return point.matrixTransform(svg.getScreenCTM().inverse());};
+      ids.forEach(id=>{const p=positions.get(id),literal=id.startsWith('literal:');const group=document.createElementNS(ns,'g');group.classList.add('graph-node');group.setAttribute('transform',`translate(${p.x} ${p.y})`);
+        const circle=document.createElementNS(ns,'circle');circle.setAttribute('r','23');circle.setAttribute('fill',literal?'#713f12':'#075985');circle.setAttribute('stroke',literal?'#fbbf24':'#38bdf8');group.append(circle);
+        const label=document.createElementNS(ns,'text');label.setAttribute('y','34');label.setAttribute('fill','#e5e7eb');label.setAttribute('font-size','11');label.setAttribute('text-anchor','middle');const name=document.createElementNS(ns,'tspan');name.setAttribute('x','0');name.textContent=short(id.replace('literal:','')).slice(0,24);label.append(name);const type=typeByNode.get(id);if(type&&!literal){const typed=document.createElementNS(ns,'tspan');typed.setAttribute('x','0');typed.setAttribute('dy','13');typed.setAttribute('fill','#38bdf8');typed.textContent=type;label.append(typed);}group.append(label);svg.append(group);
+        group.addEventListener('pointerdown',event=>{event.preventDefault();group.setPointerCapture(event.pointerId);group.classList.add('dragging');});
+        group.addEventListener('pointermove',event=>{if(!group.hasPointerCapture(event.pointerId))return;const next=svgPoint(event);p.x=Math.max(28,Math.min(772,next.x));p.y=Math.max(28,Math.min(280,next.y));group.setAttribute('transform',`translate(${p.x} ${p.y})`);updateEdges();});
+        const stop=event=>{if(group.hasPointerCapture(event.pointerId))group.releasePointerCapture(event.pointerId);group.classList.remove('dragging');};group.addEventListener('pointerup',stop);group.addEventListener('pointercancel',stop);
+      });
+      updateEdges(); container.title='Drag nodes to rearrange the graph';
       svg.setAttribute('viewBox','0 0 800 330'); container.append(svg);
     }
 

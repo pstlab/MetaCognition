@@ -36,7 +36,8 @@ class MetacognitionRestControllerTests {
     void groundingInspectionEndpointReturnsJsonResponse() throws Exception {
         KnowledgeAbstractionService abstraction = org.mockito.Mockito.mock(KnowledgeAbstractionService.class);
         AbstractionResponse.ActionSchema schema = new AbstractionResponse.ActionSchema(
-                "MoveTo", "urn:type:MoveTo", "sha256:abc", 1, List.of(), List.of(), List.of(), List.of());
+                "MoveTo", "urn:type:MoveTo", "sha256:abc", 1,
+                List.of(), List.of(), List.of(), List.of(), List.of());
         when(abstraction.inspectCurrentSchema("sha256:abc"))
                 .thenReturn(new SchemaGroundingsResponse(schema,
                         List.of(new FunctionGrounding("_:function", "blankNode", List.of()))));

@@ -11,6 +11,7 @@ public record AbstractionResponse(List<ActionSchema> schemas) {
             String signatureId,
             int groundingCount,
             List<Parameter> parameters,
+            List<FluentConstraint> fluentConstraints,
             List<FluentCondition> preconditions,
             List<FluentCondition> positiveEffects,
             List<FluentCondition> negativeEffects) {
@@ -24,5 +25,16 @@ public record AbstractionResponse(List<ActionSchema> schemas) {
     }
 
     public record FluentCondition(String object, String quality, String value) {
+    }
+
+    /** A typed diagnostic constraint, including transition endpoints when present. */
+    public record FluentConstraint(
+            String association,
+            String fluentType,
+            String fluentTypeUri,
+            String object,
+            String quality,
+            String initialValue,
+            String resultingValue) {
     }
 }

@@ -61,6 +61,30 @@ class KnowledgeAbstractionServiceTests {
                 assertThat(condition.quality()).isEqualTo(qualityVariable));
         assertThat(schema.negativeEffects()).singleElement().satisfies(condition ->
                 assertThat(condition.quality()).isEqualTo(qualityVariable));
+        assertThat(schema.fluentConstraints()).hasSize(3).allSatisfy(constraint -> {
+            assertThat(constraint.fluentType()).isEqualTo("RegionChangeFluent");
+            assertThat(constraint.quality()).isEqualTo(qualityVariable);
+            assertThat(constraint.initialValue()).startsWith("?initial");
+            assertThat(constraint.resultingValue()).startsWith("?resulting");
+            assertThat(constraint.initialValue()).isNotEqualTo(constraint.resultingValue());
+        });
+    }
+
+    @Test
+    void regionChangeProducesDeleteAndAddEffectsWithoutExplicitNegatesFluent() {
+        Model model = ModelFactory.createDefaultModel();
+        addGrounding(model, "change", true, true, false, true, false);
+
+        ActionSchema schema = service.abstractModel(model).schemas().get(0);
+        String initial = schema.fluentConstraints().get(0).initialValue();
+        String resulting = schema.fluentConstraints().get(0).resultingValue();
+
+        assertThat(schema.preconditions()).singleElement().satisfies(condition ->
+                assertThat(condition.value()).isEqualTo(initial));
+        assertThat(schema.negativeEffects()).singleElement().satisfies(condition ->
+                assertThat(condition.value()).isEqualTo(initial));
+        assertThat(schema.positiveEffects()).singleElement().satisfies(condition ->
+                assertThat(condition.value()).isEqualTo(resulting));
     }
 
     @Test
@@ -89,7 +113,8 @@ class KnowledgeAbstractionServiceTests {
             assertThat(grounding.triples()).extracting(SchemaGroundingsResponse.Triple::predicate)
                     .contains("canBePerformedBy", "hasTarget", "hasPreconditionOn", "hasEffectOn",
                             "requiresFluent", "assertsFluent", "negatesFluent",
-                            "concernsObject", "concernsQuality", "hasFluentValue", "type");
+                            "concernsObject", "concernsQuality", "hasInitialValue", "hasResultingValue", "type")
+                    .doesNotContain("hasFluentValue");
             assertThat(grounding.triples().stream().filter(triple -> triple.predicate().equals("type"))
                     .collect(java.util.stream.Collectors.groupingBy(SchemaGroundingsResponse.Triple::subject)))
                     .allSatisfy((subject, types) -> assertThat(types).hasSize(1));
@@ -102,23 +127,25 @@ class KnowledgeAbstractionServiceTests {
         Resource agent = typed(model, "agent-" + suffix, "EmbodiedAgent");
         Resource target = typed(model, "target-" + suffix, "RobotEmbodiment");
         Resource quality = typed(model, "quality-" + suffix, "Pose");
-        Resource value = typed(model, "value-" + suffix, "DiscretePoseRegion");
+        Resource initialValue = typed(model, "initial-value-" + suffix, "DiscretePoseRegion");
+        Resource resultingValue = typed(model, "resulting-value-" + suffix, "DiscretePoseRegion");
         function.addProperty(model.createProperty(SOHO + "canBePerformedBy"), agent)
                 .addProperty(model.createProperty(SOHO + "hasTarget"), target);
         if (precondition) function.addProperty(model.createProperty(MC + "hasPreconditionOn"), quality);
         if (effect) function.addProperty(model.createProperty(SOHO + "hasEffectOn"), quality);
-        if (requires) addFluent(model, function, "requiresFluent", "required-" + suffix, target, quality, value);
-        if (asserts) addFluent(model, function, "assertsFluent", "asserted-" + suffix, target, quality, value);
-        if (negates) addFluent(model, function, "negatesFluent", "negated-" + suffix, target, quality, value);
+        if (requires) addFluent(model, function, "requiresFluent", "required-" + suffix, target, quality, initialValue, resultingValue);
+        if (asserts) addFluent(model, function, "assertsFluent", "asserted-" + suffix, target, quality, initialValue, resultingValue);
+        if (negates) addFluent(model, function, "negatesFluent", "negated-" + suffix, target, quality, initialValue, resultingValue);
     }
 
     private void addFluent(Model model, Resource function, String role, String id,
-            Resource object, Resource quality, Resource value) {
-        Resource fluent = typed(model, id, "Fluent");
+            Resource object, Resource quality, Resource initialValue, Resource resultingValue) {
+        Resource fluent = typed(model, id, "RegionChangeFluent");
         function.addProperty(model.createProperty(MC + role), fluent);
         fluent.addProperty(model.createProperty(MC + "concernsObject"), object)
                 .addProperty(model.createProperty(MC + "concernsQuality"), quality)
-                .addProperty(model.createProperty(MC + "hasFluentValue"), value);
+                .addProperty(model.createProperty(MC + "hasInitialValue"), initialValue)
+                .addProperty(model.createProperty(MC + "hasResultingValue"), resultingValue);
     }
 
     private Resource typed(Model model, String id, String type) {

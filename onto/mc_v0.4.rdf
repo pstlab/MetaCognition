@@ -780,6 +780,38 @@
     
 
 
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#QualityBindingFluent -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#QualityBindingFluent">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsObject"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsQuality"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluentValue"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Region"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+        <rdfs:comment>Denote the constraining of two distinct qualities of two distinct physical objects. The two qualities of the two objects are constrained to assume the same region value. Note that this fluent establishes a strong constraint between the two qualities that are bounded to maintain the same regional value as soon as the binding holds. Thus, every time the region value of one of the two qualities changes, the change is propagated to the other quality
+.</rdfs:comment>
+    </owl:Class>
+    
+
+
     <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#ReasoningMethod -->
 
     <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#ReasoningMethod">
@@ -820,6 +852,37 @@
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
         <rdfs:comment>Denote the transition of regional value for the quality of a specific physical object. Namely, it denotes that the quality of the object changes the associated regional value, from the initial to the final one</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://pst.istc.cnr.it/ontologies/2026/metacognition#RegionGuardFluent -->
+
+    <owl:Class rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#RegionGuardFluent">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsObject"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#PhysicalObject"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#concernsQuality"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Quality"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#hasFluentValue"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.loa-cnr.it/ontologies/DUL.owl#Region"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://pst.istc.cnr.it/ontologies/2026/metacognition#Fluent"/>
+        <rdfs:comment>Denote the constraint of a certain quality of having a certain regional value associated. The fluent verifies whether a certain quality is associated with a certain region value.</rdfs:comment>
     </owl:Class>
     
 

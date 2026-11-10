@@ -11,10 +11,10 @@ public record AbstractionResponse(List<ActionSchema> schemas) {
             String signatureId,
             int groundingCount,
             List<Parameter> parameters,
-            List<FluentConstraint> fluentConstraints,
-            List<FluentCondition> preconditions,
-            List<FluentCondition> positiveEffects,
-            List<FluentCondition> negativeEffects) {
+            List<AlignmentConstraint> alignmentConstraints,
+            List<StateCondition> preconditions,
+            List<StateCondition> positiveEffects,
+            List<StateCondition> negativeEffects) {
     }
 
     public record Parameter(
@@ -24,17 +24,18 @@ public record AbstractionResponse(List<ActionSchema> schemas) {
             List<String> roles) {
     }
 
-    public record FluentCondition(String object, String quality, String value) {
+    public record StateCondition(String object, String quality, String value) {
     }
 
-    /** A typed diagnostic constraint, including transition endpoints when present. */
-    public record FluentConstraint(
+    /** A typed belief alignment. Lists preserve multi-participant bindings without inventing pairs. */
+    public record AlignmentConstraint(
             String association,
-            String fluentType,
-            String fluentTypeUri,
-            String object,
-            String quality,
-            String initialValue,
-            String resultingValue) {
+            String alignmentType,
+            String alignmentTypeUri,
+            List<String> objects,
+            List<String> qualities,
+            List<String> values,
+            List<String> initialValues,
+            List<String> resultingValues) {
     }
 }

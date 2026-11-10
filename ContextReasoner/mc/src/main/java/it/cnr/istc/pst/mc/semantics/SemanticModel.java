@@ -238,6 +238,14 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         Resource rArm = this.assertResourceOfType(
             MetacognitionDictionary.NS.getUri() + "RobotPart"
         );
+
+        Resource graspCapability = this.assertResourceOfType(
+            MetacognitionDictionary.NS_SOHO.getUri() + "GraspObjectCapability"
+        );
+        this.assertProperty(
+            rArm,
+            MetacognitionDictionary.NS_DUL.getUri() + "hasQuality",
+            graspCapability);
     
         // assert part relation
         this.assertProperty(
@@ -431,6 +439,35 @@ public class SemanticModel extends KnowledgeGraph<Model> {
 
         // return object
         return obj;
+    }
+
+    /** Creates a movable object that can participate in manipulation Functions. */
+    public Resource assertInteractingObject(String label, double[] pData, double[] oData) {
+        Resource pose = this.assertDiscretePose(pData);
+        Resource orientation = this.assertDiscreteOrientation(oData);
+        Resource movable = this.assertResourceOfType(
+            MetacognitionDictionary.NS.getUri() + "MovableDisposition");
+        Resource object = this.assertResourceOfType(
+            MetacognitionDictionary.NS.getUri() + "InteractingObject");
+        this.assertProperty(object, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", pose);
+        this.assertProperty(object, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", orientation);
+        this.assertProperty(object, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", movable);
+        this.assertDataProperty(object, MetacognitionDictionary.NS_SOHO.getUri() + "hasLabel", label);
+        return object;
+    }
+
+    /**
+     * States that an interacting object is reachable from a location. The
+     * disposition belongs to the location and enables interaction with the object.
+     */
+    public Resource assertReachability(Resource location, Resource interactingObject) {
+        Resource reachability = this.assertResourceOfType(
+            MetacognitionDictionary.NS.getUri() + "ReachabilityDisposition");
+        this.assertProperty(location, MetacognitionDictionary.NS_RDF.getUri() + "type",
+            this.model.getResource(MetacognitionDictionary.NS.getUri() + "ManipulationLocation"));
+        this.assertProperty(location, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", reachability);
+        this.assertProperty(reachability, MetacognitionDictionary.NS.getUri() + "enables", interactingObject);
+        return reachability;
     }
 
     /**

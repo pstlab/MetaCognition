@@ -11,8 +11,9 @@ The project is intended for researchers and developers who want to:
 - describe robot embodiments, capabilities, qualities, and environmental state;
 - materialize contextual Function instances such as `MoveTo` from the current ABox;
 - inspect raw and inferred knowledge with SPARQL;
+- graphically edit the asserted scenario ABox and explicitly refresh inference;
 - abstract grounded Functions into deterministic, typed action schemas;
-- inspect the Function and Fluent subgraphs supporting each schema; and
+- inspect the Function and Belief Alignment subgraphs supporting each schema; and
 - extend the ontology and production rules with new cognitive functionality.
 
 The current implementation is a context reasoner and abstraction/inspection layer.
@@ -30,14 +31,16 @@ planning-relevant neighborhood can include:
 - `canBePerformedBy` — the agent able to perform the Function;
 - `hasTarget` — the Function target;
 - `hasPreconditionOn` and `hasEffectOn` — relevant qualities;
-- `requiresFluent`, `assertsFluent`, and `negatesFluent` — diagnostic constraints.
+- `requiresAlignment`, `assertsAlignment`, and `negatesAlignment` — diagnostic constraints.
 
-Fluents are reified Diagnosis concepts. They identify the object and quality under
+Belief Alignments are reified Diagnosis concepts. They identify the objects and qualities under
 consideration through `concernsObject` and `concernsQuality`, and constrain values
-through Fluent-specific properties.
+through `hasBeliefAlignmentValue` or alignment-specific properties.
 
-The currently supported change diagnosis is `RegionChangeFluent`. Its
-`hasInitialValue` and `hasResultingValue` describe a Region transition for the same
+The currently supported alignments include `RegionGuardAlignment`,
+`RegionChangeAlignment`, `QualityBindingAlignment`, and
+`TriplesAssertionAlignment`. A `RegionChangeAlignment` uses
+`hasInitialValue` and `hasResultingValue` to describe a Region transition for the same
 object quality. In an abstract action schema this means:
 
 ```text
@@ -57,13 +60,13 @@ The abstraction pipeline is:
 Function ontology type
   -> inferred grounded Function individuals
   -> typed relational signatures
-  -> Fluent/Diagnosis constraints
+  -> Belief Alignment/Diagnosis constraints
   -> contextual action schemas
 ```
 
 Schemas are not grouped by Function type alone. The abstraction also considers the
 planning-relevant roles, the most specific useful types of their participants, and
-the Fluent structure. Consequently, two `MoveTo` individuals with equivalent
+the Belief Alignment structure. Consequently, two `MoveTo` individuals with equivalent
 structure but different resource identities collapse into one schema, while two
 `MoveTo` individuals with different typed structures remain separate schemas.
 
@@ -83,6 +86,10 @@ MetacognitionRestController
         +-- KnowledgeAbstractionService
         |       |
         |       +-- ContextReasonerService.readInferredModel(...)
+        |
+        +-- KnowledgeEditingService
+        |       |
+        |       +-- ContextReasonerService.readRawModel/writeRawModel
         |
         +-- ContextReasonerService.select(...)
                 |
@@ -105,10 +112,14 @@ The main responsibilities are:
   inference at the intended lifecycle points, and exposes detached SPARQL results.
 - `KnowledgeAbstractionService` reads the current inferred model through
   `ContextReasonerService`; it never creates a second reasoner or changes triples.
+- `KnowledgeEditingService` exposes only the labeled, connected scenario ABox subgraph,
+  validates RDF terms, and keeps ontology vocabulary resources out of the editable
+  subject set. ABox mutations mark inference as stale until explicitly refreshed.
 - `MetacognitionRestController` is a thin HTTP layer returning explicit DTO records,
   never raw Jena objects.
-- The static web pages consume the REST API and remain read-only, except for the
-  explicit scenario-loading action available from the SPARQL interface.
+- The SPARQL and abstraction pages are read-only. The dedicated ABox editor performs
+  controlled asserted-ABox changes; it cannot directly edit inferred triples or
+  ontology axioms.
 
 ## Technology
 
@@ -117,7 +128,7 @@ The main responsibilities are:
 - Apache Jena 5.1.0 (`Model`, `InfModel`, SPARQL, RDFS, and production rules)
 - Jackson JSON serialization
 - Maven
-- JUnit 5, AssertJ, Spring MockMvc, and Mockito for tests
+- JUnit 5, AssertJ, and Spring MockMvc for tests
 - Dependency-free HTML, CSS, JavaScript, and SVG for the web interfaces
 
 The Maven model also declares DL4J/ND4J and extJWNL dependencies for broader
@@ -166,6 +177,8 @@ Important Java files include:
 - `RuleReasoner.java` — rule loading, inference-model construction, and refresh.
 - `ContextReasonerService.java` — thread-safe application access to knowledge.
 - `KnowledgeAbstractionService.java` — schema extraction and grounding inspection.
+- `KnowledgeEditingService.java` — controlled asserted-ABox reads and writes.
+- `KnowledgeEditorDtos.java` — explicit RDF term/triple editor JSON DTOs.
 - `AbstractionResponse.java` and `SchemaGroundingsResponse.java` — public JSON DTOs.
 - `MetacognitionRestController.java` — REST endpoints.
 
@@ -223,92 +236,440 @@ After starting the application:
   Function individuals, concise signatures, related triples, and an interactive
   directed SVG graph. Nodes can be dragged to improve readability; edges point from
   RDF subject to object.
+- `/knowledge_editor.html` opens the asserted-knowledge ABox editor. It visualizes
+  the scenario as two linked draggable directed graphs. The overview contains only
+  asserted physical entities (locations, environmental objects, robot/embodiment,
+  and robot parts). Selecting one expands a bounded local ABox subgraph beneath it,
+  including its asserted qualities, regions, and literal values. Select a detail
+  edge to inspect, update, or remove its exact triple, or use the form to add one.
+  Changes do not silently rerun rules:
+  the page reports stale inference and provides a separate **Refresh inference**
+  action. To keep the diagram readable, coordinate and label-value edges are hidden
+  and anonymous RDF resources are shown with labels derived from their asserted
+  label or a concise asserted type. Their real blank-node identifiers remain available
+  in the selected-triple form for exact editing.
 
 The inspection interface intentionally shows planning-relevant subgraphs and the
 most specific useful types instead of serializing the complete inferred closure.
 
 ## REST API
 
-All endpoints use the `/metacognition/api` prefix.
+The application API uses the `/metacognition/api` prefix and exchanges UTF-8 JSON
+unless an endpoint explicitly says otherwise. The examples below assume
+`BASE=http://localhost:8080/metacognition/api`.
 
-### Query knowledge
+```bash
+export BASE=http://localhost:8080/metacognition/api
+```
 
-```http
-POST /metacognition/api/sparql/select
-Content-Type: application/json
+All application endpoints currently return HTTP 200 on success. Mutation endpoints
+return a status document rather than HTTP 201/204.
 
+### Endpoint summary
+
+| Method | Canonical path | Purpose | Changes knowledge? |
+|---|---|---|---|
+| `GET` | `/knowledge/abox` | Read the editable asserted scenario graph | No |
+| `POST` | `/knowledge/abox/reset` | Restore the startup ontology, recreate the example ABox, and refresh inference | Yes |
+| `POST` | `/knowledge/triples` | Add one asserted ABox triple | Yes |
+| `PUT` | `/knowledge/triples` | Replace one asserted ABox triple | Yes |
+| `POST` | `/knowledge/triples/remove` | Remove one asserted ABox triple | Yes |
+| `POST` | `/reasoning/refresh` | Rebind the Jena reasoner to the current asserted model | Inferred model only |
+| `POST` | `/sparql/select` | Run a read-only SPARQL `SELECT` on raw or inferred knowledge | No ABox change |
+| `GET` | `/abstraction` | Return contextual action schemas from current inferred knowledge | No |
+| `GET` | `/abstraction/{signatureId}/groundings` | Inspect inferred Function individuals behind one schema | No |
+
+For compatibility, `GET /knowledge/uc1` aliases `GET /knowledge/abox`, and
+`POST /load/mobipick/uc1` aliases `POST /knowledge/abox/reset`. New integrations
+should use the canonical ABox paths.
+
+Spring Boot Actuator also exposes `GET /actuator` for endpoint discovery and
+`GET /actuator/health` using its standard health JSON. The root path `/` is not an
+API endpoint; it forwards browsers to `/sparql_gui.html`.
+
+### Inference lifecycle
+
+The raw model contains the ontology plus asserted ABox. The inferred model is the
+Jena `InfModel` produced from that raw model and `onto/cognition.rules`.
+
+- Adding, replacing, or removing a triple changes only the asserted model and
+  returns `{"inferenceDirty":true}`.
+- `POST /reasoning/refresh` explicitly rebinds the reasoner and returns
+  `{"inferenceDirty":false}`.
+- Resetting the example ABox also refreshes inference and clears the dirty state.
+- `GET /abstraction` and the grounding-inspection endpoint read the currently
+  materialized inference model; they do not silently refresh it.
+- A SPARQL request with `"raw":false` rebinds inference before executing the query
+  and therefore also clears the dirty state. A request with `"raw":true` does not.
+
+For predictable batching, edit all required triples first, call the explicit
+refresh endpoint once, and only then request abstractions or groundings.
+
+### RDF JSON representation
+
+Editor endpoints never serialize Jena objects. An RDF term has this shape:
+
+```json
 {
-  "sparql": "SELECT ?function WHERE { ?function a <http://pst.istc.cnr.it/ontologies/2026/metacognition#MoveTo> }",
-  "raw": false
+  "value": "_:example",
+  "kind": "blankNode",
+  "datatype": null,
+  "language": null
 }
 ```
 
-Only SPARQL `SELECT` is accepted. `raw` defaults to `false`, which queries the
-inferred model. Results use the standard SPARQL Results JSON format.
+`kind` is one of `uri`, `blankNode`, or `literal`. URI values, including predicate
+values, must be absolute. Blank-node values may be written as `_:label` or `label`.
+For literals, `datatype` and `language` are optional; do not set both. When changing
+or removing an existing literal, copy its complete representation from the graph
+response so the RDF statement matches exactly.
+
+An RDF triple is represented as:
+
+```json
+{
+  "subject": {
+    "value": "_:object1",
+    "kind": "blankNode",
+    "datatype": null,
+    "language": null
+  },
+  "predicate": "urn:example:inspectionStatus",
+  "object": {
+    "value": "checked",
+    "kind": "literal",
+    "datatype": "http://www.w3.org/2001/XMLSchema#string",
+    "language": ""
+  }
+}
+```
+
+### Read the asserted ABox
+
+```bash
+curl -s "$BASE/knowledge/abox"
+```
+
+Example response fragment:
+
+```json
+{
+  "triples": [
+    {
+      "subject": {
+        "value": "_:b123",
+        "kind": "blankNode",
+        "datatype": null,
+        "language": null
+      },
+      "predicate": "http://pst.istc.cnr.it/ontologies/2019/01/soho#hasLabel",
+      "object": {
+        "value": "milk_box",
+        "kind": "literal",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string",
+        "language": ""
+      }
+    }
+  ],
+  "resourceLabels": {
+    "_:b123": "milk_box"
+  },
+  "inferenceDirty": false
+}
+```
+
+`triples` contains statements whose subjects belong to the connected, labeled
+scenario ABox. TBox resources may occur as objects of ABox assertions such as
+`rdf:type`, but ontology axioms are not returned as editable triples.
+`resourceLabels` maps RDF resource identifiers to concise display names for clients;
+it does not rename or modify resources.
+
+### Reset the example ABox
+
+```bash
+curl -i -X POST "$BASE/knowledge/abox/reset"
+```
+
+The response body is plain text:
+
+```text
+Ok
+```
+
+Reset is destructive with respect to current in-memory ABox edits. It restores the
+raw model snapshot captured immediately after loading the ontology, recreates one
+fresh Mobipick example ABox, and refreshes inference. Repeated calls do not
+accumulate generated resources. In the example, the manipulation location is also
+a navigation location: it has the traversability and reachability dispositions
+needed to navigate to and interact with the graspable object.
+
+### Add an asserted triple
+
+Use a subject identifier obtained from `GET /knowledge/abox`, or a new non-vocabulary
+absolute URI. This example uses an existing blank node:
+
+```bash
+curl -s -X POST "$BASE/knowledge/triples" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "triple": {
+      "subject": {"value":"_:b123","kind":"blankNode","datatype":null,"language":null},
+      "predicate": "urn:example:inspectionStatus",
+      "object": {"value":"checked","kind":"literal","datatype":"http://www.w3.org/2001/XMLSchema#string","language":""}
+    }
+  }'
+```
+
+Response:
+
+```json
+{"inferenceDirty":true}
+```
+
+Ontology vocabulary resources cannot be edited as ABox subjects. The operation is
+idempotent at RDF-model level: adding an already present statement does not create
+a duplicate, although inference is still marked dirty.
+
+### Replace an asserted triple
+
+`previous` must exactly match an existing editable statement. `replacement` uses
+the same RDF term format:
+
+```bash
+curl -s -X PUT "$BASE/knowledge/triples" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "previous": {
+      "subject": {"value":"_:b123","kind":"blankNode","datatype":null,"language":null},
+      "predicate": "urn:example:inspectionStatus",
+      "object": {"value":"checked","kind":"literal","datatype":"http://www.w3.org/2001/XMLSchema#string","language":""}
+    },
+    "replacement": {
+      "subject": {"value":"_:b123","kind":"blankNode","datatype":null,"language":null},
+      "predicate": "urn:example:inspectionStatus",
+      "object": {"value":"approved","kind":"literal","datatype":"http://www.w3.org/2001/XMLSchema#string","language":""}
+    }
+  }'
+```
+
+Successful response: `{"inferenceDirty":true}`.
+
+### Remove an asserted triple
+
+Removal uses `POST` rather than `DELETE` because the exact RDF statement, including
+literal metadata and blank-node identity, is supplied as a JSON request body:
+
+```bash
+curl -s -X POST "$BASE/knowledge/triples/remove" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "triple": {
+      "subject": {"value":"_:b123","kind":"blankNode","datatype":null,"language":null},
+      "predicate": "urn:example:inspectionStatus",
+      "object": {"value":"approved","kind":"literal","datatype":"http://www.w3.org/2001/XMLSchema#string","language":""}
+    }
+  }'
+```
+
+Successful response: `{"inferenceDirty":true}`. Removing or replacing a statement
+outside the editable ABox returns HTTP 400.
+
+### Refresh inference
+
+```bash
+curl -s -X POST "$BASE/reasoning/refresh"
+```
+
+Response:
+
+```json
+{"inferenceDirty":false}
+```
+
+This rebinds the existing Jena reasoner. It does not construct another model, edit
+the ABox, or apply inferred action effects to current factual state.
+
+### Query raw or inferred knowledge with SPARQL
+
+```bash
+curl -s -X POST "$BASE/sparql/select" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "sparql": "SELECT ?function WHERE { ?function a <http://pst.istc.cnr.it/ontologies/2026/metacognition#MoveTo> } ORDER BY ?function",
+    "raw": false
+  }'
+```
+
+Only `SELECT` is accepted. `raw` is optional and defaults to `false`. Inferred
+queries refresh/rebind inference first; raw queries read assertions without doing
+so. The response follows the standard SPARQL Results JSON format:
+
+```json
+{
+  "head": {"vars": ["function"]},
+  "results": {
+    "bindings": [
+      {
+        "function": {"type": "bnode", "value": "..."}
+      }
+    ]
+  }
+}
+```
 
 ### Obtain contextual action schemas
 
-```http
-GET /metacognition/api/abstraction
+```bash
+curl -s "$BASE/abstraction"
 ```
 
-The endpoint refreshes and reads the current inferred model, but does not modify the
-knowledge graph. A schema includes its Function type, deterministic signature ID,
-grounding count, typed parameters, Fluent constraints, preconditions, positive
-effects, and negative effects.
-
-Example fragment:
+This is read-only and does not refresh stale inference. Output is deterministic for
+the same inferred model and sorted independently of Jena iteration order. Example:
 
 ```json
 {
   "schemas": [
     {
       "functionType": "MoveTo",
+      "functionTypeUri": "http://pst.istc.cnr.it/ontologies/2026/metacognition#MoveTo",
       "signatureId": "sha256:...",
       "groundingCount": 2,
-      "fluentConstraints": [
+      "parameters": [
         {
-          "association": "assertsFluent",
-          "fluentType": "RegionChangeFluent",
-          "object": "?target",
-          "quality": "?pose",
-          "initialValue": "?initialDiscretePoseRegion",
-          "resultingValue": "?resultingDiscretePoseRegion"
+          "variable": "?embodiedAgent",
+          "type": "EmbodiedAgent",
+          "typeUri": "http://pst.istc.cnr.it/ontologies/2026/metacognition#EmbodiedAgent",
+          "roles": ["canBePerformedBy"]
+        }
+      ],
+      "alignmentConstraints": [
+        {
+          "association": "assertsAlignment",
+          "alignmentType": "RegionChangeAlignment",
+          "alignmentTypeUri": "http://pst.istc.cnr.it/ontologies/2026/metacognition#RegionChangeAlignment",
+          "objects": ["?robotEmbodiment"],
+          "qualities": ["?pose"],
+          "values": [],
+          "initialValues": ["?initialDiscretePoseRegion"],
+          "resultingValues": ["?resultingDiscretePoseRegion"]
         }
       ],
       "preconditions": [
-        { "object": "?target", "quality": "?pose", "value": "?initialDiscretePoseRegion" }
+        {"object":"?robotEmbodiment","quality":"?pose","value":"?initialDiscretePoseRegion"}
       ],
       "positiveEffects": [
-        { "object": "?target", "quality": "?pose", "value": "?resultingDiscretePoseRegion" }
+        {"object":"?robotEmbodiment","quality":"?pose","value":"?resultingDiscretePoseRegion"}
       ],
       "negativeEffects": [
-        { "object": "?target", "quality": "?pose", "value": "?initialDiscretePoseRegion" }
+        {"object":"?robotEmbodiment","quality":"?pose","value":"?initialDiscretePoseRegion"}
       ]
     }
   ]
 }
 ```
 
-### Inspect schema groundings
+Schemas are grouped by typed relational and alignment structure, not Function type
+alone. `signatureId` is deterministic and is the key used by the grounding endpoint.
 
-```http
-GET /metacognition/api/abstraction/{signatureId}/groundings
+### Inspect the groundings of one schema
+
+Use a signature returned by `/abstraction`:
+
+```bash
+curl -s "$BASE/abstraction/sha256:.../groundings"
 ```
 
-Returns the selected schema plus each inferred Function individual that implements
-it and its planning-relevant triples. Temporary rule-generated resources may appear
-as blank nodes; schema equality does not depend on those identifiers.
+Example response shape:
 
-### Load the bundled example scenario
-
-```http
-POST /metacognition/api/load/mobipick/uc1
+```json
+{
+  "schema": {"functionType":"MoveTo","signatureId":"sha256:..."},
+  "groundings": [
+    {
+      "id": "_:ruleGeneratedFunction",
+      "kind": "blankNode",
+      "triples": [
+        {
+          "subject": "MoveTo",
+          "predicate": "hasTarget",
+          "predicateUri": "http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget",
+          "object": "RobotEmbodiment",
+          "objectKind": "blankNode"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-This is the only endpoint above that changes the raw knowledge model. It asserts the
-bundled Mobipick UC1 environment and robot description and should be used as demo
-data, not as a general-purpose ingestion API.
+The actual `schema` object is complete and has the same structure returned by
+`/abstraction`. Grounding triples are a concise planning-relevant inferred subgraph,
+not the complete RDFS closure. Rule-created resources may be blank nodes. An unknown
+signature returns HTTP 400.
+
+### Validation errors
+
+Domain validation errors return HTTP 400 with a JSON body:
+
+```json
+{"message":"The predicate must be an absolute URI"}
+```
+
+Examples include a missing triple, a non-`SELECT` SPARQL query, an unknown schema
+signature, an invalid URI, or attempting to replace/remove a statement outside the
+editable ABox. Framework-level errors such as malformed JSON use Spring Boot's
+standard error response.
+
+## Integration and usage
+
+### Typical external-client workflow
+
+1. Optionally reset the bundled example with `POST /knowledge/abox/reset`.
+2. Read `GET /knowledge/abox` and retain exact RDF terms, especially blank-node
+   identifiers and literal datatype/language fields.
+3. Submit one or more add, replace, or remove requests. Each response should report
+   `inferenceDirty: true`.
+4. Call `POST /reasoning/refresh` once after the edit batch.
+5. Call `GET /abstraction` and select schemas by `signatureId`.
+6. Call `/abstraction/{signatureId}/groundings` when the contributing inferred
+   Function individuals or triples are needed.
+7. Use `/sparql/select` for additional raw or inferred read-only queries.
+
+The browser tools implement this same flow: the ABox editor mutates assertions and
+marks inference stale; the refresh button rebinds reasoning; the inspection page
+reads resulting schemas and groundings.
+
+### Minimal JavaScript integration
+
+```javascript
+const api = "http://localhost:8080/metacognition/api";
+
+await fetch(`${api}/knowledge/abox/reset`, { method: "POST" });
+
+const graph = await fetch(`${api}/knowledge/abox`).then(response => response.json());
+console.log(graph.triples, graph.resourceLabels, graph.inferenceDirty);
+
+// After any ABox mutation:
+await fetch(`${api}/reasoning/refresh`, { method: "POST" });
+
+const abstraction = await fetch(`${api}/abstraction`).then(response => response.json());
+for (const schema of abstraction.schemas) {
+  console.log(schema.functionType, schema.signatureId, schema.groundingCount);
+}
+```
+
+### Deployment and integration constraints
+
+- Knowledge is in-memory. Restarting the process discards editor changes.
+- Resetting the example ABox deliberately discards current in-memory ABox changes.
+- Blank-node identifiers are valid only for the current model instance. Re-read the
+  ABox after a reset or application restart rather than caching them permanently.
+- There is no authentication, authorization, CORS policy, persistence layer, or
+  multi-user conflict control in the current application. Use a trusted network or
+  place the service behind an appropriate gateway before remote deployment.
+- The API is intended for controlled scenario editing, reasoning inspection, and
+  planning-model generation. It is not a general unrestricted RDF store.
+- No endpoint executes robot Functions or applies schema effects to factual state.
 
 ## Extending cognitive functionality
 
@@ -316,7 +677,7 @@ The safest extension workflow is ontology first, rule second, abstraction third.
 
 ### 1. Extend the ontology
 
-Add or refine Function, Fluent/Diagnosis, Quality, Region, capability, and role
+Add or refine Function, Belief Alignment/Diagnosis, Quality, Region, capability, and role
 definitions in the current `onto/mc_v*.rdf` file. Reuse existing ontology namespaces
 and properties where their semantics apply. Update `MetacognitionDictionary` when a
 new namespace is introduced or Java code genuinely needs a new constant.
@@ -331,18 +692,23 @@ Keep these levels separate:
 ### 2. Add or revise Jena rules
 
 Rules belong in `onto/cognition.rules`. Their antecedents inspect the current ABox;
-their conclusions may create contextual Function and Fluent resources. Rule-created
+their conclusions may create contextual Function and Belief Alignment resources. Rule-created
 resources may use `makeTemp`, because the abstraction groups them structurally.
+This is the single production-rule source loaded by `RuleReasoner`, through the
+`mc.rules-path` setting and the `src/main/resources/onto` link. In particular,
+`inferPickGraspable` is defined there; Java scenario-loading code only asserts its
+ABox premises and never creates inferred `PickGraspable` individuals. Application
+startup fails if the configured rule file is missing or empty.
 
-A change Fluent should connect all identities needed by the schema rather than rely
-on Java-side intuition. For `RegionChangeFluent`, provide:
+A change alignment should connect all identities needed by the schema rather than rely
+on Java-side intuition. For `RegionChangeAlignment`, provide:
 
 ```text
-Function -> Fluent
-Fluent -> concernsObject -> object
-Fluent -> concernsQuality -> quality
-Fluent -> hasInitialValue -> initial Region
-Fluent -> hasResultingValue -> resulting Region
+Function -> Belief Alignment
+Belief Alignment -> concernsObject -> object
+Belief Alignment -> concernsQuality -> quality
+Belief Alignment -> hasInitialValue -> initial Region
+Belief Alignment -> hasResultingValue -> resulting Region
 ```
 
 Do not write a rule that directly applies the resulting Region to the current
@@ -350,7 +716,7 @@ quality merely to express an action effect.
 
 ### 3. Extend abstraction deliberately
 
-If a new Fluent subtype has different transition semantics, update
+If a new Belief Alignment subtype has different transition semantics, update
 `KnowledgeAbstractionService` explicitly. Keep graph traversal out of controllers,
 reuse `ContextReasonerService.readInferredModel`, preserve grounded-resource identity
 when assigning variables, filter overly generic inferred types consistently, and
@@ -363,14 +729,15 @@ the API records instead.
 ### 4. Update inspection and tests
 
 Update `abstraction_inspection.html` when a new semantic construct needs a concise
-visual representation. Keep the page read-only and derive its content from the API.
+visual representation. Keep that page read-only and derive its content from the
+API. Use `knowledge_editor.html` only for controlled scenario ABox editing.
 
 At minimum, add tests for:
 
 - multiple identity-distinct groundings collapsing into one structural schema;
 - different structures of the same Function type producing different schemas;
-- identity reuse across Function and Fluent roles;
-- the new Fluent's precondition/effect mapping;
+- identity reuse across Function and Belief Alignment roles;
+- the new alignment's precondition/effect mapping;
 - deterministic output;
 - read-only abstraction behavior;
 - REST response compatibility; and
@@ -383,8 +750,9 @@ changes together.
 
 - The model is in-memory; persistence and a general external ABox ingestion API are
   not currently provided.
-- The public SPARQL endpoint is intentionally read-only and accepts only `SELECT`.
-- The abstraction supports the planning-relevant Function and Fluent relations
+- The public SPARQL endpoint is intentionally read-only and accepts only `SELECT`;
+  state changes use the dedicated ABox editor endpoints.
+- The abstraction supports the planning-relevant Function and Belief Alignment relations
   implemented by the current ontology. New semantic patterns should be added
   explicitly rather than inferred heuristically.
 - The application currently has no authentication layer; deploy it behind suitable

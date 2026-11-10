@@ -30,9 +30,9 @@ import org.springframework.stereotype.Service;
 
 import it.cnr.istc.pst.mc.api.AbstractionResponse;
 import it.cnr.istc.pst.mc.api.AbstractionResponse.ActionSchema;
-import it.cnr.istc.pst.mc.api.AbstractionResponse.FluentCondition;
-import it.cnr.istc.pst.mc.api.AbstractionResponse.FluentConstraint;
+import it.cnr.istc.pst.mc.api.AbstractionResponse.AlignmentConstraint;
 import it.cnr.istc.pst.mc.api.AbstractionResponse.Parameter;
+import it.cnr.istc.pst.mc.api.AbstractionResponse.StateCondition;
 import it.cnr.istc.pst.mc.api.SchemaGroundingsResponse;
 import it.cnr.istc.pst.mc.api.SchemaGroundingsResponse.FunctionGrounding;
 import it.cnr.istc.pst.mc.api.SchemaGroundingsResponse.Triple;
@@ -40,7 +40,7 @@ import it.cnr.istc.pst.mc.api.SchemaGroundingsResponse.Triple;
 /**
  * Read-only abstraction of inferred Function meta-knowledge. Grounded Function
  * individuals are grouped into contextual action schemas by their typed roles and
- * Fluent patterns. A Region change keeps its initial value as a precondition and
+ * Belief Alignment patterns. A Region change keeps its initial value as a precondition and
  * delete effect, and its resulting value as an add effect; no inferred planning
  * effect is asserted as factual knowledge.
  */
@@ -51,12 +51,12 @@ public class KnowledgeAbstractionService {
     private static final String TARGET = NS_SOHO + "hasTarget";
     private static final String PRECONDITION_ON = NS + "hasPreconditionOn";
     private static final String EFFECT_ON = NS_SOHO + "hasEffectOn";
-    private static final String REQUIRES = NS + "requiresFluent";
-    private static final String ASSERTS = NS + "assertsFluent";
-    private static final String NEGATES = NS + "negatesFluent";
+    private static final String REQUIRES = NS + "requiresAlignment";
+    private static final String ASSERTS = NS + "assertsAlignment";
+    private static final String NEGATES = NS + "negatesAlignment";
     private static final String CONCERNS_OBJECT = NS + "concernsObject";
     private static final String CONCERNS_QUALITY = NS + "concernsQuality";
-    private static final String FLUENT_VALUE = NS + "hasFluentValue";
+    private static final String ALIGNMENT_VALUE = NS + "hasBeliefAlignmentValue";
     private static final String INITIAL_VALUE = NS + "hasInitialValue";
     private static final String RESULTING_VALUE = NS + "hasResultingValue";
 
@@ -65,13 +65,13 @@ public class KnowledgeAbstractionService {
             new Role("hasTarget", TARGET),
             new Role("hasPreconditionOn", PRECONDITION_ON),
             new Role("hasEffectOn", EFFECT_ON));
-    private static final List<FluentRole> FLUENT_ROLES = List.of(
-            new FluentRole("requiresFluent", REQUIRES),
-            new FluentRole("assertsFluent", ASSERTS),
-            new FluentRole("negatesFluent", NEGATES));
+    private static final List<AlignmentRole> ALIGNMENT_ROLES = List.of(
+            new AlignmentRole("requiresAlignment", REQUIRES),
+            new AlignmentRole("assertsAlignment", ASSERTS),
+            new AlignmentRole("negatesAlignment", NEGATES));
     private static final Set<String> GENERIC_TYPES = Set.of(
             NS_OWL + "Thing", NS_RDFS + "Resource", NS_RDFS + "Class",
-            NS_DUL + "Entity", NS_DUL + "Object", NS_SOHO + "Function", NS + "Fluent");
+            NS_DUL + "Entity", NS_DUL + "Object", NS_SOHO + "Function", NS + "BeliefAlignment");
     private static final Set<String> UNIVERSAL_TYPES = Set.of(
             NS_OWL + "Thing", NS_RDFS + "Resource", NS_RDFS + "Class", NS_DUL + "Entity");
 
@@ -135,21 +135,21 @@ public class KnowledgeAbstractionService {
         for (Role role : FUNCTION_ROLES) {
             collectStatements(model, function, role.uri(), statements, participants);
         }
-        for (FluentRole role : FLUENT_ROLES) {
+        for (AlignmentRole role : ALIGNMENT_ROLES) {
             Property property = model.createProperty(role.uri());
             for (org.apache.jena.rdf.model.Statement statement : model.listStatements(function, property, (RDFNode) null).toList()) {
                 statements.add(statement);
                 if (!statement.getObject().isResource()) continue;
-                Resource fluent = statement.getResource();
-                participants.add(fluent);
-                collectStatements(model, fluent, CONCERNS_OBJECT, statements, participants);
-                collectStatements(model, fluent, CONCERNS_QUALITY, statements, participants);
-                boolean specializedValues = model.contains(fluent, model.createProperty(INITIAL_VALUE))
-                        || model.contains(fluent, model.createProperty(RESULTING_VALUE));
-                collectStatements(model, fluent, INITIAL_VALUE, statements, participants);
-                collectStatements(model, fluent, RESULTING_VALUE, statements, participants);
+                Resource alignment = statement.getResource();
+                participants.add(alignment);
+                collectStatements(model, alignment, CONCERNS_OBJECT, statements, participants);
+                collectStatements(model, alignment, CONCERNS_QUALITY, statements, participants);
+                boolean specializedValues = model.contains(alignment, model.createProperty(INITIAL_VALUE))
+                        || model.contains(alignment, model.createProperty(RESULTING_VALUE));
+                collectStatements(model, alignment, INITIAL_VALUE, statements, participants);
+                collectStatements(model, alignment, RESULTING_VALUE, statements, participants);
                 if (!specializedValues) {
-                    collectStatements(model, fluent, FLUENT_VALUE, statements, participants);
+                    collectStatements(model, alignment, ALIGNMENT_VALUE, statements, participants);
                 }
             }
         }
@@ -193,7 +193,7 @@ public class KnowledgeAbstractionService {
         for (Role role : FUNCTION_ROLES) {
             model.listSubjectsWithProperty(model.createProperty(role.uri())).forEachRemaining(found::add);
         }
-        for (FluentRole role : FLUENT_ROLES) {
+        for (AlignmentRole role : ALIGNMENT_ROLES) {
             model.listSubjectsWithProperty(model.createProperty(role.uri())).forEachRemaining(found::add);
         }
         return found.stream().sorted(Comparator.comparing(this::resourceKey)).toList();
@@ -211,38 +211,23 @@ public class KnowledgeAbstractionService {
                     resourceRoles.computeIfAbsent(resource, ignored -> new TreeSet<>()).add(role.name()));
         }
 
-        List<GroundFluent> fluents = new ArrayList<>();
-        for (FluentRole fluentRole : FLUENT_ROLES) {
-            for (Resource fluent : objects(model, function, fluentRole.uri())) {
-                TypeRef fluentType = selectMostSpecificType(model, fluent, UNIVERSAL_TYPES);
-                List<Resource> objects = objects(model, fluent, CONCERNS_OBJECT);
-                List<Resource> qualities = objects(model, fluent, CONCERNS_QUALITY);
-                List<Resource> initialValues = objects(model, fluent, INITIAL_VALUE);
-                List<Resource> resultingValues = objects(model, fluent, RESULTING_VALUE);
-                List<Resource> legacyValues = initialValues.isEmpty() && resultingValues.isEmpty()
-                        ? objects(model, fluent, FLUENT_VALUE) : List.of();
-                for (Resource object : objects) {
-                    resourceRoles.computeIfAbsent(object, ignored -> new TreeSet<>()).add("concernsObject");
-                    for (Resource quality : qualities) {
-                        resourceRoles.computeIfAbsent(quality, ignored -> new TreeSet<>()).add("concernsQuality");
-                        if (!initialValues.isEmpty() || !resultingValues.isEmpty()) {
-                            List<Resource> initials = initialValues.isEmpty() ? java.util.Collections.singletonList(null) : initialValues;
-                            List<Resource> results = resultingValues.isEmpty() ? java.util.Collections.singletonList(null) : resultingValues;
-                            for (Resource initial : initials) {
-                                if (initial != null) resourceRoles.computeIfAbsent(initial, ignored -> new TreeSet<>()).add("hasInitialValue");
-                                for (Resource result : results) {
-                                    if (result != null) resourceRoles.computeIfAbsent(result, ignored -> new TreeSet<>()).add("hasResultingValue");
-                                    fluents.add(new GroundFluent(fluentRole.name(), fluentType, object, quality, initial, result, null));
-                                }
-                            }
-                        } else {
-                            for (Resource value : legacyValues) {
-                                resourceRoles.computeIfAbsent(value, ignored -> new TreeSet<>()).add("hasFluentValue");
-                                fluents.add(new GroundFluent(fluentRole.name(), fluentType, object, quality, null, null, value));
-                            }
-                        }
-                    }
-                }
+        List<GroundAlignment> alignments = new ArrayList<>();
+        for (AlignmentRole alignmentRole : ALIGNMENT_ROLES) {
+            for (Resource alignment : objects(model, function, alignmentRole.uri())) {
+                TypeRef alignmentType = selectMostSpecificType(model, alignment, UNIVERSAL_TYPES);
+                List<Resource> objects = objects(model, alignment, CONCERNS_OBJECT);
+                List<Resource> qualities = objects(model, alignment, CONCERNS_QUALITY);
+                List<Resource> initialValues = objects(model, alignment, INITIAL_VALUE);
+                List<Resource> resultingValues = objects(model, alignment, RESULTING_VALUE);
+                List<Resource> values = initialValues.isEmpty() && resultingValues.isEmpty()
+                        ? objects(model, alignment, ALIGNMENT_VALUE) : List.of();
+                addRoles(resourceRoles, objects, "concernsObject");
+                addRoles(resourceRoles, qualities, "concernsQuality");
+                addRoles(resourceRoles, values, "hasBeliefAlignmentValue");
+                addRoles(resourceRoles, initialValues, "hasInitialValue");
+                addRoles(resourceRoles, resultingValues, "hasResultingValue");
+                alignments.add(new GroundAlignment(alignmentRole.name(), alignmentType, objects, qualities,
+                        values, initialValues, resultingValues));
             }
         }
 
@@ -253,7 +238,7 @@ public class KnowledgeAbstractionService {
         }
 
         List<Resource> ordered = resourceRoles.keySet().stream()
-                .sorted(Comparator.comparing((Resource resource) -> nodeFingerprint(resource, resourceRoles, types, fluents))
+                .sorted(Comparator.comparing((Resource resource) -> nodeFingerprint(resource, resourceRoles, types, alignments))
                         .thenComparing(this::resourceKey))
                 .toList();
         Map<Resource, String> variables = assignVariables(ordered, resourceRoles, types);
@@ -263,38 +248,42 @@ public class KnowledgeAbstractionService {
                         types.get(resource).uri(), List.copyOf(resourceRoles.get(resource))))
                 .sorted(Comparator.comparing(Parameter::variable))
                 .toList();
-        List<FluentConstraint> constraints = constraints(fluents, variables);
-        List<FluentCondition> preconditions = preconditions(fluents, variables);
-        List<FluentCondition> positive = positiveEffects(fluents, variables);
-        List<FluentCondition> negative = negativeEffects(fluents, variables);
+        List<AlignmentConstraint> constraints = constraints(alignments, variables);
+        List<StateCondition> preconditions = preconditions(alignments, variables);
+        List<StateCondition> positive = positiveEffects(alignments, variables);
+        List<StateCondition> negative = negativeEffects(alignments, variables);
 
         String canonical = canonical(functionType, parameters, constraints, preconditions, positive, negative);
         return new Grounding(functionType, parameters, constraints, preconditions, positive, negative, canonical);
     }
 
+    private void addRoles(Map<Resource, Set<String>> roles, List<Resource> resources, String role) {
+        resources.forEach(resource -> roles.computeIfAbsent(resource, ignored -> new TreeSet<>()).add(role));
+    }
+
     private String nodeFingerprint(Resource resource, Map<Resource, Set<String>> roles,
-            Map<Resource, TypeRef> types, List<GroundFluent> fluents) {
+            Map<Resource, TypeRef> types, List<GroundAlignment> alignments) {
         List<String> incident = new ArrayList<>();
-        for (GroundFluent fluent : fluents) {
-            String shape = fluentShape(fluent, types);
-            if (resource.equals(fluent.object())) incident.add(fluent.role() + ":object:" + shape);
-            if (resource.equals(fluent.quality())) incident.add(fluent.role() + ":quality:" + shape);
-            if (resource.equals(fluent.initialValue())) incident.add(fluent.role() + ":initial:" + shape);
-            if (resource.equals(fluent.resultingValue())) incident.add(fluent.role() + ":resulting:" + shape);
-            if (resource.equals(fluent.legacyValue())) incident.add(fluent.role() + ":value:" + shape);
+        for (GroundAlignment alignment : alignments) {
+            String shape = alignmentShape(alignment, types);
+            if (alignment.objects().contains(resource)) incident.add(alignment.role() + ":object:" + shape);
+            if (alignment.qualities().contains(resource)) incident.add(alignment.role() + ":quality:" + shape);
+            if (alignment.values().contains(resource)) incident.add(alignment.role() + ":value:" + shape);
+            if (alignment.initialValues().contains(resource)) incident.add(alignment.role() + ":initial:" + shape);
+            if (alignment.resultingValues().contains(resource)) incident.add(alignment.role() + ":resulting:" + shape);
         }
         incident.sort(String::compareTo);
         return types.get(resource).uri() + "|" + String.join(",", roles.get(resource)) + "|" + String.join(",", incident);
     }
 
-    private String fluentShape(GroundFluent fluent, Map<Resource, TypeRef> types) {
-        return typeUri(fluent.object(), types) + ":" + typeUri(fluent.quality(), types) + ":"
-                + typeUri(fluent.initialValue(), types) + ":" + typeUri(fluent.resultingValue(), types) + ":"
-                + typeUri(fluent.legacyValue(), types);
+    private String alignmentShape(GroundAlignment alignment, Map<Resource, TypeRef> types) {
+        return typeUris(alignment.objects(), types) + ":" + typeUris(alignment.qualities(), types) + ":"
+                + typeUris(alignment.values(), types) + ":" + typeUris(alignment.initialValues(), types) + ":"
+                + typeUris(alignment.resultingValues(), types);
     }
 
-    private String typeUri(Resource resource, Map<Resource, TypeRef> types) {
-        return resource == null ? "-" : types.get(resource).uri();
+    private String typeUris(List<Resource> resources, Map<Resource, TypeRef> types) {
+        return resources.stream().map(resource -> types.get(resource).uri()).sorted().collect(Collectors.joining(",", "[", "]"));
     }
 
     private Map<Resource, String> assignVariables(List<Resource> resources, Map<Resource, Set<String>> roles,
@@ -315,7 +304,7 @@ public class KnowledgeAbstractionService {
         if (roles.contains("hasPreconditionOn") || roles.contains("hasEffectOn") || roles.contains("concernsQuality")) return decap(type, "quality");
         if (roles.contains("hasInitialValue")) return "initial" + capitalize(type, "Value");
         if (roles.contains("hasResultingValue")) return "resulting" + capitalize(type, "Value");
-        if (roles.contains("hasFluentValue")) return decap(type, "value");
+        if (roles.contains("hasBeliefAlignmentValue")) return decap(type, "value");
         return decap(type, "parameter");
     }
 
@@ -333,60 +322,71 @@ public class KnowledgeAbstractionService {
         return Character.toUpperCase(cleaned.charAt(0)) + cleaned.substring(1);
     }
 
-    private List<FluentConstraint> constraints(List<GroundFluent> fluents, Map<Resource, String> variables) {
-        return fluents.stream().map(fluent -> new FluentConstraint(fluent.role(),
-                        fluent.type() == null ? "Fluent" : fluent.type().name(),
-                        fluent.type() == null ? NS + "Fluent" : fluent.type().uri(),
-                        variables.get(fluent.object()), variables.get(fluent.quality()),
-                        variables.get(fluent.initialValue() != null ? fluent.initialValue()
-                                : fluent.role().equals("requiresFluent") ? fluent.legacyValue() : null),
-                        variables.get(fluent.resultingValue() != null ? fluent.resultingValue()
-                                : fluent.role().equals("requiresFluent") ? null : fluent.legacyValue())))
+    private List<AlignmentConstraint> constraints(List<GroundAlignment> alignments, Map<Resource, String> variables) {
+        return alignments.stream().map(alignment -> new AlignmentConstraint(alignment.role(),
+                        alignment.type() == null ? "BeliefAlignment" : alignment.type().name(),
+                        alignment.type() == null ? NS + "BeliefAlignment" : alignment.type().uri(),
+                        variableList(alignment.objects(), variables), variableList(alignment.qualities(), variables),
+                        variableList(alignment.values(), variables), variableList(alignment.initialValues(), variables),
+                        variableList(alignment.resultingValues(), variables)))
                 .distinct()
-                .sorted(Comparator.comparing(FluentConstraint::association)
-                        .thenComparing(FluentConstraint::object).thenComparing(FluentConstraint::quality)
-                        .thenComparing(constraint -> nullSafe(constraint.initialValue()))
-                        .thenComparing(constraint -> nullSafe(constraint.resultingValue())))
+                .sorted(Comparator.comparing(AlignmentConstraint::association)
+                        .thenComparing(AlignmentConstraint::alignmentType)
+                        .thenComparing(constraint -> String.join(",", constraint.objects()))
+                        .thenComparing(constraint -> String.join(",", constraint.qualities())))
                 .toList();
     }
 
-    private List<FluentCondition> preconditions(List<GroundFluent> fluents, Map<Resource, String> variables) {
-        return fluents.stream()
-                .filter(fluent -> fluent.initialValue() != null
-                        || fluent.role().equals("requiresFluent") && fluent.legacyValue() != null)
-                .map(fluent -> condition(fluent, fluent.initialValue() != null ? fluent.initialValue() : fluent.legacyValue(), variables))
-                .distinct().sorted(conditionComparator()).toList();
+    private List<String> variableList(List<Resource> resources, Map<Resource, String> variables) {
+        return resources.stream().map(variables::get).sorted().toList();
     }
 
-    private List<FluentCondition> positiveEffects(List<GroundFluent> fluents, Map<Resource, String> variables) {
-        return fluents.stream()
-                .filter(fluent -> fluent.resultingValue() != null
-                        || fluent.role().equals("assertsFluent") && fluent.legacyValue() != null)
-                .map(fluent -> condition(fluent,
-                        fluent.resultingValue() != null ? fluent.resultingValue() : fluent.legacyValue(), variables))
-                .distinct().sorted(conditionComparator()).toList();
+    private List<StateCondition> preconditions(List<GroundAlignment> alignments, Map<Resource, String> variables) {
+        return alignments.stream().flatMap(alignment -> {
+                    if (!alignment.initialValues().isEmpty()) return conditions(alignment, alignment.initialValues(), variables).stream();
+                    if (alignment.role().equals("requiresAlignment")) return conditions(alignment, alignment.values(), variables).stream();
+                    return java.util.stream.Stream.empty();
+                }).distinct().sorted(conditionComparator()).toList();
     }
 
-    private List<FluentCondition> negativeEffects(List<GroundFluent> fluents, Map<Resource, String> variables) {
-        return fluents.stream()
-                .filter(fluent -> fluent.initialValue() != null
-                        || fluent.role().equals("negatesFluent") && fluent.legacyValue() != null)
-                .map(fluent -> condition(fluent,
-                        fluent.initialValue() != null ? fluent.initialValue() : fluent.legacyValue(), variables))
-                .distinct().sorted(conditionComparator()).toList();
+    private List<StateCondition> positiveEffects(List<GroundAlignment> alignments, Map<Resource, String> variables) {
+        return alignments.stream().flatMap(alignment -> {
+                    if (!alignment.resultingValues().isEmpty()) return conditions(alignment, alignment.resultingValues(), variables).stream();
+                    if (alignment.role().equals("assertsAlignment") && isScalar(alignment))
+                        return conditions(alignment, alignment.values(), variables).stream();
+                    return java.util.stream.Stream.empty();
+                }).distinct().sorted(conditionComparator()).toList();
     }
 
-    private FluentCondition condition(GroundFluent fluent, Resource value, Map<Resource, String> variables) {
-        return new FluentCondition(variables.get(fluent.object()), variables.get(fluent.quality()), variables.get(value));
+    private List<StateCondition> negativeEffects(List<GroundAlignment> alignments, Map<Resource, String> variables) {
+        return alignments.stream().flatMap(alignment -> {
+                    if (!alignment.initialValues().isEmpty()) return conditions(alignment, alignment.initialValues(), variables).stream();
+                    if (alignment.role().equals("negatesAlignment") && isScalar(alignment))
+                        return conditions(alignment, alignment.values(), variables).stream();
+                    return java.util.stream.Stream.empty();
+                }).distinct().sorted(conditionComparator()).toList();
     }
 
-    private Comparator<FluentCondition> conditionComparator() {
-        return Comparator.comparing(FluentCondition::object).thenComparing(FluentCondition::quality)
-                .thenComparing(FluentCondition::value);
+    private boolean isScalar(GroundAlignment alignment) {
+        return alignment.objects().size() == 1 && alignment.qualities().size() == 1 && alignment.values().size() == 1;
     }
 
-    private String nullSafe(String value) {
-        return value == null ? "" : value;
+    private List<StateCondition> conditions(GroundAlignment alignment, List<Resource> values,
+            Map<Resource, String> variables) {
+        List<StateCondition> result = new ArrayList<>();
+        for (Resource object : alignment.objects()) {
+            for (Resource quality : alignment.qualities()) {
+                for (Resource value : values) {
+                    result.add(new StateCondition(variables.get(object), variables.get(quality), variables.get(value)));
+                }
+            }
+        }
+        return result;
+    }
+
+    private Comparator<StateCondition> conditionComparator() {
+        return Comparator.comparing(StateCondition::object).thenComparing(StateCondition::quality)
+                .thenComparing(StateCondition::value);
     }
 
     private TypeRef selectType(Model model, Resource resource) {
@@ -442,8 +442,8 @@ public class KnowledgeAbstractionService {
     }
 
     private String canonical(TypeRef functionType, List<Parameter> parameters,
-            List<FluentConstraint> constraints, List<FluentCondition> preconditions,
-            List<FluentCondition> positive, List<FluentCondition> negative) {
+            List<AlignmentConstraint> constraints, List<StateCondition> preconditions,
+            List<StateCondition> positive, List<StateCondition> negative) {
         return functionType.uri() + "|" + parameters + "|constraints=" + constraints + "|pre=" + preconditions
                 + "|pos=" + positive + "|neg=" + negative;
     }
@@ -469,13 +469,13 @@ public class KnowledgeAbstractionService {
     }
 
     private record Role(String name, String uri) { }
-    private record FluentRole(String name, String uri) { }
+    private record AlignmentRole(String name, String uri) { }
     private record TypeRef(String name, String uri) { }
-    private record GroundFluent(String role, TypeRef type, Resource object, Resource quality,
-            Resource initialValue, Resource resultingValue, Resource legacyValue) { }
-    private record Grounding(TypeRef functionType, List<Parameter> parameters, List<FluentConstraint> constraints,
-            List<FluentCondition> preconditions, List<FluentCondition> positiveEffects,
-            List<FluentCondition> negativeEffects, String canonical) { }
+    private record GroundAlignment(String role, TypeRef type, List<Resource> objects, List<Resource> qualities,
+            List<Resource> values, List<Resource> initialValues, List<Resource> resultingValues) { }
+    private record Grounding(TypeRef functionType, List<Parameter> parameters, List<AlignmentConstraint> constraints,
+            List<StateCondition> preconditions, List<StateCondition> positiveEffects,
+            List<StateCondition> negativeEffects, String canonical) { }
 
     private final class Aggregate {
         private final Grounding grounding;

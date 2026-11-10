@@ -64,10 +64,11 @@
     <nav class="nav" aria-label="Metacognition tools">
       <a href="/sparql_gui.html">SPARQL console</a>
       <a class="active" href="/abstraction_inspection.html">Knowledge inspection</a>
+      <a href="/knowledge_editor.html">ABox editor</a>
     </nav>
     <header>
       <h1>Knowledge Abstraction Inspection</h1>
-      <p class="subtitle">Inspect contextual action schemas and the inferred Function and Fluent meta-knowledge behind them. This view is read-only.</p>
+      <p class="subtitle">Inspect contextual action schemas and the inferred Function and Belief Alignment meta-knowledge behind them. This view is read-only.</p>
     </header>
     <div class="toolbar">
       <span id="status" class="status muted">Loading abstraction…</span>
@@ -115,7 +116,7 @@
         const title=document.createElement('strong'); title.textContent=schema.functionType;
         const badge=document.createElement('span'); badge.className='badge'; badge.textContent=`${schema.groundingCount} grounding${schema.groundingCount===1?'':'s'} · ${schema.signatureId}`;
         button.append(title,badge);
-        if(schema.fluentConstraints?.length){ const preview=document.createElement('span'); preview.className='constraint-preview'; preview.textContent=schema.fluentConstraints.map(constraintLabel).join(' · '); button.append(preview); }
+        if(schema.alignmentConstraints?.length){ const preview=document.createElement('span'); preview.className='constraint-preview'; preview.textContent=schema.alignmentConstraints.map(constraintLabel).join(' · '); button.append(preview); }
         button.addEventListener('click',()=>selectSchema(schema.signatureId));
         const details=document.createElement('details'); const summary=document.createElement('summary'); summary.textContent='Schema JSON';
         const pre=document.createElement('pre'); pre.textContent=json(schema); details.append(summary,pre); wrap.append(button,details); schemasEl.append(wrap);
@@ -135,16 +136,21 @@
     function renderDetail(payload){
       detailEl.className=''; detailEl.replaceChildren();
       const heading=document.createElement('h2'); heading.textContent=`${payload.schema.functionType} groundings`;
-      const note=document.createElement('p'); note.className='muted'; note.textContent=`${payload.groundings.length} inferred Function individual(s) share this typed relational and Fluent pattern.`;
+      const note=document.createElement('p'); note.className='muted'; note.textContent=`${payload.groundings.length} inferred Function individual(s) share this typed relational and Belief Alignment pattern.`;
       const constraints=document.createElement('div'); constraints.className='constraint-panel';
-      (payload.schema.fluentConstraints||[]).forEach(constraint=>{ const row=document.createElement('div'); row.className='constraint-row'; const association=document.createElement('span'); association.textContent=`${constraint.association} ${constraint.fluentType}: ${constraint.object}.${constraint.quality} `; const transition=document.createElement('span'); transition.className='transition'; transition.textContent=`delete ${constraint.initialValue||'∅'} → add ${constraint.resultingValue||'∅'}`; row.append(association,transition); constraints.append(row); });
+      (payload.schema.alignmentConstraints||[]).forEach(constraint=>{ const row=document.createElement('div'); row.className='constraint-row'; const association=document.createElement('span'); association.textContent=`${constraint.association} ${constraint.alignmentType}: objects [${constraint.objects.join(', ')}], qualities [${constraint.qualities.join(', ')}] `; const transition=document.createElement('span'); transition.className='transition'; transition.textContent=alignmentValues(constraint); row.append(association,transition); constraints.append(row); });
       const list=document.createElement('div'); list.className='grounding-list';
       payload.groundings.forEach((grounding,index)=>list.append(renderGrounding(grounding,index)));
       detailEl.append(heading,note,constraints,list);
     }
 
     function constraintLabel(constraint){
-      return `${constraint.fluentType}: delete ${constraint.initialValue||'∅'} → add ${constraint.resultingValue||'∅'}`;
+      return `${constraint.alignmentType}: ${alignmentValues(constraint)}`;
+    }
+
+    function alignmentValues(constraint){
+      if(constraint.initialValues.length||constraint.resultingValues.length) return `delete [${constraint.initialValues.join(', ')||'∅'}] → add [${constraint.resultingValues.join(', ')||'∅'}]`;
+      return `values [${constraint.values.join(', ')||'∅'}]`;
     }
 
     function renderGrounding(grounding,index){
@@ -168,9 +174,9 @@
       const structuralRoles=new Set(['canBePerformedBy','hasTarget','hasPreconditionOn','hasEffectOn']);
       const result=grounding.triples.filter(t=>t.subject===grounding.id && structuralRoles.has(t.predicate))
         .map(t=>({role:t.predicate,value:short(t.object)}));
-      ['requiresFluent','assertsFluent','negatesFluent'].forEach(role=>{
+      ['requiresAlignment','assertsAlignment','negatesAlignment'].forEach(role=>{
         const count=grounding.triples.filter(t=>t.subject===grounding.id && t.predicate===role).length;
-        if(count) result.push({role,value:`${count} fluent${count===1?'':'s'}`});
+        if(count) result.push({role,value:`${count} alignment${count===1?'':'s'}`});
       });
       return result;
     }

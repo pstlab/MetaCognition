@@ -43,7 +43,7 @@ class KnowledgeAbstractionServiceTests {
     }
 
     @Test
-    void preservesIdentityAndMapsAllFluentRoles() {
+    void preservesIdentityAndMapsAllAlignmentRoles() {
         Model model = ModelFactory.createDefaultModel();
         addGrounding(model, "one", true, true, true, true, true);
 
@@ -61,23 +61,23 @@ class KnowledgeAbstractionServiceTests {
                 assertThat(condition.quality()).isEqualTo(qualityVariable));
         assertThat(schema.negativeEffects()).singleElement().satisfies(condition ->
                 assertThat(condition.quality()).isEqualTo(qualityVariable));
-        assertThat(schema.fluentConstraints()).hasSize(3).allSatisfy(constraint -> {
-            assertThat(constraint.fluentType()).isEqualTo("RegionChangeFluent");
-            assertThat(constraint.quality()).isEqualTo(qualityVariable);
-            assertThat(constraint.initialValue()).startsWith("?initial");
-            assertThat(constraint.resultingValue()).startsWith("?resulting");
-            assertThat(constraint.initialValue()).isNotEqualTo(constraint.resultingValue());
+        assertThat(schema.alignmentConstraints()).hasSize(3).allSatisfy(constraint -> {
+            assertThat(constraint.alignmentType()).isEqualTo("RegionChangeAlignment");
+            assertThat(constraint.qualities()).containsExactly(qualityVariable);
+            assertThat(constraint.initialValues()).singleElement().satisfies(value -> assertThat(value).startsWith("?initial"));
+            assertThat(constraint.resultingValues()).singleElement().satisfies(value -> assertThat(value).startsWith("?resulting"));
+            assertThat(constraint.initialValues()).isNotEqualTo(constraint.resultingValues());
         });
     }
 
     @Test
-    void regionChangeProducesDeleteAndAddEffectsWithoutExplicitNegatesFluent() {
+    void regionChangeProducesDeleteAndAddEffectsWithoutExplicitNegatesAlignment() {
         Model model = ModelFactory.createDefaultModel();
         addGrounding(model, "change", true, true, false, true, false);
 
         ActionSchema schema = service.abstractModel(model).schemas().get(0);
-        String initial = schema.fluentConstraints().get(0).initialValue();
-        String resulting = schema.fluentConstraints().get(0).resultingValue();
+        String initial = schema.alignmentConstraints().get(0).initialValues().get(0);
+        String resulting = schema.alignmentConstraints().get(0).resultingValues().get(0);
 
         assertThat(schema.preconditions()).singleElement().satisfies(condition ->
                 assertThat(condition.value()).isEqualTo(initial));
@@ -112,9 +112,9 @@ class KnowledgeAbstractionServiceTests {
         assertThat(response.groundings()).allSatisfy(grounding -> {
             assertThat(grounding.triples()).extracting(SchemaGroundingsResponse.Triple::predicate)
                     .contains("canBePerformedBy", "hasTarget", "hasPreconditionOn", "hasEffectOn",
-                            "requiresFluent", "assertsFluent", "negatesFluent",
+                            "requiresAlignment", "assertsAlignment", "negatesAlignment",
                             "concernsObject", "concernsQuality", "hasInitialValue", "hasResultingValue", "type")
-                    .doesNotContain("hasFluentValue");
+                    .doesNotContain("hasBeliefAlignmentValue");
             assertThat(grounding.triples().stream().filter(triple -> triple.predicate().equals("type"))
                     .collect(java.util.stream.Collectors.groupingBy(SchemaGroundingsResponse.Triple::subject)))
                     .allSatisfy((subject, types) -> assertThat(types).hasSize(1));
@@ -133,16 +133,16 @@ class KnowledgeAbstractionServiceTests {
                 .addProperty(model.createProperty(SOHO + "hasTarget"), target);
         if (precondition) function.addProperty(model.createProperty(MC + "hasPreconditionOn"), quality);
         if (effect) function.addProperty(model.createProperty(SOHO + "hasEffectOn"), quality);
-        if (requires) addFluent(model, function, "requiresFluent", "required-" + suffix, target, quality, initialValue, resultingValue);
-        if (asserts) addFluent(model, function, "assertsFluent", "asserted-" + suffix, target, quality, initialValue, resultingValue);
-        if (negates) addFluent(model, function, "negatesFluent", "negated-" + suffix, target, quality, initialValue, resultingValue);
+        if (requires) addAlignment(model, function, "requiresAlignment", "required-" + suffix, target, quality, initialValue, resultingValue);
+        if (asserts) addAlignment(model, function, "assertsAlignment", "asserted-" + suffix, target, quality, initialValue, resultingValue);
+        if (negates) addAlignment(model, function, "negatesAlignment", "negated-" + suffix, target, quality, initialValue, resultingValue);
     }
 
-    private void addFluent(Model model, Resource function, String role, String id,
+    private void addAlignment(Model model, Resource function, String role, String id,
             Resource object, Resource quality, Resource initialValue, Resource resultingValue) {
-        Resource fluent = typed(model, id, "RegionChangeFluent");
-        function.addProperty(model.createProperty(MC + role), fluent);
-        fluent.addProperty(model.createProperty(MC + "concernsObject"), object)
+        Resource alignment = typed(model, id, "RegionChangeAlignment");
+        function.addProperty(model.createProperty(MC + role), alignment);
+        alignment.addProperty(model.createProperty(MC + "concernsObject"), object)
                 .addProperty(model.createProperty(MC + "concernsQuality"), quality)
                 .addProperty(model.createProperty(MC + "hasInitialValue"), initialValue)
                 .addProperty(model.createProperty(MC + "hasResultingValue"), resultingValue);

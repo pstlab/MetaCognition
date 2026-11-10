@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABox Editor</title>
+  <style>
+    :root{--bg:#0f172a;--panel:#111827;--panel2:#1f2937;--text:#e5e7eb;--muted:#94a3b8;--accent:#38bdf8;--border:#334155;--ok:#22c55e;--err:#ef4444;--warn:#f59e0b}
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#020617,var(--bg));color:var(--text)}
+    .container{max-width:1500px;margin:auto;padding:30px 20px 48px}.nav{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}.nav a{color:var(--muted);text-decoration:none;padding:9px 13px;border-radius:10px;border:1px solid var(--border)}.nav a.active,.nav a:hover{color:var(--text);background:#1e293b;border-color:var(--accent)}
+    h1{margin:0 0 8px}.subtitle,.hint{color:var(--muted);line-height:1.5}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:20px 0}.status{margin-left:auto;color:var(--muted)}.status.dirty{color:var(--warn)}.status.ok{color:var(--ok)}.status.err{color:var(--err)}
+    button{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:600;cursor:pointer;background:linear-gradient(135deg,var(--accent),#0ea5e9);color:#082f49}button.secondary{background:#1e293b;color:var(--text);border:1px solid var(--border)}button.danger{background:#7f1d1d;color:#fecaca}button:disabled{opacity:.5;cursor:not-allowed}
+    .layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(320px,1fr);gap:18px;align-items:start}.card{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:16px;padding:16px}.graph{height:430px;background:#020617;border:1px solid var(--border);border-radius:12px;overflow:hidden}.detail-graph{height:520px}.graph svg{display:block;width:100%;height:100%}.node{cursor:grab;touch-action:none}.node.dragging{cursor:grabbing}.node.selected circle{stroke:var(--warn)!important;stroke-width:4}.node text,.edge-label{pointer-events:none;user-select:none}.edge-hit{cursor:pointer;stroke:transparent;stroke-width:14}.edge.selected{stroke:var(--warn)!important;stroke-width:3}.edge-label.selected{fill:#fbbf24!important;font-weight:700}.section-title{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin:0 0 8px}.section-title h2{margin:0}.section-title span{color:var(--muted);font-size:13px}.detail-panel{margin-top:18px}
+    label{display:block;color:var(--muted);font-size:13px;margin:11px 0 6px}input,select{width:100%;padding:10px;border-radius:9px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font:inherit}input:focus,select:focus{outline:none;border-color:var(--accent)}.row{display:grid;grid-template-columns:120px 1fr;gap:8px}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.selected-info{padding:10px;border-radius:9px;background:#0b1220;color:var(--muted);font-size:12px;overflow-wrap:anywhere}.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;color:var(--muted);font-size:12px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}.resource{background:#075985}.literal{background:#713f12}
+    @media(max-width:950px){.layout{grid-template-columns:1fr}.graph{height:500px}.status{width:100%;margin-left:0}}
+  </style>
+</head>
+<body>
+<main class="container">
+  <nav class="nav" aria-label="Metacognition tools"><a href="/sparql_gui.html">SPARQL console</a><a href="/abstraction_inspection.html">Knowledge inspection</a><a class="active" href="/knowledge_editor.html">ABox editor</a></nav>
+  <h1>ABox Editor</h1>
+  <p class="subtitle">Edit asserted scenario triples graphically. Ontology axioms and inferred triples are excluded. The graph hides coordinate and label-value details and gives anonymous RDF resources readable names; the editor still preserves their exact RDF identity.</p>
+  <div class="toolbar"><button id="reload" class="secondary">Reload asserted graph</button><button id="load">Reset / reload example ABox</button><button id="reason">Refresh inference</button><span id="status" class="status">Loading…</span></div>
+  <div class="layout">
+    <section class="card">
+      <div class="section-title"><h2>Physical ABox overview</h2><span>Select an entity to inspect its assertions</span></div>
+      <div class="legend"><span><i class="dot resource"></i>physical entity</span><span>Arrows follow subject → object</span><span>Drag nodes to reorganize</span></div>
+      <div id="overviewGraph" class="graph"></div>
+      <div class="detail-panel">
+        <div class="section-title"><h2>Selected entity details</h2><span id="detailTitle">No entity selected</span></div>
+        <p class="hint">This local asserted subgraph expands the selected physical entity into qualities, regions, and literal values. Click an edge to edit its exact RDF triple.</p>
+        <div id="detailGraph" class="graph detail-graph"></div>
+      </div>
+    </section>
+    <aside class="card">
+      <h2>Triple editor</h2><p class="hint">Use complete URIs. Existing blank-node identifiers can be selected from the graph.</p>
+      <div id="selection" class="selected-info">No triple selected — the form will add a new triple.</div>
+      <div class="row"><div><label for="subjectKind">Subject kind</label><select id="subjectKind"><option value="blankNode">Blank node</option><option value="uri">URI</option></select></div><div><label for="subject">Subject</label><input id="subject" placeholder="_:node or urn:example:resource" /></div></div>
+      <label for="predicate">Predicate URI</label><input id="predicate" placeholder="http://…#property" />
+      <div class="row"><div><label for="objectKind">Object kind</label><select id="objectKind"><option value="blankNode">Blank node</option><option value="uri">URI</option><option value="literal">Literal</option></select></div><div><label for="object">Object</label><input id="object" /></div></div>
+      <label for="datatype">Literal datatype URI (optional)</label><input id="datatype" placeholder="http://www.w3.org/2001/XMLSchema#string" />
+      <label for="language">Literal language (optional)</label><input id="language" placeholder="en" />
+      <div class="form-actions"><button id="add">Add triple</button><button id="update" class="secondary" disabled>Update selected</button><button id="remove" class="danger" disabled>Remove selected</button><button id="clear" class="secondary">Clear</button></div>
+    </aside>
+  </div>
+</main>
+<script>
+  const api='/metacognition/api';
+  const overviewEl=document.getElementById('overviewGraph'),detailEl=document.getElementById('detailGraph');
+  const detailTitle=document.getElementById('detailTitle'),statusEl=document.getElementById('status'),selectionEl=document.getElementById('selection');
+  const fields={subjectKind:document.getElementById('subjectKind'),subject:document.getElementById('subject'),predicate:document.getElementById('predicate'),objectKind:document.getElementById('objectKind'),object:document.getElementById('object'),datatype:document.getElementById('datatype'),language:document.getElementById('language')};
+  let triples=[],resourceLabels={},selected=null,selectedRoot=null;
+  const physicalTypes=new Set(['StaticObject','NavigationLocation','ManipulationLocation','InteractingObject','EmbodiedAgent','RobotAgent','RobotEmbodiment','RobotPart']);
+  const short=value=>{if(!value)return'';if(value.startsWith('_:'))return value;const split=Math.max(value.lastIndexOf('#'),value.lastIndexOf('/'),value.lastIndexOf(':'));return value.slice(split+1)||value};
+  const displayTerm=term=>resourceLabels[term.value]||short(term.value);
+  const setStatus=(text,kind='')=>{statusEl.textContent=text;statusEl.className=`status ${kind}`};
+  const request=async(url,options={})=>{const response=await fetch(url,options);if(!response.ok){let message=`HTTP ${response.status}`;try{const body=await response.json();message=body.detail||body.message||message}catch{}throw new Error(message)}return response.status===204?null:response.json()};
+  const termKey=term=>`${term.kind}:${term.value}${term.datatype||''}${term.language||''}`;
+  const typeName=term=>triples.filter(t=>termKey(t.subject)===termKey(term)&&short(t.predicate)==='type').map(t=>short(t.object.value)).filter(Boolean).sort()[0]||'';
+  function physicalTerms(){
+    const resources=new Map();
+    triples.filter(t=>short(t.predicate)==='type'&&physicalTypes.has(short(t.object.value))).forEach(t=>resources.set(termKey(t.subject),t.subject));
+    triples.filter(t=>short(t.predicate)==='hasLabel').forEach(t=>resources.set(termKey(t.subject),t.subject));
+    return [...resources.values()].filter(term=>term.kind!=='literal').sort((a,b)=>displayTerm(a).localeCompare(displayTerm(b)));
+  }
+  async function loadGraph(){
+    setStatus('Loading asserted ABox graph…');
+    try{
+      const previous=selectedRoot&&selectedRoot.value,data=await request(`${api}/knowledge/abox`);
+      triples=data.triples||[];resourceLabels=data.resourceLabels||{};selected=null;clearForm();
+      const physical=physicalTerms();selectedRoot=physical.find(term=>term.value===previous)||physical[0]||null;
+      drawViews();
+      setStatus(`${triples.length} editable ABox triples · ${physical.length} physical entities${data.inferenceDirty?' · inference refresh required':''}`,data.inferenceDirty?'dirty':'ok');
+    }catch(error){setStatus(error.message,'err')}
+  }
+  const term=(value,kind,datatype=null,language=null)=>({value,kind,datatype:datatype||null,language:language||null});
+  function formTriple(){return{subject:term(fields.subject.value.trim(),fields.subjectKind.value),predicate:fields.predicate.value.trim(),object:term(fields.object.value,fields.objectKind.value,fields.datatype.value.trim(),fields.language.value.trim())}}
+  function fillForm(triple){fields.subjectKind.value=triple.subject.kind;fields.subject.value=triple.subject.value;fields.predicate.value=triple.predicate;fields.objectKind.value=triple.object.kind;fields.object.value=triple.object.value;fields.datatype.value=triple.object.datatype||'';fields.language.value=triple.object.language||''}
+  function clearForm(){selected=null;Object.values(fields).forEach(field=>{if(field.tagName==='INPUT')field.value=''});fields.subjectKind.value='blankNode';fields.objectKind.value='blankNode';selectionEl.textContent='No triple selected — the form will add a new triple.';document.getElementById('update').disabled=true;document.getElementById('remove').disabled=true;document.querySelectorAll('.edge,.edge-label').forEach(el=>el.classList.remove('selected'))}
+  function selectTriple(index){selected=triples[index];fillForm(selected);selectionEl.textContent=`Selected: ${displayTerm(selected.subject)} → ${short(selected.predicate)} → ${displayTerm(selected.object)}`;document.getElementById('update').disabled=false;document.getElementById('remove').disabled=false;document.querySelectorAll('[data-edge]').forEach(el=>el.classList.toggle('selected',Number(el.dataset.edge)===index))}
+  async function mutate(url,method,body){setStatus('Updating asserted knowledge…');try{await request(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});await loadGraph()}catch(error){setStatus(error.message,'err')}}
+  document.getElementById('add').onclick=()=>mutate(`${api}/knowledge/triples`,'POST',{triple:formTriple()});
+  document.getElementById('update').onclick=()=>selected&&mutate(`${api}/knowledge/triples`,'PUT',{previous:selected,replacement:formTriple()});
+  document.getElementById('remove').onclick=()=>selected&&mutate(`${api}/knowledge/triples/remove`,'POST',{triple:selected});
+  document.getElementById('clear').onclick=clearForm;document.getElementById('reload').onclick=loadGraph;
+  document.getElementById('load').onclick=async()=>{setStatus('Resetting and recreating the example ABox…');try{const response=await fetch(`${api}/knowledge/abox/reset`,{method:'POST'});if(!response.ok)throw new Error(`HTTP ${response.status}`);await loadGraph()}catch(error){setStatus(error.message,'err')}};
+  document.getElementById('reason').onclick=async()=>{setStatus('Refreshing inference…');try{await request(`${api}/reasoning/refresh`,{method:'POST'});await loadGraph();setStatus('Inference refreshed from current assertions.','ok')}catch(error){setStatus(error.message,'err')}};
+
+  function drawViews(){
+    const physical=physicalTerms(),physicalKeys=new Set(physical.map(termKey));
+    const overview=triples.map((triple,index)=>({triple,index})).filter(({triple})=>physicalKeys.has(termKey(triple.subject))&&triple.object.kind!=='literal'&&physicalKeys.has(termKey(triple.object)));
+    drawSvg(overviewEl,overview,physical,{selectedKey:selectedRoot&&termKey(selectedRoot),onNode:selectRoot,showTypes:true});
+    const detail=selectedRoot?detailTriples(selectedRoot,3):[];
+    detailTitle.textContent=selectedRoot?`${displayTerm(selectedRoot)}${typeName(selectedRoot)?` · ${typeName(selectedRoot)}`:''}`:'No entity selected';
+    drawSvg(detailEl,detail,selectedRoot?[selectedRoot]:[],{selectedKey:selectedRoot&&termKey(selectedRoot),onNode:null,showTypes:false});
+  }
+
+  function selectRoot(term){selectedRoot=term;clearForm();drawViews()}
+
+  function detailTriples(root,maxDepth){
+    const physicalKeys=new Set(physicalTerms().map(termKey)),seen=new Set([termKey(root)]),frontier=[{term:root,depth:0}],included=new Set();
+    while(frontier.length){
+      const {term,depth}=frontier.shift(),key=termKey(term);
+      triples.forEach((triple,index)=>{
+        if(termKey(triple.subject)!==key)return;
+        included.add(index);
+        if(depth>=maxDepth||triple.object.kind==='literal'||short(triple.predicate)==='type')return;
+        const objectKey=termKey(triple.object);
+        if(physicalKeys.has(objectKey)&&objectKey!==termKey(root))return;
+        if(!seen.has(objectKey)){seen.add(objectKey);frontier.push({term:triple.object,depth:depth+1})}
+      });
+    }
+    triples.forEach((triple,index)=>{if(termKey(triple.object)===termKey(root))included.add(index)});
+    return [...included].sort((a,b)=>a-b).map(index=>({triple:triples[index],index}));
+  }
+
+  function drawSvg(container,entries,extraTerms,options){
+    container.replaceChildren();
+    const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),markerId=`arrow-${Math.random().toString(36).slice(2)}`;
+    svg.setAttribute('viewBox','0 0 1000 650');
+    const defs=document.createElementNS(ns,'defs'),marker=document.createElementNS(ns,'marker'),arrow=document.createElementNS(ns,'path');
+    marker.id=markerId;marker.setAttribute('viewBox','0 0 10 10');marker.setAttribute('refX','9');marker.setAttribute('refY','5');marker.setAttribute('markerWidth','7');marker.setAttribute('markerHeight','7');marker.setAttribute('orient','auto');
+    arrow.setAttribute('d','M0 0L10 5L0 10z');arrow.setAttribute('fill','#64748b');marker.append(arrow);defs.append(marker);svg.append(defs);
+    const nodes=new Map();extraTerms.forEach(term=>nodes.set(termKey(term),term));entries.forEach(({triple})=>{nodes.set(termKey(triple.subject),triple.subject);nodes.set(termKey(triple.object),triple.object)});
+    const ids=[...nodes.keys()],positions=new Map(ids.map((id,i)=>[id,options.showTypes
+      ?{x:100+(i%5)*200,y:90+Math.floor(i/5)*165}
+      :{x:500+390*Math.cos(2*Math.PI*i/Math.max(ids.length,1)),y:325+250*Math.sin(2*Math.PI*i/Math.max(ids.length,1))}])),edges=[];
+    entries.forEach(({triple,index})=>{
+      const source=termKey(triple.subject),target=termKey(triple.object),line=document.createElementNS(ns,'line'),hit=document.createElementNS(ns,'line'),label=document.createElementNS(ns,'text');
+      line.classList.add('edge');line.dataset.edge=index;line.setAttribute('stroke','#64748b');line.setAttribute('stroke-width','1.5');line.setAttribute('marker-end',`url(#${markerId})`);
+      hit.classList.add('edge-hit');hit.onclick=()=>selectTriple(index);label.classList.add('edge-label');label.dataset.edge=index;label.setAttribute('fill','#94a3b8');label.setAttribute('font-size','10');label.setAttribute('text-anchor','middle');label.textContent=short(triple.predicate);
+      svg.append(line,hit,label);edges.push({source,target,line,hit,label});
+    });
+    const update=()=>edges.forEach(edge=>{const a=positions.get(edge.source),b=positions.get(edge.target),dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,r=28;edge.line.setAttribute('x1',a.x);edge.line.setAttribute('y1',a.y);edge.line.setAttribute('x2',b.x-dx/d*r);edge.line.setAttribute('y2',b.y-dy/d*r);edge.hit.setAttribute('x1',a.x);edge.hit.setAttribute('y1',a.y);edge.hit.setAttribute('x2',b.x);edge.hit.setAttribute('y2',b.y);edge.label.setAttribute('x',(a.x+b.x)/2);edge.label.setAttribute('y',(a.y+b.y)/2-5)});
+    const point=event=>{const p=svg.createSVGPoint();p.x=event.clientX;p.y=event.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())};
+    ids.forEach(id=>{
+      const term=nodes.get(id),position=positions.get(id),group=document.createElementNS(ns,'g'),circle=document.createElementNS(ns,'circle'),label=document.createElementNS(ns,'text'),type=document.createElementNS(ns,'text'),title=document.createElementNS(ns,'title');let moved=false;
+      group.classList.add('node');if(id===options.selectedKey)group.classList.add('selected');group.setAttribute('transform',`translate(${position.x} ${position.y})`);
+      circle.setAttribute('r','24');circle.setAttribute('fill',term.kind==='literal'?'#713f12':'#075985');circle.setAttribute('stroke',term.kind==='literal'?'#fbbf24':'#38bdf8');
+      label.setAttribute('text-anchor','middle');label.setAttribute('y','38');label.setAttribute('fill','#e5e7eb');label.setAttribute('font-size','11');label.textContent=displayTerm(term).slice(0,30);
+      type.setAttribute('text-anchor','middle');type.setAttribute('y','52');type.setAttribute('fill','#94a3b8');type.setAttribute('font-size','9');type.textContent=options.showTypes?typeName(term):'';title.textContent=term.value;
+      group.append(circle,label,type,title);
+      group.onpointerdown=event=>{event.preventDefault();moved=false;group.setPointerCapture(event.pointerId);group.classList.add('dragging')};
+      group.onpointermove=event=>{if(!group.hasPointerCapture(event.pointerId))return;moved=true;const next=point(event);position.x=Math.max(30,Math.min(970,next.x));position.y=Math.max(30,Math.min(590,next.y));group.setAttribute('transform',`translate(${position.x} ${position.y})`);update()};
+      group.onpointerup=event=>{if(group.hasPointerCapture(event.pointerId))group.releasePointerCapture(event.pointerId);group.classList.remove('dragging');if(!moved&&options.onNode)options.onNode(term)};
+      svg.append(group);
+    });
+    update();container.append(svg);
+  }
+  loadGraph();
+</script>
+</body>
+</html>

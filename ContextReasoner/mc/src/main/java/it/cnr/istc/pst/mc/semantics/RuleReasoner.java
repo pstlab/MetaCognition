@@ -5,7 +5,6 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.jena.query.ResultSet;
@@ -66,24 +65,26 @@ public class RuleReasoner extends KnowledgeGraph<InfModel> {
 
         try {
 
-            log.info("Loading rule file {}", file);
+            Path path = Path.of(file).toAbsolutePath().normalize();
+            log.info("Loading the configured Jena rule file {}", path);
             // check rule file path
-            Path path = Path.of(file);
             // check if file exists
             if (!Files.exists(path)) {
-                return Collections.emptyList();
+                throw new IllegalStateException("Configured Jena rule file does not exist: " + path);
             }
 
             // read the file 
             String content = Files.readString(path, StandardCharsets.UTF_8);
             // check if there exists any content inside the file
             if (content == null || content.trim().isEmpty()) {
-                return Collections.emptyList();
+                throw new IllegalStateException("Configured Jena rule file is empty: " + path);
             }
 
             BufferedReader br = new BufferedReader(new StringReader(content));
             Rule.Parser parser = Rule.rulesParserFromReader(br);
-            return Rule.parseRules(parser);
+            List<Rule> parsed = Rule.parseRules(parser);
+            log.info("Loaded {} Jena rules from {}", parsed.size(), path);
+            return parsed;
 
             //return Rule.parseRules(ruleFilePath);
 

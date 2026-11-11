@@ -27,14 +27,97 @@
 
 # infer the functions an embodiment can perform according to its qualities
 [rule2:
-    (?a dul:hasConstituent ?e), (?a rdf:type mc:EmbodiedAgent),
-    (?e dul:hasQuality ?q),
-    (?q rdf:type mc:NavigationCapability),
-    (?l dul:hasQuality ?disp), 
-    (?disp rdf:type mc:TraversabilityDisposition), 
-    makeTemp(?x)
-    -> 
-    (?x rdf:type mc:MoveTo), 
-    (?x soho:canBePerformedBy ?a),
-    (?x soho:hasTarget ?l)
+
+    (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
+
+    (?e dul:hasQuality ?c),(?c rdf:type mc:NavigationCapability),
+
+    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose), (?ep dul:hasRegion ?er),
+    
+
+    (?l dul:hasQuality ?d), (?d rdf:type mc:TraversabilityDisposition),
+
+    (?l dul:hasQuality ?lp), (?lp rdf:type mc:Pose), (?lp dul:hasRegion ?lr),
+
+    makeTemp(?m), 
+    
+    makeTemp(?f)
+
+    ->
+
+    (?m rdf:type mc:MoveTo), 
+
+    (?m soho:canBePerformedBy ?a),
+    (?m soho:hasTarget ?e),
+
+    (?m mc:hasPreconditionOn ?ep),
+    (?m soho:hasEffectOn ?ep),
+
+    (?m mc:assertsAlignment ?f),
+    
+    (?f rdf:type mc:RegionChangeAlignment),
+    (?f mc:concernsObject ?e),
+    (?f mc:concernsQuality ?ep),
+    (?f mc:hasInitialValue ?er),
+    (?f mc:hasResultingValue ?lr)
+]
+
+# Infer a contextual PickGraspable for every object enabled by a location's
+# reachability disposition. The alignments express the required robot pose, the
+# object pose transition, the post-pick pose binding, and consumption of the
+# reachability assertion without changing the factual ABox.
+[inferPickGraspable:
+    (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
+
+    (?e dul:hasQuality ?g), (?g rdf:type soho:GraspObjectCapability),
+    (?e dul:hasQuality ?n), (?n rdf:type mc:NavigationCapability),
+
+    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose), (?ep dul:hasRegion ?er),
+
+    (?l dul:hasQuality ?r), (?r rdf:type mc:ReachabilityDisposition),
+    (?r mc:enables ?o), (?o rdf:type mc:InteractingObject),
+
+    (?l dul:hasQuality ?lp), (?lp rdf:type mc:Pose), (?lp dul:hasRegion ?lr),
+    (?o dul:hasQuality ?op), (?op rdf:type mc:Pose), (?op dul:hasRegion ?or),
+
+    makeTemp(?p),
+    makeTemp(?guard),
+    makeTemp(?binding),
+    makeTemp(?change),
+    makeTemp(?reachability)
+
+    ->
+
+    (?p rdf:type mc:PickGraspable),
+    (?p soho:canBePerformedBy ?a),
+    (?p soho:hasTarget ?o),
+    (?p mc:hasPreconditionOn ?ep),
+    (?p mc:hasPreconditionOn ?op),
+    (?p soho:hasEffectOn ?op),
+
+    (?p mc:requiresAlignment ?guard),
+    (?guard rdf:type mc:RegionGuardAlignment),
+    (?guard mc:concernsObject ?e),
+    (?guard mc:concernsQuality ?ep),
+    (?guard mc:hasBeliefAlignmentValue ?lr),
+
+    (?p mc:assertsAlignment ?binding),
+    (?binding rdf:type mc:QualityBindingAlignment),
+    (?binding mc:concernsObject ?e),
+    (?binding mc:concernsObject ?o),
+    (?binding mc:concernsQuality ?ep),
+    (?binding mc:concernsQuality ?op),
+    (?binding mc:hasBeliefAlignmentValue ?lr),
+
+    (?p mc:assertsAlignment ?change),
+    (?change rdf:type mc:RegionChangeAlignment),
+    (?change mc:concernsObject ?o),
+    (?change mc:concernsQuality ?op),
+    (?change mc:hasInitialValue ?or),
+    (?change mc:hasResultingValue ?lr),
+
+    (?p mc:negatesAlignment ?reachability),
+    (?reachability rdf:type mc:TriplesAssertionAlignment),
+    (?reachability mc:concernsObject ?o),
+    (?reachability mc:concernsQuality ?r)
 ]

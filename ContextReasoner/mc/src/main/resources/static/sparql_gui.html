@@ -236,6 +236,8 @@
       gap: 12px;
     }
 
+    #scenarioButtons { display:flex; flex-direction:column; gap:10px; }
+
     @media (max-width: 900px) {
       .grid {
         grid-template-columns: 1fr;
@@ -315,11 +317,7 @@ WHERE {
         </p>
 
         <div class="action-group" style="margin-top: 20px;">
-          
-          <button class="secondary" onclick="callApi('/metacognition/api/load/mobipick/uc1', 'POST')">
-            Reset / reload Mobipick UC1
-          </button>
-
+          <div id="scenarioButtons"><span class="footer-note">Discovering ABox scenarios…</span></div>
         </div>
 
         <div class="footer-note" style="margin-top: 18px;">
@@ -355,6 +353,7 @@ WHERE {
     const jsonOutputEl = document.getElementById('jsonOutput');
     const tableContainerEl = document.getElementById('tableContainer');
     const resultMetaEl = document.getElementById('resultMeta');
+    const scenarioButtonsEl = document.getElementById('scenarioButtons');
 
     function setStatus(message, kind = '') {
       statusEl.textContent = message;
@@ -632,6 +631,30 @@ WHERE {
           );
         }
       }
+
+    async function loadScenarioCatalog() {
+      try {
+        const response = await fetch('/metacognition/api/knowledge/scenarios');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const catalog = await response.json();
+        scenarioButtonsEl.replaceChildren();
+        (catalog.scenarios || []).forEach(scenario => {
+          const button = document.createElement('button');
+          button.className = scenario.active ? 'primary' : 'secondary';
+          button.textContent = `${scenario.active ? '● ' : ''}${scenario.label}`;
+          button.title = scenario.source;
+          button.onclick = async () => {
+            await callApi(`/metacognition/api/knowledge/scenarios/${encodeURIComponent(scenario.id)}/load`, 'POST');
+            await loadScenarioCatalog();
+          };
+          scenarioButtonsEl.append(button);
+        });
+      } catch (error) {
+        scenarioButtonsEl.textContent = `Cannot list ABox scenarios: ${error.message}`;
+      }
+    }
+
+    loadScenarioCatalog();
   </script>
 </body>
 </html>

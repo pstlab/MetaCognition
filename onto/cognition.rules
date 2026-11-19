@@ -24,23 +24,35 @@
     (?e dul:hasQuality ?q)
 ]
 
+# Materialize the ontology subsumption for forward production rules. In Jena's
+# hybrid mode the RDFS-derived type is query-visible but is not reliably used to
+# activate a separate custom forward rule such as PickGraspable.
+[navigationLocationIsManipulationLocation:
+    (?l rdf:type mc:NavigationLocation)
+    ->
+    (?l rdf:type mc:ManipulationLocation)
+]
 
-# infer the functions an embodiment can perform according to its qualities
-[rule2:
 
+# Infer a contextual MoveTo for each directed connection between navigation
+# locations. The Function changes the Pose of the embodiment's designated
+# navigation-reference part; it does not modify the factual Pose assertion.
+[rule-moveto:
     (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
 
-    (?e dul:hasQuality ?c),(?c rdf:type mc:NavigationCapability),
+    (?e dul:hasQuality ?c), (?c rdf:type mc:NavigationCapability),
+    (?e dul:hasPart ?b), (?b rdf:type mc:RobotPart),
+    (?b rdf:type mc:NavigationReferencePart),
+    (?b dul:hasQuality ?bp), (?bp rdf:type mc:Pose),
 
-    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose), (?ep dul:hasRegion ?er),
-    
+    (?ls rdf:type mc:NavigationLocation),
+    (?ls dul:hasQuality ?ds), (?ds rdf:type mc:ReachabilityDisposition),
+    (?ds mc:connects ?ld), (?ld rdf:type mc:NavigationLocation),
+    (?ls dul:hasQuality ?ps), (?ps rdf:type mc:Pose), (?ps dul:hasRegion ?rs),
+    (?ld dul:hasQuality ?pd), (?pd rdf:type mc:Pose), (?pd dul:hasRegion ?rd),
 
-    (?l dul:hasQuality ?d), (?d rdf:type mc:TraversabilityDisposition),
-
-    (?l dul:hasQuality ?lp), (?lp rdf:type mc:Pose), (?lp dul:hasRegion ?lr),
-
-    makeTemp(?m), 
-    
+    makeTemp(?m),
+    makeTemp(?g),
     makeTemp(?f)
 
     ->
@@ -49,33 +61,40 @@
 
     (?m soho:canBePerformedBy ?a),
     (?m soho:hasTarget ?e),
+    (?m soho:requiresCapability ?c),
 
-    (?m mc:hasPreconditionOn ?ep),
-    (?m soho:hasEffectOn ?ep),
+    (?m mc:hasPreconditionOn ?bp),
+    (?m soho:hasEffectOn ?bp),
+
+    (?m mc:requiresAlignment ?g),
+    (?g rdf:type mc:RegionGuardAlignment),
+    (?g mc:concernsObject ?b),
+    (?g mc:concernsQuality ?bp),
+    (?g mc:hasBeliefAlignmentValue ?rs),
 
     (?m mc:assertsAlignment ?f),
-    
     (?f rdf:type mc:RegionChangeAlignment),
-    (?f mc:concernsObject ?e),
-    (?f mc:concernsQuality ?ep),
-    (?f mc:hasInitialValue ?er),
-    (?f mc:hasResultingValue ?lr)
+    (?f mc:concernsObject ?b),
+    (?f mc:concernsQuality ?bp),
+    (?f mc:hasInitialValue ?rs),
+    (?f mc:hasResultingValue ?rd)
 ]
 
-# Infer a contextual PickGraspable for every object enabled by a location's
+# Infer a contextual PickGraspable for every object connected by a location's
 # reachability disposition. The alignments express the required robot pose, the
 # object pose transition, the post-pick pose binding, and consumption of the
 # reachability assertion without changing the factual ABox.
-[inferPickGraspable:
+[rule-pickgraspable:
     (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
 
     (?e dul:hasQuality ?g), (?g rdf:type soho:GraspObjectCapability),
     (?e dul:hasQuality ?n), (?n rdf:type mc:NavigationCapability),
 
-    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose), (?ep dul:hasRegion ?er),
+    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose),
 
+    (?l rdf:type mc:ManipulationLocation),
     (?l dul:hasQuality ?r), (?r rdf:type mc:ReachabilityDisposition),
-    (?r mc:enables ?o), (?o rdf:type mc:InteractingObject),
+    (?r mc:connects ?o), (?o rdf:type mc:InteractingObject),
 
     (?l dul:hasQuality ?lp), (?lp rdf:type mc:Pose), (?lp dul:hasRegion ?lr),
     (?o dul:hasQuality ?op), (?op rdf:type mc:Pose), (?op dul:hasRegion ?or),
@@ -118,6 +137,8 @@
 
     (?p mc:negatesAlignment ?reachability),
     (?reachability rdf:type mc:TriplesAssertionAlignment),
-    (?reachability mc:concernsObject ?o),
-    (?reachability mc:concernsQuality ?r)
+    (?reachability rdf:type rdf:Statement),
+    (?reachability rdf:subject ?r),
+    (?reachability rdf:predicate mc:connects),
+    (?reachability rdf:object ?o)
 ]

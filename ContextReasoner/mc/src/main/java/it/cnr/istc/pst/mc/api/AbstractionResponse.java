@@ -2,6 +2,8 @@ package it.cnr.istc.pst.mc.api;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /** JSON representation of contextual action schemas derived from inferred functions. */
 public record AbstractionResponse(List<ActionSchema> schemas) {
 
@@ -27,6 +29,14 @@ public record AbstractionResponse(List<ActionSchema> schemas) {
     public record StateCondition(String object, String quality, String value) {
     }
 
+    /** Explicit RDF statement pattern carried by a TriplesAssertionAlignment. */
+    public record TriplePattern(
+            String subject,
+            String predicate,
+            String predicateUri,
+            String object) {
+    }
+
     /** A typed belief alignment. Lists preserve multi-participant bindings without inventing pairs. */
     public record AlignmentConstraint(
             String association,
@@ -36,6 +46,7 @@ public record AbstractionResponse(List<ActionSchema> schemas) {
             List<String> qualities,
             List<String> values,
             List<String> initialValues,
-            List<String> resultingValues) {
+            List<String> resultingValues,
+            @JsonInclude(JsonInclude.Include.NON_NULL) TriplePattern triple) {
     }
 }

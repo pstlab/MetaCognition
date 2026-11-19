@@ -1,0 +1,333 @@
+@prefix dul: <http://www.loa-cnr.it/ontologies/DUL.owl#> .
+@prefix ex: <http://pst.istc.cnr.it/ontologies/2026/mobipick-abox#> .
+@prefix exp: <http://pst.istc.cnr.it/ontologies/2026/mobipick-experiment#> .
+@prefix mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix soho: <http://pst.istc.cnr.it/ontologies/2019/01/soho#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:agent a mc:EmbodiedAgent ;
+    soho:hasLabel "mobipick" ;
+    dul:hasConstituent ex:robot .
+
+ex:mobipick_box_capacity_1 a owl:Ontology ;
+    exp:goalDestination ex:place3 ;
+    rdfs:comment "Reproducible initial ABox aligned to revised connects vocabulary and Java embodiment parthood. Placement access and capacity numeric metadata remain experimental assumptions; not verified against executable Jena rules." ;
+    owl:imports <http://pst.istc.cnr.it/ontologies/2026/metacognition> .
+
+ex:box1_capacity_region a exp:DiscreteCapacityRegion ;
+    exp:availableUnits "1"^^xsd:nonNegativeInteger .
+
+ex:box1_containment a mc:ContainmentCapability ;
+    dul:hasRegion ex:box1_capacity_region .
+
+ex:box1_movable a mc:MovableDisposition .
+
+ex:box1_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:box1_pose a mc:Pose ;
+    dul:hasRegion ex:region_place2 .
+
+ex:drill1 a mc:InteractingObject ;
+    exp:goalLocation ex:place3 ;
+    exp:initiallyAt ex:place2 ;
+    exp:notStorableIn ex:box1 ;
+    dul:hasQuality ex:drill1_movable,
+        ex:drill1_orientation,
+        ex:drill1_pose .
+
+ex:drill1_movable a mc:MovableDisposition .
+
+ex:drill1_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:drill1_pose a mc:Pose ;
+    dul:hasRegion ex:region_place2 .
+
+ex:mobipick_arm a mc:RobotPart ;
+    soho:hasLabel "mobipick_arm" ;
+    dul:hasPart ex:mobipick_camera ;
+    dul:hasQuality ex:mobipick_grasp_capability .
+
+ex:mobipick_base a mc:NavigationReferencePart,
+        mc:RobotPart ;
+    soho:hasLabel "mobipick_base" ;
+    dul:hasQuality ex:mobipick_base_orientation,
+        ex:mobipick_base_pose,
+        ex:mobipick_navigation_capability .
+
+ex:mobipick_base_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:mobipick_base_pose a mc:Pose ;
+    dul:hasRegion ex:region_nav0 .
+
+ex:mobipick_camera a mc:RobotPart ;
+    soho:hasLabel "mobipick_camera" ;
+    dul:hasQuality ex:mobipick_detection_capability .
+
+ex:mobipick_detection_capability a soho:ObjectDetection .
+
+ex:mobipick_grasp_capability a soho:GraspObjectCapability .
+
+ex:mobipick_navigation_capability a mc:NavigationCapability .
+
+ex:nav0_containment a mc:Containment ;
+    dul:hasRegion ex:nav0_occupancy_region .
+
+ex:nav0_occupancy_region a mc:BinaryCapacityRegion .
+
+ex:nav0_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:nav0_pose a mc:Pose ;
+    dul:hasRegion ex:region_nav0 .
+
+ex:nav0_reachability a mc:ReachabilityDisposition ;
+    mc:connects ex:nav1,
+        ex:nav2,
+        ex:nav3 .
+
+ex:nav1_containment a mc:Containment ;
+    dul:hasRegion ex:nav1_occupancy_region .
+
+ex:nav1_occupancy_region a mc:BinaryCapacityRegion .
+
+ex:nav1_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:nav1_pose a mc:Pose ;
+    dul:hasRegion ex:region_nav1 .
+
+ex:nav1_reachability a mc:ReachabilityDisposition ;
+    mc:connects ex:nav0,
+        ex:nav2,
+        ex:nav3,
+        ex:place1_access,
+        ex:relay1,
+        ex:screwdriver1 .
+
+ex:nav2_containment a mc:Containment ;
+    dul:hasRegion ex:nav2_occupancy_region .
+
+ex:nav2_occupancy_region a mc:BinaryCapacityRegion .
+
+ex:nav2_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:nav2_pose a mc:Pose ;
+    dul:hasRegion ex:region_nav2 .
+
+ex:nav2_reachability a mc:ReachabilityDisposition ;
+    mc:connects ex:box1,
+        ex:drill1,
+        ex:nav0,
+        ex:nav1,
+        ex:nav3,
+        ex:place2_access .
+
+ex:nav3_containment a mc:Containment ;
+    dul:hasRegion ex:nav3_occupancy_region .
+
+ex:nav3_occupancy_region a mc:BinaryCapacityRegion .
+
+ex:nav3_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:nav3_pose a mc:Pose ;
+    dul:hasRegion ex:region_nav3 .
+
+ex:nav3_reachability a mc:ReachabilityDisposition ;
+    mc:connects ex:nav0,
+        ex:nav1,
+        ex:nav2,
+        ex:place3_access .
+
+ex:place1_containment a mc:Containment ;
+    dul:hasRegion ex:place1_occupancy_region .
+
+ex:place1_occupancy_region a mc:BinaryCapacityRegion .
+
+ex:place1_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:place1_pose a mc:Pose ;
+    dul:hasRegion ex:region_place1 .
+
+ex:place2_containment a mc:Containment ;
+    dul:hasRegion ex:place2_occupancy_region .
+
+ex:place2_occupancy_region a mc:BinaryCapacityRegion .
+
+ex:place2_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:place2_pose a mc:Pose ;
+    dul:hasRegion ex:region_place2 .
+
+ex:place3_containment a mc:Containment ;
+    dul:hasRegion ex:place3_occupancy_region .
+
+ex:place3_occupancy_region a mc:BinaryCapacityRegion .
+
+ex:place3_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:place3_pose a mc:Pose ;
+    dul:hasRegion ex:region_place3 .
+
+ex:region_nav1 a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "nav1" .
+
+ex:region_nav2 a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "nav2" .
+
+ex:region_nav3 a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "nav3" .
+
+ex:relay1 a mc:InteractingObject ;
+    exp:goalLocation ex:place3 ;
+    exp:initiallyAt ex:place1 ;
+    dul:hasQuality ex:relay1_movable,
+        ex:relay1_orientation,
+        ex:relay1_pose .
+
+ex:relay1_movable a mc:MovableDisposition .
+
+ex:relay1_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:relay1_pose a mc:Pose ;
+    dul:hasRegion ex:region_place1 .
+
+ex:robot a mc:RobotEmbodiment ;
+    soho:hasLabel "mobipick" ;
+    dul:hasPart ex:mobipick_arm,
+        ex:mobipick_base .
+
+ex:screwdriver1 a mc:InteractingObject ;
+    exp:goalLocation ex:place3 ;
+    exp:initiallyAt ex:place1 ;
+    dul:hasQuality ex:screwdriver1_movable,
+        ex:screwdriver1_orientation,
+        ex:screwdriver1_pose .
+
+ex:screwdriver1_movable a mc:MovableDisposition .
+
+ex:screwdriver1_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:screwdriver1_pose a mc:Pose ;
+    dul:hasRegion ex:region_place1 .
+
+ex:table1 a mc:StaticObject ;
+    dul:hasQuality ex:table1_orientation,
+        ex:table1_pose .
+
+ex:table1_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:table1_pose a mc:Pose ;
+    dul:hasRegion ex:region_place1 .
+
+ex:table2 a mc:StaticObject ;
+    dul:hasQuality ex:table2_orientation,
+        ex:table2_pose .
+
+ex:table2_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:table2_pose a mc:Pose ;
+    dul:hasRegion ex:region_place2 .
+
+ex:table3 a mc:StaticObject ;
+    dul:hasQuality ex:table3_orientation,
+        ex:table3_pose .
+
+ex:table3_orientation a mc:Orientation ;
+    dul:hasRegion ex:orientation_region_default .
+
+ex:table3_pose a mc:Pose ;
+    dul:hasRegion ex:region_place3 .
+
+ex:box1 a mc:InstrumentalObject ;
+    exp:initiallyAt ex:place2 ;
+    exp:maximumCapacityUnits "1"^^xsd:nonNegativeInteger ;
+    dul:hasQuality ex:box1_containment,
+        ex:box1_movable,
+        ex:box1_orientation,
+        ex:box1_pose .
+
+ex:place1 a mc:ManipulationLocation ;
+    exp:partOfTable ex:table1 ;
+    dul:hasQuality ex:place1_access,
+        ex:place1_containment,
+        ex:place1_orientation,
+        ex:place1_pose .
+
+ex:place1_access a mc:ReachabilityDisposition .
+
+ex:place2 a mc:ManipulationLocation ;
+    exp:partOfTable ex:table2 ;
+    dul:hasQuality ex:place2_access,
+        ex:place2_containment,
+        ex:place2_orientation,
+        ex:place2_pose .
+
+ex:place2_access a mc:ReachabilityDisposition .
+
+ex:place3_access a mc:ReachabilityDisposition .
+
+ex:region_nav0 a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "nav0" ;
+    exp:x 2.05e+01 ;
+    exp:y 1.52e+01 ;
+    exp:z 0e+00 ;
+    rdfs:comment "Base home coordinates from Java: (20.50, 15.20, 0.0). Other location coordinates are symbolic." .
+
+ex:region_place3 a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "place3" .
+
+ex:nav0 a mc:NavigationLocation ;
+    dul:hasQuality ex:nav0_containment,
+        ex:nav0_orientation,
+        ex:nav0_pose,
+        ex:nav0_reachability .
+
+ex:nav1 a mc:NavigationLocation ;
+    dul:hasQuality ex:nav1_containment,
+        ex:nav1_orientation,
+        ex:nav1_pose,
+        ex:nav1_reachability .
+
+ex:nav2 a mc:NavigationLocation ;
+    dul:hasQuality ex:nav2_containment,
+        ex:nav2_orientation,
+        ex:nav2_pose,
+        ex:nav2_reachability .
+
+ex:nav3 a mc:NavigationLocation ;
+    dul:hasQuality ex:nav3_containment,
+        ex:nav3_orientation,
+        ex:nav3_pose,
+        ex:nav3_reachability .
+
+ex:place3 a mc:ManipulationLocation ;
+    exp:partOfTable ex:table3 ;
+    dul:hasQuality ex:place3_access,
+        ex:place3_containment,
+        ex:place3_orientation,
+        ex:place3_pose .
+
+ex:region_place1 a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "place1" .
+
+ex:region_place2 a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "place2" .
+
+ex:orientation_region_default a mc:SymbolicSpatialRegion ;
+    mc:hasSymbol "north" ;
+    rdfs:comment "Symbolic orientation placeholder; Java initializes base orientation to (0,0,1,0)." .
+

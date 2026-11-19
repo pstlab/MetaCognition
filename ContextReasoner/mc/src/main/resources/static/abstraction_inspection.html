@@ -150,6 +150,7 @@
     }
 
     function alignmentValues(constraint){
+      if(constraint.triple) return `triple (${constraint.triple.subject} —${constraint.triple.predicate}→ ${constraint.triple.object})`;
       if(constraint.initialValues.length||constraint.resultingValues.length) return `delete [${constraint.initialValues.join(', ')||'∅'}] → add [${constraint.resultingValues.join(', ')||'∅'}]`;
       return `values [${constraint.values.join(', ')||'∅'}]`;
     }

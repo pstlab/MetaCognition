@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="title description">
+  <title id="title">Mobipick experimental scenario</title>
+  <desc id="description">A mobile manipulation robot navigating among tables and interacting objects.</desc>
+  <defs>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f8fafc"/><stop offset="1" stop-color="#cbd5e1"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0284c7"/></marker>
+  </defs>
+  <rect width="720" height="320" rx="18" fill="url(#floor)"/>
+  <path d="M105 258C210 185 302 262 400 202S565 120 655 180" fill="none" stroke="#38bdf8" stroke-width="5" stroke-dasharray="12 9" marker-end="url(#arrow)"/>
+  <g fill="#475569"><path d="M475 92h145l18 23H457z"/><path d="M470 115h155v12H470z"/><path d="M482 127h10v82h-10zm121 0h10v82h-10z"/></g>
+  <g fill="#475569"><path d="M95 92h125l16 20H79z"/><path d="M88 112h138v11H88z"/><path d="M98 123h9v70h-9zm99 0h9v70h-9z"/></g>
+  <g transform="translate(285 77)">
+    <rect x="4" y="148" width="130" height="55" rx="25" fill="#334155"/><circle cx="34" cy="202" r="16" fill="#0f172a"/><circle cx="106" cy="202" r="16" fill="#0f172a"/>
+    <rect x="32" y="98" width="72" height="64" rx="13" fill="#f59e0b"/><rect x="50" y="34" width="38" height="72" rx="10" fill="#64748b"/>
+    <path d="M84 68l53-34 10 13-43 45" fill="none" stroke="#334155" stroke-width="14" stroke-linecap="round"/><path d="M145 42l25 15" stroke="#0f172a" stroke-width="9" stroke-linecap="round"/>
+    <rect x="51" y="17" width="37" height="26" rx="6" fill="#0ea5e9"/><circle cx="61" cy="30" r="5" fill="#e0f2fe"/>
+  </g>
+  <g transform="translate(520 70)"><rect width="34" height="38" rx="4" fill="#ef4444"/><path d="M5 7h24" stroke="#fecaca" stroke-width="3"/></g>
+  <g font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#0f172a"><text x="112" y="82">Manipulation location</text><text x="487" y="82">Destination location</text><text x="317" y="302">Mobipick</text></g>
+</svg>

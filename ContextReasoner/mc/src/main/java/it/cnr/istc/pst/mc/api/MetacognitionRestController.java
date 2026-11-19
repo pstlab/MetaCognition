@@ -24,6 +24,9 @@ import org.springframework.http.ResponseEntity;
 import it.cnr.istc.pst.mc.service.ContextReasonerService;
 import it.cnr.istc.pst.mc.service.KnowledgeAbstractionService;
 import it.cnr.istc.pst.mc.service.KnowledgeEditingService;
+import it.cnr.istc.pst.mc.service.ABoxScenarioService;
+import it.cnr.istc.pst.mc.api.ScenarioDtos.ScenarioCatalog;
+import it.cnr.istc.pst.mc.api.ScenarioDtos.ScenarioInfo;
 import it.cnr.istc.pst.mc.api.KnowledgeEditorDtos.KnowledgeGraphResponse;
 import it.cnr.istc.pst.mc.api.KnowledgeEditorDtos.ReasoningStatus;
 import it.cnr.istc.pst.mc.api.KnowledgeEditorDtos.TripleMutationRequest;
@@ -49,6 +52,9 @@ public class MetacognitionRestController {
     @Autowired
     private KnowledgeEditingService editingService;
 
+    @Autowired
+    private ABoxScenarioService scenarioService;
+
     /** Returns contextual action schemas abstracted from current inferred meta-knowledge. */
     @GetMapping(value = "/abstraction", produces = "application/json")
     public AbstractionResponse getAbstraction() {
@@ -65,6 +71,18 @@ public class MetacognitionRestController {
     @GetMapping(value = { "/knowledge/abox", "/knowledge/uc1" }, produces = "application/json")
     public KnowledgeGraphResponse getEditableKnowledge() {
         return this.editingService.currentGraph();
+    }
+
+    /** Lists bundled Turtle ABoxes and identifies the currently loaded scenario. */
+    @GetMapping(value = "/knowledge/scenarios", produces = "application/json")
+    public ScenarioCatalog getScenarios() {
+        return this.scenarioService.catalog();
+    }
+
+    /** Replaces the current ABox with one bundled Turtle scenario and refreshes inference. */
+    @PostMapping(value = "/knowledge/scenarios/{scenarioId}/load", produces = "application/json")
+    public ScenarioInfo loadScenario(@PathVariable String scenarioId) {
+        return this.scenarioService.load(scenarioId);
     }
 
     @PostMapping(value = "/knowledge/triples", consumes = "application/json", produces = "application/json")

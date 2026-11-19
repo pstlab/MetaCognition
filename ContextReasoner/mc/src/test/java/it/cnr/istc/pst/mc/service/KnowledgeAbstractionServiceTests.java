@@ -121,6 +121,35 @@ class KnowledgeAbstractionServiceTests {
         });
     }
 
+    @Test
+    void reifiedPredicateParticipatesInSchemaSignature() {
+        Model model = ModelFactory.createDefaultModel();
+        addReifiedGrounding(model, "one", MC + "connects");
+        addReifiedGrounding(model, "two", MC + "contains");
+
+        AbstractionResponse response = service.abstractModel(model);
+
+        assertThat(response.schemas()).hasSize(2);
+        assertThat(response.schemas()).allSatisfy(schema ->
+                assertThat(schema.alignmentConstraints()).singleElement().satisfies(constraint ->
+                        assertThat(constraint.triple()).isNotNull()));
+        assertThat(response.schemas()).extracting(schema ->
+                schema.alignmentConstraints().get(0).triple().predicateUri())
+                .containsExactlyInAnyOrder(MC + "connects", MC + "contains");
+    }
+
+    private void addReifiedGrounding(Model model, String suffix, String predicateUri) {
+        Resource function = typed(model, "reified-function-" + suffix, "PickGraspable");
+        Resource object = typed(model, "reified-object-" + suffix, "InteractingObject");
+        Resource disposition = typed(model, "reified-disposition-" + suffix, "ReachabilityDisposition");
+        Resource alignment = typed(model, "reified-alignment-" + suffix, "TriplesAssertionAlignment");
+        function.addProperty(model.createProperty(SOHO + "hasTarget"), object)
+                .addProperty(model.createProperty(MC + "negatesAlignment"), alignment);
+        alignment.addProperty(RDF.subject, disposition)
+                .addProperty(RDF.predicate, model.createResource(predicateUri))
+                .addProperty(RDF.object, object);
+    }
+
     private void addGrounding(Model model, String suffix, boolean precondition, boolean effect,
             boolean requires, boolean asserts, boolean negates) {
         Resource function = typed(model, "function-" + suffix, "MoveTo");

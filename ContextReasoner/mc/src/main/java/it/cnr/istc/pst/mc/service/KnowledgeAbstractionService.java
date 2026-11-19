@@ -33,6 +33,7 @@ import it.cnr.istc.pst.mc.api.AbstractionResponse.ActionSchema;
 import it.cnr.istc.pst.mc.api.AbstractionResponse.AlignmentConstraint;
 import it.cnr.istc.pst.mc.api.AbstractionResponse.Parameter;
 import it.cnr.istc.pst.mc.api.AbstractionResponse.StateCondition;
+import it.cnr.istc.pst.mc.api.AbstractionResponse.TriplePattern;
 import it.cnr.istc.pst.mc.api.SchemaGroundingsResponse;
 import it.cnr.istc.pst.mc.api.SchemaGroundingsResponse.FunctionGrounding;
 import it.cnr.istc.pst.mc.api.SchemaGroundingsResponse.Triple;
@@ -49,6 +50,7 @@ public class KnowledgeAbstractionService {
 
     private static final String CAN_PERFORM = NS_SOHO + "canBePerformedBy";
     private static final String TARGET = NS_SOHO + "hasTarget";
+    private static final String REQUIRES_CAPABILITY = NS_SOHO + "requiresCapability";
     private static final String PRECONDITION_ON = NS + "hasPreconditionOn";
     private static final String EFFECT_ON = NS_SOHO + "hasEffectOn";
     private static final String REQUIRES = NS + "requiresAlignment";
@@ -63,6 +65,7 @@ public class KnowledgeAbstractionService {
     private static final List<Role> FUNCTION_ROLES = List.of(
             new Role("canBePerformedBy", CAN_PERFORM),
             new Role("hasTarget", TARGET),
+            new Role("requiresCapability", REQUIRES_CAPABILITY),
             new Role("hasPreconditionOn", PRECONDITION_ON),
             new Role("hasEffectOn", EFFECT_ON));
     private static final List<AlignmentRole> ALIGNMENT_ROLES = List.of(
@@ -151,6 +154,7 @@ public class KnowledgeAbstractionService {
                 if (!specializedValues) {
                     collectStatements(model, alignment, ALIGNMENT_VALUE, statements, participants);
                 }
+                collectReifiedStatement(model, alignment, statements, participants);
             }
         }
         participants.add(function);
@@ -165,6 +169,20 @@ public class KnowledgeAbstractionService {
                         .thenComparing(Triple::object))
                 .toList();
         return new FunctionGrounding(displayId(function), function.isAnon() ? "blankNode" : "uri", triples);
+    }
+
+    private void collectReifiedStatement(Model model, Resource alignment,
+            Set<org.apache.jena.rdf.model.Statement> statements, Set<Resource> participants) {
+        for (Property property : List.of(RDF.subject, RDF.predicate, RDF.object)) {
+            for (org.apache.jena.rdf.model.Statement statement : model.listStatements(
+                    alignment, property, (RDFNode) null).toList()) {
+                statements.add(statement);
+                // The predicate is a constant in the triple pattern, not an action parameter.
+                if (!property.equals(RDF.predicate) && statement.getObject().isResource()) {
+                    participants.add(statement.getResource());
+                }
+            }
+        }
     }
 
     private void collectStatements(Model model, Resource subject, String propertyUri,
@@ -221,13 +239,18 @@ public class KnowledgeAbstractionService {
                 List<Resource> resultingValues = objects(model, alignment, RESULTING_VALUE);
                 List<Resource> values = initialValues.isEmpty() && resultingValues.isEmpty()
                         ? objects(model, alignment, ALIGNMENT_VALUE) : List.of();
+                ReifiedTriple triple = reifiedTriple(model, alignment);
                 addRoles(resourceRoles, objects, "concernsObject");
                 addRoles(resourceRoles, qualities, "concernsQuality");
                 addRoles(resourceRoles, values, "hasBeliefAlignmentValue");
                 addRoles(resourceRoles, initialValues, "hasInitialValue");
                 addRoles(resourceRoles, resultingValues, "hasResultingValue");
+                if (triple != null) {
+                    addRoles(resourceRoles, List.of(triple.subject()), "rdfSubject");
+                    addRoles(resourceRoles, List.of(triple.object()), "rdfObject");
+                }
                 alignments.add(new GroundAlignment(alignmentRole.name(), alignmentType, objects, qualities,
-                        values, initialValues, resultingValues));
+                        values, initialValues, resultingValues, triple));
             }
         }
 
@@ -271,6 +294,10 @@ public class KnowledgeAbstractionService {
             if (alignment.values().contains(resource)) incident.add(alignment.role() + ":value:" + shape);
             if (alignment.initialValues().contains(resource)) incident.add(alignment.role() + ":initial:" + shape);
             if (alignment.resultingValues().contains(resource)) incident.add(alignment.role() + ":resulting:" + shape);
+            if (alignment.triple() != null && alignment.triple().subject().equals(resource))
+                incident.add(alignment.role() + ":rdfSubject:" + shape);
+            if (alignment.triple() != null && alignment.triple().object().equals(resource))
+                incident.add(alignment.role() + ":rdfObject:" + shape);
         }
         incident.sort(String::compareTo);
         return types.get(resource).uri() + "|" + String.join(",", roles.get(resource)) + "|" + String.join(",", incident);
@@ -279,7 +306,10 @@ public class KnowledgeAbstractionService {
     private String alignmentShape(GroundAlignment alignment, Map<Resource, TypeRef> types) {
         return typeUris(alignment.objects(), types) + ":" + typeUris(alignment.qualities(), types) + ":"
                 + typeUris(alignment.values(), types) + ":" + typeUris(alignment.initialValues(), types) + ":"
-                + typeUris(alignment.resultingValues(), types);
+                + typeUris(alignment.resultingValues(), types)
+                + (alignment.triple() == null ? "" : ":triple=" + types.get(alignment.triple().subject()).uri()
+                        + "|" + alignment.triple().predicateUri() + "|"
+                        + types.get(alignment.triple().object()).uri());
     }
 
     private String typeUris(List<Resource> resources, Map<Resource, TypeRef> types) {
@@ -328,13 +358,33 @@ public class KnowledgeAbstractionService {
                         alignment.type() == null ? NS + "BeliefAlignment" : alignment.type().uri(),
                         variableList(alignment.objects(), variables), variableList(alignment.qualities(), variables),
                         variableList(alignment.values(), variables), variableList(alignment.initialValues(), variables),
-                        variableList(alignment.resultingValues(), variables)))
+                        variableList(alignment.resultingValues(), variables), triplePattern(alignment, variables)))
                 .distinct()
                 .sorted(Comparator.comparing(AlignmentConstraint::association)
                         .thenComparing(AlignmentConstraint::alignmentType)
                         .thenComparing(constraint -> String.join(",", constraint.objects()))
                         .thenComparing(constraint -> String.join(",", constraint.qualities())))
                 .toList();
+    }
+
+    private TriplePattern triplePattern(GroundAlignment alignment, Map<Resource, String> variables) {
+        if (alignment.triple() == null) return null;
+        return new TriplePattern(variables.get(alignment.triple().subject()),
+                localName(alignment.triple().predicateUri()), alignment.triple().predicateUri(),
+                variables.get(alignment.triple().object()));
+    }
+
+    private ReifiedTriple reifiedTriple(Model model, Resource alignment) {
+        List<Resource> subjects = objects(model, alignment, RDF.subject.getURI());
+        List<Resource> predicates = objects(model, alignment, RDF.predicate.getURI());
+        List<Resource> objects = objects(model, alignment, RDF.object.getURI());
+        if (subjects.isEmpty() && predicates.isEmpty() && objects.isEmpty()) return null;
+        if (subjects.size() != 1 || predicates.size() != 1 || objects.size() != 1
+                || !predicates.get(0).isURIResource()) {
+            throw new IllegalArgumentException("TriplesAssertionAlignment must reify exactly one resource triple: "
+                    + displayId(alignment));
+        }
+        return new ReifiedTriple(subjects.get(0), predicates.get(0).getURI(), objects.get(0));
     }
 
     private List<String> variableList(List<Resource> resources, Map<Resource, String> variables) {
@@ -472,7 +522,9 @@ public class KnowledgeAbstractionService {
     private record AlignmentRole(String name, String uri) { }
     private record TypeRef(String name, String uri) { }
     private record GroundAlignment(String role, TypeRef type, List<Resource> objects, List<Resource> qualities,
-            List<Resource> values, List<Resource> initialValues, List<Resource> resultingValues) { }
+            List<Resource> values, List<Resource> initialValues, List<Resource> resultingValues,
+            ReifiedTriple triple) { }
+    private record ReifiedTriple(Resource subject, String predicateUri, Resource object) { }
     private record Grounding(TypeRef functionType, List<Parameter> parameters, List<AlignmentConstraint> constraints,
             List<StateCondition> preconditions, List<StateCondition> positiveEffects,
             List<StateCondition> negativeEffects, String canonical) { }

@@ -9,5 +9,5 @@ WHERE {
  ?l rdf:type mc:NavigationLocation .
  ?l soho:hasLabel ?label .
  ?l dul:hasQuality ?q .
- ?q rdf:type mc:TraversabilityDisposition .
+ ?q rdf:type mc:ReachabilityDisposition .
 }

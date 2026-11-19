@@ -31,6 +31,7 @@ public class ContextReasonerService {
     private final Model baseModel;
     private final RuleReasoner reasoner;
     private volatile boolean inferenceDirty;
+    private volatile String activeScenario;
 
     /**
      * SituationAwarenessService constructor. 
@@ -65,6 +66,7 @@ public class ContextReasonerService {
         log.info("Raw model size: {}", this.model.size());
         log.info("Inference model size: {}", this.reasoner.size());
         this.inferenceDirty = false;
+        this.activeScenario = "ontology-only";
     }
 
 
@@ -147,6 +149,39 @@ public class ContextReasonerService {
 
     public boolean isInferenceDirty() {
         return this.inferenceDirty;
+    }
+
+    public String getActiveScenario() {
+        return this.activeScenario;
+    }
+
+    /** Replaces the asserted scenario with a parsed ABox while retaining the TBox. */
+    public void loadABoxScenario(String scenarioId, Model abox) {
+        if (scenarioId == null || scenarioId.isBlank() || abox == null) {
+            throw new IllegalArgumentException("A scenario identifier and parsed ABox are required");
+        }
+        this.lock.begin(ReadWrite.WRITE);
+        try {
+            this.model.getModel().removeAll();
+            this.model.getModel().add(this.baseModel);
+            this.model.getModel().add(abox);
+            this.model.getModel().setNsPrefixes(this.baseModel.getNsPrefixMap());
+            this.model.getModel().setNsPrefixes(abox.getNsPrefixMap());
+            this.reasoner.refreshInferenceModel();
+            this.inferenceDirty = false;
+            this.activeScenario = scenarioId;
+            this.lock.commit();
+        } catch (RuntimeException exception) {
+            this.model.getModel().removeAll();
+            this.model.getModel().add(this.baseModel);
+            this.reasoner.refreshInferenceModel();
+            this.inferenceDirty = false;
+            this.activeScenario = "ontology-only";
+            this.lock.abort();
+            throw exception;
+        } finally {
+            this.lock.end();
+        }
     }
 
 
@@ -233,7 +268,7 @@ public class ContextReasonerService {
             // assert environment locations of the environment
             log.info("Asssert environment locations");
             // assert location
-            Resource rLoc = this.model.assertEnvironmentLocation(
+            Resource homeLocation = this.model.assertEnvironmentLocation(
                 "base_home", 
                 new double[] {
                     20.50,
@@ -247,7 +282,7 @@ public class ContextReasonerService {
                     0.0
                 });
 
-            log.debug("Asserted environment location {}", rLoc.getURI());
+            log.debug("Asserted environment location {}", homeLocation.getURI());
             
             Resource manipulationLocation = this.model.assertEnvironmentLocation(
                 "base_table1", 
@@ -265,7 +300,7 @@ public class ContextReasonerService {
 
             log.debug("Asserted environment location {}", manipulationLocation.getURI());
 
-            rLoc = this.model.assertEnvironmentLocation(
+            Resource table2Location = this.model.assertEnvironmentLocation(
                 "base_table2", 
                 new double[] {
                     19.39,
@@ -279,17 +314,18 @@ public class ContextReasonerService {
                     1.0
                 });
 
-            log.debug("Asserted environment location {}", rLoc.getURI());
+            log.debug("Asserted environment location {}", table2Location.getURI());
 
             Resource graspable = this.model.assertInteractingObject(
                 "milk_box",
                 new double[] { 18.30, 15.18, 0.80 },
                 new double[] { 0.0, 0.0, 0.0, 1.0 });
+                
             Resource reachability = this.model.assertReachability(manipulationLocation, graspable);
             log.debug("Asserted reachability {} from location {} to object {}",
                 reachability.getURI(), manipulationLocation.getURI(), graspable.getURI());
 
-            rLoc = this.model.assertEnvironmentLocation(
+            Resource table3Location = this.model.assertEnvironmentLocation(
                 "base_table3", 
                 new double[] {
                     21.01,
@@ -303,9 +339,9 @@ public class ContextReasonerService {
                     1.0
                 });
 
-            log.debug("Asserted environment location {}", rLoc.getURI());
+            log.debug("Asserted environment location {}", table3Location.getURI());
 
-            rLoc = this.model.assertEnvironmentLocation(
+            Resource table4Location = this.model.assertEnvironmentLocation(
                 "base_table4", 
                 new double[] {
                     21.80,
@@ -319,7 +355,21 @@ public class ContextReasonerService {
                     0.707
                 });
 
-            log.debug("Asserted environment location {}", rLoc.getURI());
+            log.debug("Asserted environment location {}", table4Location.getURI());
+
+            // The UC1 navigation graph is directed. Each location owns one
+            // ReachabilityDisposition whose connects edges identify its possible
+            // destinations. This is the ABox evidence consumed by MoveTo rule2.
+            Resource[] navigationLocations = {
+                homeLocation, manipulationLocation, table2Location, table3Location, table4Location
+            };
+            for (Resource source : navigationLocations) {
+                for (Resource destination : navigationLocations) {
+                    if (!source.equals(destination)) {
+                        this.model.assertNavigationConnection(source, destination);
+                    }
+                }
+            }
 
             // create robot description 
             log.info("Load Mobipick description into the Knowledge Graph");
@@ -332,6 +382,7 @@ public class ContextReasonerService {
             // Materialize inference from the newly recreated ABox.
             this.reasoner.refreshInferenceModel();
             this.inferenceDirty = false;
+            this.activeScenario = "programmatic-uc1";
             this.lock.commit();
 
         } catch (RuntimeException exception) {

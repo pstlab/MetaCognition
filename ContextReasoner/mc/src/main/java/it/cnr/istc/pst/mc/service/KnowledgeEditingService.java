@@ -143,6 +143,11 @@ public class KnowledgeEditingService {
         Set<Resource> editable = new HashSet<>();
         ArrayDeque<Resource> pending = new ArrayDeque<>();
         model.listSubjectsWithProperty(model.createProperty(HAS_LABEL)).forEachRemaining(pending::add);
+        // File-based ABoxes commonly use stable scenario URIs without labels.
+        // Seed those subjects as well; ontology namespaces remain excluded and
+        // anonymous TBox restrictions are reached from no ABox seed.
+        model.listSubjects().filterKeep(subject -> subject.isURIResource() && !isVocabularyResource(subject))
+                .forEachRemaining(pending::add);
         while (!pending.isEmpty()) {
             Resource current = pending.removeFirst();
             if (!editable.add(current)) continue;

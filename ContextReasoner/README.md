@@ -12,6 +12,7 @@ The project is intended for researchers and developers who want to:
 - materialize contextual Function instances such as `MoveTo` from the current ABox;
 - inspect raw and inferred knowledge with SPARQL;
 - graphically edit the asserted scenario ABox and explicitly refresh inference;
+- discover and load distributable Turtle ABoxes from `onto/aboxes`;
 - abstract grounded Functions into deterministic, typed action schemas;
 - inspect the Function and Belief Alignment subgraphs supporting each schema; and
 - extend the ontology and production rules with new cognitive functionality.
@@ -30,6 +31,7 @@ planning-relevant neighborhood can include:
 
 - `canBePerformedBy` — the agent able to perform the Function;
 - `hasTarget` — the Function target;
+- `requiresCapability` — the contextual capability required by the Function;
 - `hasPreconditionOn` and `hasEffectOn` — relevant qualities;
 - `requiresAlignment`, `assertsAlignment`, and `negatesAlignment` — diagnostic constraints.
 
@@ -49,8 +51,31 @@ negative effect  remove object.quality = initial Region
 positive effect  add object.quality = resulting Region
 ```
 
+`TriplesAssertionAlignment` uses standard RDF reification: exactly one
+`rdf:subject`, `rdf:predicate`, and `rdf:object` describe the statement pattern.
+Reification does not assert that statement. Its interpretation comes from the
+Function association: `requiresAlignment` is a triple precondition,
+`assertsAlignment` is an add effect, and `negatesAlignment` is a delete effect.
+For example, PickGraspable explicitly negates the reified pattern
+`?reachabilityDisposition mc:connects ?interactingObject`.
+
 These are planning semantics only. Inference does **not** replace the current
 `dul:hasRegion` value in the factual ABox.
+
+The current `MoveTo` rule is part-aware. A `RobotEmbodiment` contains a
+`NavigationReferencePart` (the Mobipick base) whose `Pose` is constrained by the
+action schema. Every directed
+`NavigationLocation -> ReachabilityDisposition -> connects -> NavigationLocation`
+path produces a contextual grounding. Its `RegionGuardAlignment` requires the
+base Pose to have the source location's Region, while its
+`RegionChangeAlignment` describes the transition from that source Region to the
+destination Region.
+
+`NavigationLocation` is an ontological subclass of `ManipulationLocation`: it
+satisfies the same Pose, Orientation, and Containment constraints and adds a
+`ReachabilityDisposition`. Consequently, the reasoner classifies every navigation
+location as a manipulation location. PickGraspable is grounded only for those
+locations whose disposition specifically `connects` an `InteractingObject`.
 
 ## From knowledge to action schemas
 
@@ -271,6 +296,8 @@ return a status document rather than HTTP 201/204.
 |---|---|---|---|
 | `GET` | `/knowledge/abox` | Read the editable asserted scenario graph | No |
 | `POST` | `/knowledge/abox/reset` | Restore the startup ontology, recreate the example ABox, and refresh inference | Yes |
+| `GET` | `/knowledge/scenarios` | List available ABoxes and the active scenario | No |
+| `POST` | `/knowledge/scenarios/{scenarioId}/load` | Replace the ABox with a selected scenario and refresh inference | Yes |
 | `POST` | `/knowledge/triples` | Add one asserted ABox triple | Yes |
 | `PUT` | `/knowledge/triples` | Replace one asserted ABox triple | Yes |
 | `POST` | `/knowledge/triples/remove` | Remove one asserted ABox triple | Yes |
@@ -400,8 +427,47 @@ Reset is destructive with respect to current in-memory ABox edits. It restores t
 raw model snapshot captured immediately after loading the ontology, recreates one
 fresh Mobipick example ABox, and refreshes inference. Repeated calls do not
 accumulate generated resources. In the example, the manipulation location is also
-a navigation location: it has the traversability and reachability dispositions
-needed to navigate to and interact with the graspable object.
+a navigation location: its `ReachabilityDisposition` uses `connects` for navigation
+and interaction relations.
+
+### Discover and load Turtle ABox scenarios
+
+Every `.ttl` file under `onto/aboxes` is discovered as a scenario. Its filename
+without `.ttl` is the stable API identifier. Adding a file and rebuilding or
+restarting the application makes it appear automatically in the SPARQL console.
+
+```bash
+curl -s "$BASE/knowledge/scenarios"
+```
+
+Example response:
+
+```json
+{
+  "scenarios": [
+    {
+      "id": "mobipick_baseline_part_aware",
+      "label": "Mobipick Baseline Part Aware",
+      "source": "classpath:onto/aboxes/mobipick_baseline_part_aware.ttl",
+      "active": true
+    }
+  ],
+  "activeScenario": "mobipick_baseline_part_aware"
+}
+```
+
+Load or reset to a selected file:
+
+```bash
+curl -s -X POST \
+  "$BASE/knowledge/scenarios/mobipick_baseline_part_aware/load"
+```
+
+The complete Turtle document is parsed before the current model changes. On
+success, the raw model is reset to the ontology baseline, the selected ABox is
+added, and inference is refreshed. Unknown or malformed scenarios return HTTP 400
+and are never partially loaded. The Java-built example remains available using
+scenario ID `programmatic-uc1`.
 
 ### Add an asserted triple
 
@@ -544,24 +610,34 @@ the same inferred model and sorted independently of Jena iteration order. Exampl
       ],
       "alignmentConstraints": [
         {
+          "association": "requiresAlignment",
+          "alignmentType": "RegionGuardAlignment",
+          "alignmentTypeUri": "http://pst.istc.cnr.it/ontologies/2026/metacognition#RegionGuardAlignment",
+          "objects": ["?navigationReferencePart"],
+          "qualities": ["?pose"],
+          "values": ["?sourceDiscretePoseRegion"],
+          "initialValues": [],
+          "resultingValues": []
+        },
+        {
           "association": "assertsAlignment",
           "alignmentType": "RegionChangeAlignment",
           "alignmentTypeUri": "http://pst.istc.cnr.it/ontologies/2026/metacognition#RegionChangeAlignment",
-          "objects": ["?robotEmbodiment"],
+          "objects": ["?navigationReferencePart"],
           "qualities": ["?pose"],
           "values": [],
-          "initialValues": ["?initialDiscretePoseRegion"],
+          "initialValues": ["?sourceDiscretePoseRegion"],
           "resultingValues": ["?resultingDiscretePoseRegion"]
         }
       ],
       "preconditions": [
-        {"object":"?robotEmbodiment","quality":"?pose","value":"?initialDiscretePoseRegion"}
+        {"object":"?navigationReferencePart","quality":"?pose","value":"?sourceDiscretePoseRegion"}
       ],
       "positiveEffects": [
-        {"object":"?robotEmbodiment","quality":"?pose","value":"?resultingDiscretePoseRegion"}
+        {"object":"?navigationReferencePart","quality":"?pose","value":"?resultingDiscretePoseRegion"}
       ],
       "negativeEffects": [
-        {"object":"?robotEmbodiment","quality":"?pose","value":"?initialDiscretePoseRegion"}
+        {"object":"?navigationReferencePart","quality":"?pose","value":"?sourceDiscretePoseRegion"}
       ]
     }
   ]

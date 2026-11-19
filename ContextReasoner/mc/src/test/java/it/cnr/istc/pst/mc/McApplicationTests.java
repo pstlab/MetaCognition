@@ -31,23 +31,44 @@ class McApplicationTests {
 	}
 
 	@Test
-	void revisedMoveToRuleProducesRegionChangeAlignment() {
+	void revisedMoveToRuleProducesPartAwareGuardAndRegionChangeAlignment() {
 		contextReasoner.loadMobipickUc1();
 
 		ActionSchema moveTo = abstraction.abstractCurrentKnowledge().schemas().stream()
 				.filter(schema -> schema.functionType().equals("MoveTo"))
 				.findFirst().orElseThrow();
 
-		assertThat(moveTo.alignmentConstraints()).isNotEmpty().allSatisfy(constraint -> {
+		assertThat(moveTo.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("RegionChangeAlignment")).isNotEmpty().allSatisfy(constraint -> {
 			assertThat(constraint.alignmentType()).isEqualTo("RegionChangeAlignment");
 			assertThat(constraint.initialValues()).isNotEmpty();
 			assertThat(constraint.resultingValues()).isNotEmpty();
 			assertThat(constraint.initialValues()).isNotEqualTo(constraint.resultingValues());
 		});
+		assertThat(moveTo.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("RegionGuardAlignment")).isNotEmpty().allSatisfy(guard -> {
+			assertThat(guard.objects()).isNotEmpty();
+			assertThat(guard.qualities()).isNotEmpty();
+			assertThat(guard.values()).isNotEmpty();
+		});
+		assertThat(moveTo.parameters()).anySatisfy(parameter -> {
+			assertThat(parameter.type()).isEqualTo("NavigationReferencePart");
+			assertThat(parameter.roles()).contains("concernsObject");
+		});
+		assertThat(moveTo.parameters()).anySatisfy(parameter -> {
+			assertThat(parameter.type()).isEqualTo("NavigationCapability");
+			assertThat(parameter.roles()).contains("requiresCapability");
+		});
+		assertThat(moveTo.parameters()).anySatisfy(parameter -> {
+			assertThat(parameter.type()).isEqualTo("Pose");
+			assertThat(parameter.roles()).contains(
+					"hasPreconditionOn", "hasEffectOn", "concernsQuality");
+		});
 		assertThat(moveTo.preconditions()).isNotEmpty();
 		assertThat(moveTo.positiveEffects()).isNotEmpty();
 		assertThat(moveTo.negativeEffects()).isNotEmpty();
-		assertThat(moveTo.alignmentConstraints()).allSatisfy(constraint -> {
+		assertThat(moveTo.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("RegionChangeAlignment")).allSatisfy(constraint -> {
 			assertThat(moveTo.preconditions()).anySatisfy(condition ->
 					assertThat(constraint.initialValues()).contains(condition.value()));
 			assertThat(moveTo.negativeEffects()).anySatisfy(condition ->
@@ -79,6 +100,17 @@ class McApplicationTests {
 					assertThat(binding.qualities()).hasSize(2);
 					assertThat(binding.values()).hasSize(1);
 				});
+		assertThat(pick.parameters()).anySatisfy(parameter ->
+				assertThat(parameter.roles()).contains("rdfSubject"));
+		assertThat(pick.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("TriplesAssertionAlignment"))
+				.singleElement().satisfies(assertion -> {
+					assertThat(assertion.association()).isEqualTo("negatesAlignment");
+					assertThat(assertion.triple()).isNotNull();
+					assertThat(assertion.triple().predicate()).isEqualTo("connects");
+					assertThat(assertion.triple().predicateUri())
+							.isEqualTo("http://pst.istc.cnr.it/ontologies/2026/metacognition#connects");
+				});
 		assertThat(pick.preconditions()).hasSize(2);
 		assertThat(pick.positiveEffects()).hasSize(1);
 		assertThat(pick.negativeEffects()).hasSize(1);
@@ -89,10 +121,14 @@ class McApplicationTests {
 		contextReasoner.loadMobipickUc1();
 		KnowledgeGraphResponse graph = editing.currentGraph();
 
-		RdfTriple enables = graph.triples().stream()
-				.filter(triple -> triple.predicate().endsWith("#enables"))
+		RdfTriple connects = graph.triples().stream()
+				.filter(triple -> triple.predicate().endsWith("#connects"))
+				.filter(triple -> graph.triples().stream().anyMatch(type ->
+						type.subject().equals(triple.object())
+								&& type.predicate().endsWith("rdf-syntax-ns#type")
+								&& type.object().value().endsWith("#InteractingObject")))
 				.findFirst().orElseThrow();
-		RdfTerm reachability = enables.subject();
+		RdfTerm reachability = connects.subject();
 		RdfTerm location = graph.triples().stream()
 				.filter(triple -> triple.predicate().endsWith("DUL.owl#hasQuality"))
 				.filter(triple -> triple.object().equals(reachability))
@@ -109,9 +145,9 @@ class McApplicationTests {
 				.map(triple -> triple.object().value()).toList())
 				.anyMatch(uri -> uri.endsWith("#ManipulationLocation"));
 
-		RdfTriple marker = new RdfTriple(enables.object(), "urn:test:editorStatus",
+		RdfTriple marker = new RdfTriple(connects.object(), "urn:test:editorStatus",
 				new RdfTerm("reachable", "literal", "http://www.w3.org/2001/XMLSchema#string", ""));
-		RdfTriple replacement = new RdfTriple(enables.object(), "urn:test:editorStatus",
+		RdfTriple replacement = new RdfTriple(connects.object(), "urn:test:editorStatus",
 				new RdfTerm("verified", "literal", "http://www.w3.org/2001/XMLSchema#string", ""));
 		try {
 			editing.add(marker);

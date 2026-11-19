@@ -163,8 +163,10 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         // create robot part - base
         Resource rBase = this.assertResourceOfType(
             MetacognitionDictionary.NS.getUri() + "RobotPart");
-
-            
+        this.assertProperty(
+            rBase,
+            MetacognitionDictionary.NS_RDF.getUri() + "type",
+            this.model.getResource(MetacognitionDictionary.NS.getUri() + "NavigationReferencePart"));
 
         // create pose quality of the robot base
         Resource rBasePose = this.assertDiscretePose(
@@ -441,32 +443,56 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         return obj;
     }
 
-    /** Creates a movable object that can participate in manipulation Functions. */
+    /** Creates an object that can participate in manipulation Functions. */
     public Resource assertInteractingObject(String label, double[] pData, double[] oData) {
         Resource pose = this.assertDiscretePose(pData);
         Resource orientation = this.assertDiscreteOrientation(oData);
-        Resource movable = this.assertResourceOfType(
-            MetacognitionDictionary.NS.getUri() + "MovableDisposition");
         Resource object = this.assertResourceOfType(
             MetacognitionDictionary.NS.getUri() + "InteractingObject");
         this.assertProperty(object, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", pose);
         this.assertProperty(object, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", orientation);
-        this.assertProperty(object, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", movable);
         this.assertDataProperty(object, MetacognitionDictionary.NS_SOHO.getUri() + "hasLabel", label);
         return object;
     }
 
     /**
      * States that an interacting object is reachable from a location. The
-     * disposition belongs to the location and enables interaction with the object.
+     * disposition belongs to the location and connects it to the object.
      */
     public Resource assertReachability(Resource location, Resource interactingObject) {
-        Resource reachability = this.assertResourceOfType(
-            MetacognitionDictionary.NS.getUri() + "ReachabilityDisposition");
+        Resource reachability = this.getOrCreateReachabilityDisposition(location);
         this.assertProperty(location, MetacognitionDictionary.NS_RDF.getUri() + "type",
             this.model.getResource(MetacognitionDictionary.NS.getUri() + "ManipulationLocation"));
-        this.assertProperty(location, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", reachability);
-        this.assertProperty(reachability, MetacognitionDictionary.NS.getUri() + "enables", interactingObject);
+        this.assertProperty(reachability, MetacognitionDictionary.NS.getUri() + "connects", interactingObject);
+        return reachability;
+    }
+
+    /** Adds a directed navigation connection without changing either location's Pose. */
+    public Resource assertNavigationConnection(Resource source, Resource destination) {
+        Resource reachability = this.getOrCreateReachabilityDisposition(source);
+        this.assertProperty(reachability, MetacognitionDictionary.NS.getUri() + "connects", destination);
+        return reachability;
+    }
+
+    private Resource getOrCreateReachabilityDisposition(Resource location) {
+        Property hasQuality = this.model.getProperty(MetacognitionDictionary.NS_DUL.getUri() + "hasQuality");
+        Resource dispositionType = this.model.getResource(
+            MetacognitionDictionary.NS.getUri() + "ReachabilityDisposition");
+        Property rdfType = this.model.getProperty(MetacognitionDictionary.NS_RDF.getUri() + "type");
+        var qualities = location.listProperties(hasQuality);
+        try {
+            while (qualities.hasNext()) {
+                var node = qualities.nextStatement().getObject();
+                if (node.isResource() && this.model.contains(node.asResource(), rdfType, dispositionType)) {
+                    return node.asResource();
+                }
+            }
+        } finally {
+            qualities.close();
+        }
+
+        Resource reachability = this.assertResourceOfType(dispositionType.getURI());
+        this.assertProperty(location, hasQuality.getURI(), reachability);
         return reachability;
     }
 
@@ -484,9 +510,9 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         // create orientation
         Resource orientation = this.assertDiscreteOrientation(oData);
 
-        // create disposition
+        // create the directed-connectivity disposition used by navigation rules
         Resource disp = this.assertResourceOfType(
-            MetacognitionDictionary.NS.getUri() + "TraversabilityDisposition"
+            MetacognitionDictionary.NS.getUri() + "ReachabilityDisposition"
         );
 
         // assert environment location 

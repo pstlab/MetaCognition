@@ -163,10 +163,12 @@ public class SemanticModel extends KnowledgeGraph<Model> {
         // create robot part - base
         Resource rBase = this.assertResourceOfType(
             MetacognitionDictionary.NS.getUri() + "RobotPart");
+        Resource navigationReferenceRole = this.assertResourceOfType(
+            MetacognitionDictionary.NS.getUri() + "NavigationReferencePart");
         this.assertProperty(
             rBase,
-            MetacognitionDictionary.NS_RDF.getUri() + "type",
-            this.model.getResource(MetacognitionDictionary.NS.getUri() + "NavigationReferencePart"));
+            MetacognitionDictionary.NS_DUL.getUri() + "hasRole",
+            navigationReferenceRole);
 
         // create pose quality of the robot base
         Resource rBasePose = this.assertDiscretePose(
@@ -241,11 +243,30 @@ public class SemanticModel extends KnowledgeGraph<Model> {
             MetacognitionDictionary.NS.getUri() + "RobotPart"
         );
 
+        // create the physical gripper and assign its functional grasping role
+        Resource rGripper = this.assertResourceOfType(
+            MetacognitionDictionary.NS.getUri() + "RobotPart"
+        );
+        Resource graspingReferenceRole = this.assertResourceOfType(
+            MetacognitionDictionary.NS.getUri() + "GraspingReferencePart"
+        );
+        this.assertProperty(
+            rGripper,
+            MetacognitionDictionary.NS_DUL.getUri() + "hasRole",
+            graspingReferenceRole);
+
+        Resource gripperPose = this.assertDiscretePose(
+            new double[] { 20.50, 15.20, 0.0 });
+        this.assertProperty(
+            rGripper,
+            MetacognitionDictionary.NS_DUL.getUri() + "hasQuality",
+            gripperPose);
+
         Resource graspCapability = this.assertResourceOfType(
             MetacognitionDictionary.NS_SOHO.getUri() + "GraspObjectCapability"
         );
         this.assertProperty(
-            rArm,
+            rGripper,
             MetacognitionDictionary.NS_DUL.getUri() + "hasQuality",
             graspCapability);
     
@@ -254,6 +275,15 @@ public class SemanticModel extends KnowledgeGraph<Model> {
             rArm, 
             MetacognitionDictionary.NS_DUL.getUri() + "hasPart", 
             rCamera);
+        this.assertProperty(
+            rArm,
+            MetacognitionDictionary.NS_DUL.getUri() + "hasPart",
+            rGripper);
+
+        this.assertDataProperty(
+            rGripper,
+            MetacognitionDictionary.NS_SOHO.getUri() + "hasLabel",
+            "mobipick_gripper");
 
         this.assertDataProperty(
             rArm, 
@@ -461,8 +491,6 @@ public class SemanticModel extends KnowledgeGraph<Model> {
      */
     public Resource assertReachability(Resource location, Resource interactingObject) {
         Resource reachability = this.getOrCreateReachabilityDisposition(location);
-        this.assertProperty(location, MetacognitionDictionary.NS_RDF.getUri() + "type",
-            this.model.getResource(MetacognitionDictionary.NS.getUri() + "ManipulationLocation"));
         this.assertProperty(reachability, MetacognitionDictionary.NS.getUri() + "connects", interactingObject);
         return reachability;
     }
@@ -543,6 +571,18 @@ public class SemanticModel extends KnowledgeGraph<Model> {
 
         // return location
         return loc;
+    }
+
+    /** Creates a manipulation destination without making it a navigation waypoint. */
+    public Resource assertManipulationLocation(String label, double[] pData, double[] oData) {
+        Resource pose = this.assertDiscretePose(pData);
+        Resource orientation = this.assertDiscreteOrientation(oData);
+        Resource location = this.assertResourceOfType(
+            MetacognitionDictionary.NS.getUri() + "ManipulationLocation");
+        this.assertProperty(location, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", pose);
+        this.assertProperty(location, MetacognitionDictionary.NS_DUL.getUri() + "hasQuality", orientation);
+        this.assertDataProperty(location, MetacognitionDictionary.NS_SOHO.getUri() + "hasLabel", label);
+        return location;
     }
 
 }

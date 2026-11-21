@@ -48,12 +48,12 @@ ex:drill1_pose a mc:Pose ;
 
 ex:mobipick_arm a mc:RobotPart ;
     soho:hasLabel "mobipick_arm" ;
-    dul:hasPart ex:mobipick_camera ;
-    dul:hasQuality ex:mobipick_grasp_capability .
+    dul:hasPart ex:mobipick_camera,
+        ex:mobipick_gripper .
 
-ex:mobipick_base a mc:NavigationReferencePart,
-        mc:RobotPart ;
+ex:mobipick_base a mc:RobotPart ;
     soho:hasLabel "mobipick_base" ;
+    dul:hasRole ex:mobipick_navigation_reference_role ;
     dul:hasQuality ex:mobipick_base_orientation,
         ex:mobipick_base_pose,
         ex:mobipick_navigation_capability .
@@ -72,7 +72,20 @@ ex:mobipick_detection_capability a soho:ObjectDetection .
 
 ex:mobipick_grasp_capability a soho:GraspObjectCapability .
 
+ex:mobipick_grasping_reference_role a mc:GraspingReferencePart .
+
+ex:mobipick_gripper a mc:RobotPart ;
+    soho:hasLabel "mobipick_gripper" ;
+    dul:hasRole ex:mobipick_grasping_reference_role ;
+    dul:hasQuality ex:mobipick_grasp_capability,
+        ex:mobipick_gripper_pose .
+
+ex:mobipick_gripper_pose a mc:Pose ;
+    dul:hasRegion ex:region_nav0 .
+
 ex:mobipick_navigation_capability a mc:NavigationCapability .
+
+ex:mobipick_navigation_reference_role a mc:NavigationReferencePart .
 
 ex:nav0_containment a mc:Containment ;
     dul:hasRegion ex:nav0_occupancy_region .
@@ -105,7 +118,7 @@ ex:nav1_reachability a mc:ReachabilityDisposition ;
     mc:connects ex:nav0,
         ex:nav2,
         ex:nav3,
-        ex:place1_access,
+        ex:place1,
         ex:relay1,
         ex:screwdriver1 .
 
@@ -126,7 +139,7 @@ ex:nav2_reachability a mc:ReachabilityDisposition ;
         ex:nav0,
         ex:nav1,
         ex:nav3,
-        ex:place2_access .
+        ex:place2 .
 
 ex:nav3_containment a mc:Containment ;
     dul:hasRegion ex:nav3_occupancy_region .
@@ -143,7 +156,7 @@ ex:nav3_reachability a mc:ReachabilityDisposition ;
     mc:connects ex:nav0,
         ex:nav1,
         ex:nav2,
-        ex:place3_access .
+        ex:place3 .
 
 ex:place1_containment a mc:Containment ;
     dul:hasRegion ex:place1_occupancy_region .

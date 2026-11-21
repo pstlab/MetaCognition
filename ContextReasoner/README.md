@@ -41,7 +41,7 @@ through `hasBeliefAlignmentValue` or alignment-specific properties.
 
 The currently supported alignments include `RegionGuardAlignment`,
 `RegionChangeAlignment`, `QualityBindingAlignment`, and
-`TriplesAssertionAlignment`. A `RegionChangeAlignment` uses
+`TripleAssertionAlignment` subtypes. A `RegionChangeAlignment` uses
 `hasInitialValue` and `hasResultingValue` to describe a Region transition for the same
 object quality. In an abstract action schema this means:
 
@@ -51,31 +51,59 @@ negative effect  remove object.quality = initial Region
 positive effect  add object.quality = resulting Region
 ```
 
-`TriplesAssertionAlignment` uses standard RDF reification: exactly one
-`rdf:subject`, `rdf:predicate`, and `rdf:object` describe the statement pattern.
-Reification does not assert that statement. Its interpretation comes from the
-Function association: `requiresAlignment` is a triple precondition,
+`TripleAssertionAlignment` subtypes represent planning-relevant RDF assertions
+without using RDF reification predicates in OWL restrictions. The subtype fixes
+the predicate, while typed alignment relations identify the directional endpoints.
+For `ConnectAssertionAlignment`, `concernsQuality` is the
+`ReachabilityDisposition` subject, `concernsObject` is the `InteractingObject`
+object, and the implicit predicate is `mc:connects`. The Function association gives
+the assertion its polarity: `requiresAlignment` is a triple precondition,
 `assertsAlignment` is an add effect, and `negatesAlignment` is a delete effect.
-For example, PickGraspable explicitly negates the reified pattern
-`?reachabilityDisposition mc:connects ?interactingObject`.
+Thus PickGraspable negates the pattern
+`?reachabilityDisposition mc:connects ?interactingObject` without modifying the
+factual ABox during inference. The REST abstraction makes this implicit predicate
+explicit in its JSON `triple` field.
+
+`PlaceGraspable` applies the inverse manipulation transition. A navigation
+location's `ReachabilityDisposition` must connect to an explicitly modeled
+`ManipulationLocation`. The destination location's Pose Region becomes the
+resulting Region of the placed object's Pose. Its schema negates the gripper/object
+`QualityBindingAlignment` both as a precondition and a delete effect, asserts the Region change, and asserts
+`?reachabilityDisposition mc:connects ?interactingObject` as planning
+meta-knowledge. These inferred effects do not mutate the asserted ABox.
 
 These are planning semantics only. Inference does **not** replace the current
 `dul:hasRegion` value in the factual ABox.
 
 The current `MoveTo` rule is part-aware. A `RobotEmbodiment` contains a
-`NavigationReferencePart` (the Mobipick base) whose `Pose` is constrained by the
-action schema. Every directed
+`RobotPart` (the Mobipick base) that plays the DUL role
+`NavigationReferencePart` through `dul:hasRole`; that part's `Pose` is constrained
+by the action schema. Keeping the functional role separate from physical parthood
+allows another robot configuration to designate a different component without
+changing the component taxonomy. Every directed
 `NavigationLocation -> ReachabilityDisposition -> connects -> NavigationLocation`
 path produces a contextual grounding. Its `RegionGuardAlignment` requires the
 base Pose to have the source location's Region, while its
 `RegionChangeAlignment` describes the transition from that source Region to the
 destination Region.
 
+`PickGraspable` applies the same role-filter pattern to manipulation. The physical
+gripper is a `RobotPart` that plays `GraspingReferencePart` through `dul:hasRole`.
+The production rule uses the `NavigationReferencePart` physical part's `Pose` for
+the location precondition and `RegionGuardAlignment`, while it uses the
+`GraspingReferencePart` physical part's `Pose` in the `QualityBindingAlignment`
+with the grasped object. Alignment `concernsObject` links always refer to those
+physical parts and the grasped object, never to role individuals.
+
 `NavigationLocation` is an ontological subclass of `ManipulationLocation`: it
 satisfies the same Pose, Orientation, and Containment constraints and adds a
-`ReachabilityDisposition`. Consequently, the reasoner classifies every navigation
-location as a manipulation location. PickGraspable is grounded only for those
-locations whose disposition specifically `connects` an `InteractingObject`.
+`ReachabilityDisposition`. The reasoner may therefore classify it as both, but the
+production rules use the intended operational type explicitly. `PickGraspable` is
+grounded only from a `NavigationLocation` whose disposition `connects` an
+`InteractingObject`. Dedicated `ManipulationLocation` individuals represent
+candidate placement destinations consumed by `PlaceGraspable`; a directed
+`NavigationLocation -> ReachabilityDisposition -> connects -> ManipulationLocation`
+edge makes such a destination available.
 
 ## From knowledge to action schemas
 
@@ -772,9 +800,10 @@ their conclusions may create contextual Function and Belief Alignment resources.
 resources may use `makeTemp`, because the abstraction groups them structurally.
 This is the single production-rule source loaded by `RuleReasoner`, through the
 `mc.rules-path` setting and the `src/main/resources/onto` link. In particular,
-`inferPickGraspable` is defined there; Java scenario-loading code only asserts its
-ABox premises and never creates inferred `PickGraspable` individuals. Application
-startup fails if the configured rule file is missing or empty.
+The `rule-pickgraspable` and `rule-placegraspable` rules are defined there; Java
+scenario-loading code only asserts their ABox premises and never creates inferred
+Function individuals. Application startup fails if the configured rule file is
+missing or empty.
 
 A change alignment should connect all identities needed by the schema rather than rely
 on Java-side intuition. For `RegionChangeAlignment`, provide:

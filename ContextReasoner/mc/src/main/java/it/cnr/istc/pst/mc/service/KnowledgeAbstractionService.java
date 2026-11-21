@@ -61,6 +61,8 @@ public class KnowledgeAbstractionService {
     private static final String ALIGNMENT_VALUE = NS + "hasBeliefAlignmentValue";
     private static final String INITIAL_VALUE = NS + "hasInitialValue";
     private static final String RESULTING_VALUE = NS + "hasResultingValue";
+    private static final String CONNECT_ASSERTION_ALIGNMENT = NS + "ConnectAssertionAlignment";
+    private static final String CONNECTS = NS + "connects";
 
     private static final List<Role> FUNCTION_ROLES = List.of(
             new Role("canBePerformedBy", CAN_PERFORM),
@@ -155,6 +157,7 @@ public class KnowledgeAbstractionService {
                     collectStatements(model, alignment, ALIGNMENT_VALUE, statements, participants);
                 }
                 collectReifiedStatement(model, alignment, statements, participants);
+                collectImplicitAssertionStatement(model, alignment, statements, participants);
             }
         }
         participants.add(function);
@@ -182,6 +185,21 @@ public class KnowledgeAbstractionService {
                     participants.add(statement.getResource());
                 }
             }
+        }
+    }
+
+    private void collectImplicitAssertionStatement(Model model, Resource alignment,
+            Set<org.apache.jena.rdf.model.Statement> statements, Set<Resource> participants) {
+        if (!model.contains(alignment, RDF.type, model.createResource(CONNECT_ASSERTION_ALIGNMENT))) return;
+        List<Resource> subjects = objects(model, alignment, CONCERNS_QUALITY);
+        List<Resource> objects = objects(model, alignment, CONCERNS_OBJECT);
+        if (subjects.size() != 1 || objects.size() != 1) return;
+        org.apache.jena.rdf.model.Statement asserted = model.createStatement(
+                subjects.get(0), model.createProperty(CONNECTS), objects.get(0));
+        if (model.contains(asserted)) {
+            statements.add(asserted);
+            participants.add(subjects.get(0));
+            participants.add(objects.get(0));
         }
     }
 
@@ -239,15 +257,15 @@ public class KnowledgeAbstractionService {
                 List<Resource> resultingValues = objects(model, alignment, RESULTING_VALUE);
                 List<Resource> values = initialValues.isEmpty() && resultingValues.isEmpty()
                         ? objects(model, alignment, ALIGNMENT_VALUE) : List.of();
-                ReifiedTriple triple = reifiedTriple(model, alignment);
+                ReifiedTriple triple = statementTriple(model, alignment, alignmentType, objects, qualities);
                 addRoles(resourceRoles, objects, "concernsObject");
                 addRoles(resourceRoles, qualities, "concernsQuality");
                 addRoles(resourceRoles, values, "hasBeliefAlignmentValue");
                 addRoles(resourceRoles, initialValues, "hasInitialValue");
                 addRoles(resourceRoles, resultingValues, "hasResultingValue");
                 if (triple != null) {
-                    addRoles(resourceRoles, List.of(triple.subject()), "rdfSubject");
-                    addRoles(resourceRoles, List.of(triple.object()), "rdfObject");
+                    addRoles(resourceRoles, List.of(triple.subject()), "assertionSubject");
+                    addRoles(resourceRoles, List.of(triple.object()), "assertionObject");
                 }
                 alignments.add(new GroundAlignment(alignmentRole.name(), alignmentType, objects, qualities,
                         values, initialValues, resultingValues, triple));
@@ -295,9 +313,9 @@ public class KnowledgeAbstractionService {
             if (alignment.initialValues().contains(resource)) incident.add(alignment.role() + ":initial:" + shape);
             if (alignment.resultingValues().contains(resource)) incident.add(alignment.role() + ":resulting:" + shape);
             if (alignment.triple() != null && alignment.triple().subject().equals(resource))
-                incident.add(alignment.role() + ":rdfSubject:" + shape);
+                incident.add(alignment.role() + ":assertionSubject:" + shape);
             if (alignment.triple() != null && alignment.triple().object().equals(resource))
-                incident.add(alignment.role() + ":rdfObject:" + shape);
+                incident.add(alignment.role() + ":assertionObject:" + shape);
         }
         incident.sort(String::compareTo);
         return types.get(resource).uri() + "|" + String.join(",", roles.get(resource)) + "|" + String.join(",", incident);
@@ -381,10 +399,27 @@ public class KnowledgeAbstractionService {
         if (subjects.isEmpty() && predicates.isEmpty() && objects.isEmpty()) return null;
         if (subjects.size() != 1 || predicates.size() != 1 || objects.size() != 1
                 || !predicates.get(0).isURIResource()) {
-            throw new IllegalArgumentException("TriplesAssertionAlignment must reify exactly one resource triple: "
+            throw new IllegalArgumentException("Legacy RDF-reified alignment must contain exactly one resource triple: "
                     + displayId(alignment));
         }
         return new ReifiedTriple(subjects.get(0), predicates.get(0).getURI(), objects.get(0));
+    }
+
+    /**
+     * Resolves a directional RDF assertion carried by an alignment. Legacy RDF
+     * reification remains readable, while OWL-native assertion subtypes fix the
+     * predicate and use typed alignment roles for their endpoints.
+     */
+    private ReifiedTriple statementTriple(Model model, Resource alignment, TypeRef alignmentType,
+            List<Resource> objects, List<Resource> qualities) {
+        ReifiedTriple legacy = reifiedTriple(model, alignment);
+        if (legacy != null) return legacy;
+        if (alignmentType == null || !CONNECT_ASSERTION_ALIGNMENT.equals(alignmentType.uri())) return null;
+        if (qualities.size() != 1 || objects.size() != 1) {
+            throw new IllegalArgumentException("ConnectAssertionAlignment must concern exactly one "
+                    + "ReachabilityDisposition and one InteractingObject: " + displayId(alignment));
+        }
+        return new ReifiedTriple(qualities.get(0), CONNECTS, objects.get(0));
     }
 
     private List<String> variableList(List<Resource> resources, Map<Resource, String> variables) {
@@ -394,7 +429,12 @@ public class KnowledgeAbstractionService {
     private List<StateCondition> preconditions(List<GroundAlignment> alignments, Map<Resource, String> variables) {
         return alignments.stream().flatMap(alignment -> {
                     if (!alignment.initialValues().isEmpty()) return conditions(alignment, alignment.initialValues(), variables).stream();
-                    if (alignment.role().equals("requiresAlignment")) return conditions(alignment, alignment.values(), variables).stream();
+                    // Multi-participant alignments (for example a QualityBinding)
+                    // are relational constraints, not a Cartesian set of scalar
+                    // object/quality/value conditions. They remain explicit in
+                    // alignmentConstraints and are flattened only when scalar.
+                    if (alignment.role().equals("requiresAlignment") && isScalar(alignment))
+                        return conditions(alignment, alignment.values(), variables).stream();
                     return java.util.stream.Stream.empty();
                 }).distinct().sorted(conditionComparator()).toList();
     }

@@ -91,10 +91,14 @@ class MetacognitionRestControllerTests {
                 PREFIX soho: <http://pst.istc.cnr.it/ontologies/2019/01/soho#>
                 PREFIX mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
                 SELECT * WHERE {
-                  ?a dul:hasConstituent ?e . ?e a mc:RobotEmbodiment ;
-                     dul:hasQuality ?g, ?n, ?ep .
-                  ?g a soho:GraspObjectCapability . ?n a mc:NavigationCapability . ?ep a mc:Pose .
-                  ?l a mc:ManipulationLocation ; dul:hasQuality ?r, ?lp .
+                  ?a dul:hasConstituent ?e . ?e a mc:RobotEmbodiment ; dul:hasPart ?gripper, ?navigationPart .
+                  ?gripper a mc:RobotPart ; dul:hasRole ?role ; dul:hasQuality ?g, ?gp .
+                  ?role a mc:GraspingReferencePart .
+                  ?g a soho:GraspObjectCapability . ?gp a mc:Pose .
+                  ?navigationPart a mc:RobotPart ; dul:hasRole ?navigationRole ; dul:hasQuality ?n, ?np .
+                  ?navigationRole a mc:NavigationReferencePart .
+                  ?n a mc:NavigationCapability . ?np a mc:Pose .
+                  ?l a mc:NavigationLocation ; dul:hasQuality ?r, ?lp .
                   ?r a mc:ReachabilityDisposition ; mc:connects ?o . ?o a mc:InteractingObject ; dul:hasQuality ?op .
                   ?lp a mc:Pose ; dul:hasRegion ?lr . ?op a mc:Pose ; dul:hasRegion ?or .
                 } LIMIT 1
@@ -105,6 +109,24 @@ class MetacognitionRestControllerTests {
         mvc.perform(get("/metacognition/api/abstraction"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.schemas[?(@.functionType == 'MoveTo')]").exists())
-                .andExpect(jsonPath("$.schemas[?(@.functionType == 'PickGraspable')]").exists());
+                .andExpect(jsonPath("$.schemas[?(@.functionType == 'PickGraspable')]").exists())
+                .andExpect(jsonPath("$.schemas[?(@.functionType == 'PlaceGraspable')]").exists());
+        assertThat(abstraction.abstractCurrentKnowledge().schemas().stream()
+                .filter(schema -> schema.functionType().equals("PlaceGraspable")).toList())
+                .as("baseline Place schemas").singleElement();
+
+        for (String scenarioId : new String[] {
+                "mobipick_box_capacity_1_part_aware",
+                "mobipick_box_capacity_2_part_aware" }) {
+            mvc.perform(post("/metacognition/api/knowledge/scenarios/{scenarioId}/load", scenarioId))
+                    .andExpect(status().isOk());
+            mvc.perform(get("/metacognition/api/abstraction"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.schemas[?(@.functionType == 'PickGraspable')]").exists())
+                    .andExpect(jsonPath("$.schemas[?(@.functionType == 'PlaceGraspable')]").exists());
+            assertThat(abstraction.abstractCurrentKnowledge().schemas().stream()
+                    .filter(schema -> schema.functionType().equals("PlaceGraspable")).toList())
+                    .as(scenarioId + " Place schemas").singleElement();
+        }
     }
 }

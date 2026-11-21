@@ -357,6 +357,14 @@ public class ContextReasonerService {
 
             log.debug("Asserted environment location {}", table4Location.getURI());
 
+            Resource placementLocation = this.model.assertManipulationLocation(
+                "placement_table1",
+                new double[] { 18.45, 15.18, 0.80 },
+                new double[] { 0.0, 0.0, 0.0, 1.0 });
+            this.model.assertNavigationConnection(manipulationLocation, placementLocation);
+            log.debug("Asserted manipulation destination {} reachable from {}",
+                placementLocation.getURI(), manipulationLocation.getURI());
+
             // The UC1 navigation graph is directed. Each location owns one
             // ReachabilityDisposition whose connects edges identify its possible
             // destinations. This is the ABox evidence consumed by MoveTo rule2.

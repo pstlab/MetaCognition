@@ -34,6 +34,19 @@ class McApplicationTests {
 	void revisedMoveToRuleProducesPartAwareGuardAndRegionChangeAlignment() {
 		contextReasoner.loadMobipickUc1();
 
+		String roleAssignment = """
+				PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+				PREFIX dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
+				PREFIX mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
+				SELECT ?part ?role WHERE {
+				  ?part a mc:RobotPart ; dul:hasRole ?role .
+				  ?role a mc:NavigationReferencePart .
+				}
+				""";
+		assertThat(contextReasoner.select(true, roleAssignment).hasNext())
+				.as("the asserted ABox assigns the navigation-reference role to a robot part")
+				.isTrue();
+
 		ActionSchema moveTo = abstraction.abstractCurrentKnowledge().schemas().stream()
 				.filter(schema -> schema.functionType().equals("MoveTo"))
 				.findFirst().orElseThrow();
@@ -52,7 +65,7 @@ class McApplicationTests {
 			assertThat(guard.values()).isNotEmpty();
 		});
 		assertThat(moveTo.parameters()).anySatisfy(parameter -> {
-			assertThat(parameter.type()).isEqualTo("NavigationReferencePart");
+			assertThat(parameter.type()).isEqualTo("RobotPart");
 			assertThat(parameter.roles()).contains("concernsObject");
 		});
 		assertThat(moveTo.parameters()).anySatisfy(parameter -> {
@@ -82,6 +95,46 @@ class McApplicationTests {
 	void pickRuleProducesTypedAlignmentSchemaFromUc1Reachability() {
 		contextReasoner.loadMobipickUc1();
 
+		String graspingReference = """
+				PREFIX dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
+				PREFIX mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
+				PREFIX soho: <http://pst.istc.cnr.it/ontologies/2019/01/soho#>
+				SELECT ?part ?pose WHERE {
+				  ?part a mc:RobotPart ;
+				        dul:hasRole [ a mc:GraspingReferencePart ] ;
+				        dul:hasQuality ?pose, ?capability .
+				  ?pose a mc:Pose .
+				  ?capability a soho:GraspObjectCapability .
+				}
+				""";
+		assertThat(contextReasoner.select(true, graspingReference).hasNext())
+				.as("the physical gripper bears the grasping-reference role, pose and capability")
+				.isTrue();
+
+		String roleSeparatedAlignments = """
+				PREFIX dul: <http://www.loa-cnr.it/ontologies/DUL.owl#>
+				PREFIX mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
+				SELECT ?pick WHERE {
+				  ?pick a mc:PickGraspable ;
+				        mc:requiresAlignment ?guard ;
+				        mc:assertsAlignment ?binding .
+				  ?guard a mc:RegionGuardAlignment ;
+				         mc:concernsObject ?navigationPart ;
+				         mc:concernsQuality ?navigationPose .
+				  ?navigationPart dul:hasRole [ a mc:NavigationReferencePart ] ;
+				                  dul:hasQuality ?navigationPose .
+				  ?binding a mc:QualityBindingAlignment ;
+				           mc:concernsObject ?gripper ;
+				           mc:concernsQuality ?gripperPose .
+				  ?gripper dul:hasRole [ a mc:GraspingReferencePart ] ;
+				           dul:hasQuality ?gripperPose .
+				  FILTER (?navigationPart != ?gripper)
+				}
+				""";
+		assertThat(contextReasoner.select(false, roleSeparatedAlignments).hasNext())
+				.as("Pick guards navigation pose and binds the distinct gripper pose")
+				.isTrue();
+
 		ActionSchema pick = abstraction.abstractCurrentKnowledge().schemas().stream()
 				.filter(schema -> schema.functionType().equals("PickGraspable"))
 				.findFirst().orElseThrow();
@@ -90,9 +143,13 @@ class McApplicationTests {
 			assertThat(parameter.type()).isEqualTo("InteractingObject");
 			assertThat(parameter.roles()).contains("hasTarget", "concernsObject");
 		});
+		assertThat(pick.parameters()).anySatisfy(parameter -> {
+			assertThat(parameter.type()).isEqualTo("RobotPart");
+			assertThat(parameter.roles()).contains("concernsObject");
+		});
 		assertThat(pick.alignmentConstraints()).extracting(constraint -> constraint.alignmentType())
 				.contains("RegionGuardAlignment", "QualityBindingAlignment",
-						"RegionChangeAlignment", "TriplesAssertionAlignment");
+						"RegionChangeAlignment", "ConnectAssertionAlignment");
 		assertThat(pick.alignmentConstraints()).filteredOn(constraint ->
 				constraint.alignmentType().equals("QualityBindingAlignment"))
 				.singleElement().satisfies(binding -> {
@@ -101,9 +158,9 @@ class McApplicationTests {
 					assertThat(binding.values()).hasSize(1);
 				});
 		assertThat(pick.parameters()).anySatisfy(parameter ->
-				assertThat(parameter.roles()).contains("rdfSubject"));
+				assertThat(parameter.roles()).contains("assertionSubject"));
 		assertThat(pick.alignmentConstraints()).filteredOn(constraint ->
-				constraint.alignmentType().equals("TriplesAssertionAlignment"))
+				constraint.alignmentType().equals("ConnectAssertionAlignment"))
 				.singleElement().satisfies(assertion -> {
 					assertThat(assertion.association()).isEqualTo("negatesAlignment");
 					assertThat(assertion.triple()).isNotNull();
@@ -117,7 +174,73 @@ class McApplicationTests {
 	}
 
 	@Test
-	void reachableUc1LocationSupportsNavigationAndManipulationAndCanBeEdited() {
+	void placeRuleProducesGuardBindingRemovalRegionChangeAndReachabilityAssertion() {
+		contextReasoner.loadMobipickUc1();
+
+		String inferredPlace = """
+				PREFIX mc: <http://pst.istc.cnr.it/ontologies/2026/metacognition#>
+				SELECT ?place ?object ?destinationRegion ?binding WHERE {
+				  ?place a mc:PlaceGraspable ;
+				         <http://pst.istc.cnr.it/ontologies/2019/01/soho#hasTarget> ?object ;
+				         mc:requiresAlignment [ a mc:RegionGuardAlignment ] ;
+				         mc:requiresAlignment ?binding ;
+				         mc:negatesAlignment ?binding ;
+				         mc:assertsAlignment [ a mc:ConnectAssertionAlignment ] ;
+				         mc:assertsAlignment ?change .
+				  ?binding a mc:QualityBindingAlignment .
+				  ?change a mc:RegionChangeAlignment ;
+				          mc:hasResultingValue ?destinationRegion .
+				}
+				""";
+		assertThat(contextReasoner.select(false, inferredPlace).hasNext())
+				.as("PlaceGraspable must be materialized only as inferred meta-knowledge")
+				.isTrue();
+
+		var placeSchemas = abstraction.abstractCurrentKnowledge().schemas().stream()
+				.filter(schema -> schema.functionType().equals("PlaceGraspable")).toList();
+		assertThat(placeSchemas).as("structurally equivalent Place groundings must collapse")
+				.singleElement();
+		ActionSchema place = placeSchemas.get(0);
+
+		assertThat(place.parameters()).anySatisfy(parameter -> {
+			assertThat(parameter.type()).isEqualTo("InteractingObject");
+			assertThat(parameter.roles()).contains("hasTarget", "concernsObject");
+		});
+		assertThat(place.alignmentConstraints()).extracting(constraint -> constraint.alignmentType())
+				.contains("RegionGuardAlignment", "QualityBindingAlignment",
+						"RegionChangeAlignment", "ConnectAssertionAlignment");
+		assertThat(place.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("QualityBindingAlignment"))
+				.extracting(binding -> binding.association())
+				.containsExactlyInAnyOrder("requiresAlignment", "negatesAlignment");
+		assertThat(place.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("QualityBindingAlignment"))
+				.allSatisfy(binding -> {
+					assertThat(binding.objects()).hasSize(2);
+					assertThat(binding.qualities()).hasSize(2);
+					assertThat(binding.values()).hasSize(1);
+				});
+		assertThat(place.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("ConnectAssertionAlignment"))
+				.allSatisfy(assertion -> {
+					assertThat(assertion.association()).isEqualTo("assertsAlignment");
+					assertThat(assertion.triple()).isNotNull();
+					assertThat(assertion.triple().predicate()).isEqualTo("connects");
+				});
+		assertThat(place.alignmentConstraints()).filteredOn(constraint ->
+				constraint.alignmentType().equals("RegionChangeAlignment"))
+				.allSatisfy(change -> {
+					assertThat(change.initialValues()).isNotEmpty();
+					assertThat(change.resultingValues()).isNotEmpty();
+					assertThat(change.initialValues()).isNotEqualTo(change.resultingValues());
+				});
+		assertThat(place.preconditions()).hasSize(2);
+		assertThat(place.positiveEffects()).hasSize(1);
+		assertThat(place.negativeEffects()).hasSize(1);
+	}
+
+	@Test
+	void reachableUc1ObjectIsConnectedFromAnAssertedNavigationLocationAndCanBeEdited() {
 		contextReasoner.loadMobipickUc1();
 		KnowledgeGraphResponse graph = editing.currentGraph();
 
@@ -143,7 +266,7 @@ class McApplicationTests {
 				.filter(triple -> triple.subject().equals(location))
 				.filter(triple -> triple.predicate().endsWith("rdf-syntax-ns#type"))
 				.map(triple -> triple.object().value()).toList())
-				.anyMatch(uri -> uri.endsWith("#ManipulationLocation"));
+				.noneMatch(uri -> uri.endsWith("#ManipulationLocation"));
 
 		RdfTriple marker = new RdfTriple(connects.object(), "urn:test:editorStatus",
 				new RdfTerm("reachable", "literal", "http://www.w3.org/2001/XMLSchema#string", ""));

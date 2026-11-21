@@ -29,7 +29,7 @@ public record AbstractionResponse(List<ActionSchema> schemas) {
     public record StateCondition(String object, String quality, String value) {
     }
 
-    /** Explicit RDF statement pattern carried by a TriplesAssertionAlignment. */
+    /** Explicit RDF statement pattern carried by a TripleAssertionAlignment subtype. */
     public record TriplePattern(
             String subject,
             String predicate,

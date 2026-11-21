@@ -24,25 +24,17 @@
     (?e dul:hasQuality ?q)
 ]
 
-# Materialize the ontology subsumption for forward production rules. In Jena's
-# hybrid mode the RDFS-derived type is query-visible but is not reliably used to
-# activate a separate custom forward rule such as PickGraspable.
-[navigationLocationIsManipulationLocation:
-    (?l rdf:type mc:NavigationLocation)
-    ->
-    (?l rdf:type mc:ManipulationLocation)
-]
-
-
 # Infer a contextual MoveTo for each directed connection between navigation
 # locations. The Function changes the Pose of the embodiment's designated
-# navigation-reference part; it does not modify the factual Pose assertion.
+# part bearing the navigation-reference role; it does not modify the factual
+# Pose assertion.
 [rule-moveto:
     (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
 
     (?e dul:hasQuality ?c), (?c rdf:type mc:NavigationCapability),
     (?e dul:hasPart ?b), (?b rdf:type mc:RobotPart),
-    (?b rdf:type mc:NavigationReferencePart),
+    (?b dul:hasRole ?navigationRole),
+    (?navigationRole rdf:type mc:NavigationReferencePart),
     (?b dul:hasQuality ?bp), (?bp rdf:type mc:Pose),
 
     (?ls rdf:type mc:NavigationLocation),
@@ -80,19 +72,26 @@
     (?f mc:hasResultingValue ?rd)
 ]
 
-# Infer a contextual PickGraspable for every object connected by a location's
-# reachability disposition. The alignments express the required robot pose, the
-# object pose transition, the post-pick pose binding, and consumption of the
-# reachability assertion without changing the factual ABox.
+# Infer a contextual PickGraspable for every object connected by a navigation
+# location's reachability disposition. The navigation-reference pose guards the robot's
+# location, while the grasping-reference pose is bound to the object pose after
+# picking. The rule does not change the factual ABox.
 [rule-pickgraspable:
     (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
 
-    (?e dul:hasQuality ?g), (?g rdf:type soho:GraspObjectCapability),
-    (?e dul:hasQuality ?n), (?n rdf:type mc:NavigationCapability),
+    (?e dul:hasPart ?gripper), (?gripper rdf:type mc:RobotPart),
+    (?gripper dul:hasRole ?graspingRole),
+    (?graspingRole rdf:type mc:GraspingReferencePart),
+    (?gripper dul:hasQuality ?g), (?g rdf:type soho:GraspObjectCapability),
+    (?gripper dul:hasQuality ?gp), (?gp rdf:type mc:Pose),
 
-    (?e dul:hasQuality ?ep), (?ep rdf:type mc:Pose),
+    (?e dul:hasPart ?navigationPart), (?navigationPart rdf:type mc:RobotPart),
+    (?navigationPart dul:hasRole ?navigationRole),
+    (?navigationRole rdf:type mc:NavigationReferencePart),
+    (?navigationPart dul:hasQuality ?n), (?n rdf:type mc:NavigationCapability),
+    (?navigationPart dul:hasQuality ?np), (?np rdf:type mc:Pose),
 
-    (?l rdf:type mc:ManipulationLocation),
+    (?l rdf:type mc:NavigationLocation),
     (?l dul:hasQuality ?r), (?r rdf:type mc:ReachabilityDisposition),
     (?r mc:connects ?o), (?o rdf:type mc:InteractingObject),
 
@@ -110,21 +109,21 @@
     (?p rdf:type mc:PickGraspable),
     (?p soho:canBePerformedBy ?a),
     (?p soho:hasTarget ?o),
-    (?p mc:hasPreconditionOn ?ep),
+    (?p mc:hasPreconditionOn ?np),
     (?p mc:hasPreconditionOn ?op),
     (?p soho:hasEffectOn ?op),
 
     (?p mc:requiresAlignment ?guard),
     (?guard rdf:type mc:RegionGuardAlignment),
-    (?guard mc:concernsObject ?e),
-    (?guard mc:concernsQuality ?ep),
+    (?guard mc:concernsObject ?navigationPart),
+    (?guard mc:concernsQuality ?np),
     (?guard mc:hasBeliefAlignmentValue ?lr),
 
     (?p mc:assertsAlignment ?binding),
     (?binding rdf:type mc:QualityBindingAlignment),
-    (?binding mc:concernsObject ?e),
+    (?binding mc:concernsObject ?gripper),
     (?binding mc:concernsObject ?o),
-    (?binding mc:concernsQuality ?ep),
+    (?binding mc:concernsQuality ?gp),
     (?binding mc:concernsQuality ?op),
     (?binding mc:hasBeliefAlignmentValue ?lr),
 
@@ -136,9 +135,84 @@
     (?change mc:hasResultingValue ?lr),
 
     (?p mc:negatesAlignment ?reachability),
-    (?reachability rdf:type mc:TriplesAssertionAlignment),
-    (?reachability rdf:type rdf:Statement),
-    (?reachability rdf:subject ?r),
-    (?reachability rdf:predicate mc:connects),
-    (?reachability rdf:object ?o)
+    (?reachability rdf:type mc:ConnectAssertionAlignment),
+    (?reachability mc:concernsQuality ?r),
+    (?reachability mc:concernsObject ?o)
+]
+
+# Infer a contextual PlaceGraspable for each explicitly modeled manipulation
+# location connected from a navigation location. The navigation-reference pose
+# guards the robot location, the existing gripper/object binding is required and
+# then removed, the object
+# pose changes to the manipulation-location region, and the source navigation
+# disposition becomes connected to the placed object. No factual triple is changed.
+[rule-placegraspable:
+    (?a dul:hasConstituent ?e), (?e rdf:type mc:RobotEmbodiment),
+
+    (?e dul:hasPart ?gripper), (?gripper rdf:type mc:RobotPart),
+    (?gripper dul:hasRole ?graspingRole),
+    (?graspingRole rdf:type mc:GraspingReferencePart),
+    (?gripper dul:hasQuality ?g), (?g rdf:type soho:GraspObjectCapability),
+    (?gripper dul:hasQuality ?gp), (?gp rdf:type mc:Pose),
+
+    (?e dul:hasPart ?navigationPart), (?navigationPart rdf:type mc:RobotPart),
+    (?navigationPart dul:hasRole ?navigationRole),
+    (?navigationRole rdf:type mc:NavigationReferencePart),
+    (?navigationPart dul:hasQuality ?n), (?n rdf:type mc:NavigationCapability),
+    (?navigationPart dul:hasQuality ?np), (?np rdf:type mc:Pose),
+
+    (?l rdf:type mc:NavigationLocation),
+    (?l dul:hasQuality ?r), (?r rdf:type mc:ReachabilityDisposition),
+    (?r mc:connects ?destination), (?destination rdf:type mc:ManipulationLocation),
+    (?destination dul:hasQuality ?destinationPose),
+    (?destinationPose rdf:type mc:Pose), (?destinationPose dul:hasRegion ?destinationRegion),
+    (?l dul:hasQuality ?sourcePose), (?sourcePose rdf:type mc:Pose),
+    (?sourcePose dul:hasRegion ?sourceRegion),
+
+    (?o rdf:type mc:InteractingObject),
+    (?o dul:hasQuality ?op), (?op rdf:type mc:Pose), (?op dul:hasRegion ?or),
+
+    notEqual(?or, ?destinationRegion),
+
+    makeTemp(?p),
+    makeTemp(?guard),
+    makeTemp(?binding),
+    makeTemp(?change),
+    makeTemp(?reachability)
+
+    ->
+
+    (?p rdf:type mc:PlaceGraspable),
+    (?p soho:canBePerformedBy ?a),
+    (?p soho:hasTarget ?o),
+    (?p mc:hasPreconditionOn ?np),
+    (?p mc:hasPreconditionOn ?op),
+    (?p soho:hasEffectOn ?op),
+
+    (?p mc:requiresAlignment ?guard),
+    (?guard rdf:type mc:RegionGuardAlignment),
+    (?guard mc:concernsObject ?navigationPart),
+    (?guard mc:concernsQuality ?np),
+    (?guard mc:hasBeliefAlignmentValue ?sourceRegion),
+
+    (?p mc:requiresAlignment ?binding),
+    (?p mc:negatesAlignment ?binding),
+    (?binding rdf:type mc:QualityBindingAlignment),
+    (?binding mc:concernsObject ?gripper),
+    (?binding mc:concernsObject ?o),
+    (?binding mc:concernsQuality ?gp),
+    (?binding mc:concernsQuality ?op),
+    (?binding mc:hasBeliefAlignmentValue ?sourceRegion),
+
+    (?p mc:assertsAlignment ?change),
+    (?change rdf:type mc:RegionChangeAlignment),
+    (?change mc:concernsObject ?o),
+    (?change mc:concernsQuality ?op),
+    (?change mc:hasInitialValue ?or),
+    (?change mc:hasResultingValue ?destinationRegion),
+
+    (?p mc:assertsAlignment ?reachability),
+    (?reachability rdf:type mc:ConnectAssertionAlignment),
+    (?reachability mc:concernsQuality ?r),
+    (?reachability mc:concernsObject ?o)
 ]

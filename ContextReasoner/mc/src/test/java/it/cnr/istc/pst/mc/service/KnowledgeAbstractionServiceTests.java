@@ -122,32 +122,45 @@ class KnowledgeAbstractionServiceTests {
     }
 
     @Test
-    void reifiedPredicateParticipatesInSchemaSignature() {
+    void assertionSubtypeProvidesDirectionalTriplePattern() {
         Model model = ModelFactory.createDefaultModel();
-        addReifiedGrounding(model, "one", MC + "connects");
-        addReifiedGrounding(model, "two", MC + "contains");
+        addConnectAssertionGrounding(model, "one");
+        addConnectAssertionGrounding(model, "two");
 
         AbstractionResponse response = service.abstractModel(model);
 
-        assertThat(response.schemas()).hasSize(2);
-        assertThat(response.schemas()).allSatisfy(schema ->
-                assertThat(schema.alignmentConstraints()).singleElement().satisfies(constraint ->
-                        assertThat(constraint.triple()).isNotNull()));
-        assertThat(response.schemas()).extracting(schema ->
-                schema.alignmentConstraints().get(0).triple().predicateUri())
-                .containsExactlyInAnyOrder(MC + "connects", MC + "contains");
+        assertThat(response.schemas()).singleElement().satisfies(schema -> {
+            assertThat(schema.groundingCount()).isEqualTo(2);
+            assertThat(schema.alignmentConstraints()).singleElement().satisfies(constraint -> {
+                assertThat(constraint.alignmentType()).isEqualTo("ConnectAssertionAlignment");
+                assertThat(constraint.association()).isEqualTo("negatesAlignment");
+                assertThat(constraint.triple()).isNotNull();
+                assertThat(constraint.triple().predicateUri()).isEqualTo(MC + "connects");
+                assertThat(constraint.triple().subject()).startsWith("?reachabilityDisposition");
+                assertThat(constraint.triple().object()).startsWith("?target");
+            });
+        });
+
+        String signatureId = response.schemas().get(0).signatureId();
+        SchemaGroundingsResponse inspection = service.inspectSchema(model, signatureId);
+        assertThat(inspection.groundings()).allSatisfy(grounding ->
+                assertThat(grounding.triples()).anySatisfy(triple -> {
+                    assertThat(triple.predicate()).isEqualTo("connects");
+                    assertThat(triple.subject()).contains("reified-disposition");
+                    assertThat(triple.object()).contains("reified-object");
+                }));
     }
 
-    private void addReifiedGrounding(Model model, String suffix, String predicateUri) {
+    private void addConnectAssertionGrounding(Model model, String suffix) {
         Resource function = typed(model, "reified-function-" + suffix, "PickGraspable");
         Resource object = typed(model, "reified-object-" + suffix, "InteractingObject");
         Resource disposition = typed(model, "reified-disposition-" + suffix, "ReachabilityDisposition");
-        Resource alignment = typed(model, "reified-alignment-" + suffix, "TriplesAssertionAlignment");
+        Resource alignment = typed(model, "reified-alignment-" + suffix, "ConnectAssertionAlignment");
         function.addProperty(model.createProperty(SOHO + "hasTarget"), object)
                 .addProperty(model.createProperty(MC + "negatesAlignment"), alignment);
-        alignment.addProperty(RDF.subject, disposition)
-                .addProperty(RDF.predicate, model.createResource(predicateUri))
-                .addProperty(RDF.object, object);
+        alignment.addProperty(model.createProperty(MC + "concernsQuality"), disposition)
+                .addProperty(model.createProperty(MC + "concernsObject"), object);
+        disposition.addProperty(model.createProperty(MC + "connects"), object);
     }
 
     private void addGrounding(Model model, String suffix, boolean precondition, boolean effect,
